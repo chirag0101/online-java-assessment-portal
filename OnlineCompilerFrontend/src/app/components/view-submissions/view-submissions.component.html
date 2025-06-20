@@ -1,0 +1,62 @@
+<div class="table-container">
+  <div class="table-panel">
+    <div class="header-section">
+      <h2><span class="title">Submission Records</span></h2>
+      <div class="date-range-selector">
+        <label for="fromDate">From:</label>
+        <input type="date" id="fromDate" [(ngModel)]="fromDate" (change)="filterSubmissionsByDate()" [max]="todayDate">
+        <label for="toDate">To:</label>
+        <input type="date" id="toDate" [(ngModel)]="toDate" (change)="filterSubmissionsByDate()" [max]="todayDate">
+        <button class="clear-filter-button" (click)="clearDateFilter()">CLEAR FILTER</button>
+      </div>
+
+      <div class="global-filter">
+        <label for="globalFilter"><mat-icon>search</mat-icon></label>
+        <input type="text" id="globalFilter" [(ngModel)]="globalFilterText" (input)="applyGlobalFilter()" placeholder="Search all fields...">
+        <button class="clear-filter-button" (click)="clearGlobalFilter()">CLEAR SEARCH</button>
+      </div>
+
+    </div>
+
+    <div class="table-wrapper">
+      <div *ngIf="loading" class="loading-message">Loading submissions...</div>
+      <div *ngIf="error" class="error-message">Error loading submissions. Please try again.
+        <button class="retry-button" (click)="fetchSubmissions()"><mat-icon>replay</mat-icon></button>
+      </div>
+      <div *ngIf="!loading && !error && globallyFilteredSubmissions.length === 0" class="no-data-message">
+        No submissions found.
+      </div>
+
+      <table *ngIf="!loading && !error && globallyFilteredSubmissions.length > 0">
+        <thead>
+          <tr>
+            <th>Candidate</th>
+            <th>Interviewer ID</th>
+            <th>Code</th>
+            <th>Time</th>
+            <th>Action</th>
+            <th>Status</th>
+            <th>Output</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let submission of globallyFilteredSubmissions">
+            <td>{{ submission.candidateFullName + ' ('+ submission.candidateId +')'}}</td>
+            <td>{{ submission.interviewerId }}</td>
+            <td>{{ submission.code.length > 50 ? (submission.code | slice:0:50) + '...' : submission.code }}</td>
+            <td>{{ submission.time | date:'medium' }}</td>
+            <td>{{ submission.actionPerformed }}</td>
+            <td>{{ submission.status }}</td>
+            <td>{{ submission.output === null ? 'N/A' : (submission.output.length > 50 ? (submission.output | slice:0:50) + '...' : submission.output) }}</td>            
+            <td><button class="view-code-button" (click)="viewCodeDetails(submission)"><mat-icon>info_outline</mat-icon></button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer-actions">
+      <button class="back-button" (click)="goBack()">Back</button>
+    </div>
+  </div>
+</div>

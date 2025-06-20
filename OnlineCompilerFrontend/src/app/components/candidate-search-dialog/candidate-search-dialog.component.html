@@ -1,0 +1,68 @@
+<h2 mat-dialog-title>Search Candidate</h2>
+
+<mat-dialog-content>
+  <p>{{ data.message || 'Search for a candidate by ID, Name, or Technology:' }}</p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Search Term</mat-label>
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="searchTerm"
+      (keyup)="performSearch()"
+      placeholder="e.g., Alice, CAND001, Java"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <div class="table-wrapper">
+    <mat-radio-group [(ngModel)]="selectedCandidateId" name="candidateSelection" (change)="onSelectionChange($event.value)">
+      <table mat-table [dataSource]="filteredCandidates" class="mat-elevation-z8 full-width">
+
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef> Select </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-radio-button [value]="element.candidateId"></mat-radio-button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="candidateId">
+          <th mat-header-cell *matHeaderCellDef> Candidate ID </th>
+          <td mat-cell *matCellDef="let element"> {{element.candidateId}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="candidateFullName">
+          <th mat-header-cell *matHeaderCellDef> Full Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.candidateFullName}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="candidateTechnology">
+          <th mat-header-cell *matHeaderCellDef> Technology </th>
+          <td mat-cell *matCellDef="let element"> {{element.candidateTechnology}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="candidateYearsOfExpInMonths">
+          <th mat-header-cell *matHeaderCellDef> Experience </th>
+          <td mat-cell *matCellDef="let element"> {{element.candidateYearsOfExpInMonths}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="candidateEmailId">
+          <th mat-header-cell *matHeaderCellDef> Candidate Email ID </th>
+          <td mat-cell *matCellDef="let element"> {{element.candidateEmailId}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="5">No candidates found matching "{{searchTerm}}"</td>
+        </tr>
+      </table>
+    </mat-radio-group>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" [disabled]="!selectedCandidate" (click)="onConfirm()">Select Candidate</button>
+</mat-dialog-actions>

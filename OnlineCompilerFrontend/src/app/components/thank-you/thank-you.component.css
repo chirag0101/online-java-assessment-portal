@@ -1,0 +1,29 @@
+.thank-you-container {
+  font-family: 'Nunito Sans', sans-serif; 
+  color: #005bab;
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center;     
+  min-height: 50vh;       
+  text-align: center;      
+  padding: 50px;            
+  box-sizing: border-box; 
+}
+
+.thank-you-title {
+  margin-bottom: 20px; 
+  font-size: 2.5em;
+}
+
+.iris-logo {
+  width: 200px;
+  height: 250px;
+  margin-bottom: 20px;
+  object-fit: contain;
+}
+
+.thank-you-message {
+  font-size: 1.1em;
+  line-height: 1.5;
+}

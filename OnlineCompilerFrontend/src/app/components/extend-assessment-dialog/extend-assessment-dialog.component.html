@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Extend Assessment</h2>
+<mat-dialog-content>
+  <p>{{ data.message || 'Enter the number of minutes to extend the assessment:' }}</p>
+  <mat-form-field appearance="outline">
+    <mat-label>Minutes</mat-label>
+    <input matInput type="number" [(ngModel)]="minutes" min="1" required>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onConfirm()">Extend</button>
+</mat-dialog-actions>

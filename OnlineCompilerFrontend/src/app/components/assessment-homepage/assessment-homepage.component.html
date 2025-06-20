@@ -1,0 +1,51 @@
+<div *ngIf="isVerified; else verificationPending">
+  <div class="info-panel">
+    <div class="candidate-label">
+      <label class="info-label">CANDIDATE ID: </label>
+      <label>{{ candidateId }} </label>
+    </div>
+    <div class="candidate-label">
+      <label class="info-label">CANDIDATE NAME: </label>
+      <label>{{ candidateName }} </label>
+    </div>
+    <div class="candidate-label">
+      <label class="info-label">CANDIDATE EXP: </label>
+      <label>{{ candidateExperience }} </label>
+    </div>
+    <div class="candidate-label">
+      <label class="info-label">CANDIDATE TECHNOLOGY: </label>
+      <label>{{ canidateTechnology }}</label>
+    </div>
+  </div>
+
+  <div class="compiler-page-container">
+    <div class="code-compiler-section">
+      <div class="code-editor-container">
+        <div #editor class="codemirror-host"></div>
+      </div>
+      <div class="output-panel">
+        <pre>{{ editerOutput }}</pre>
+      </div>
+    </div>
+
+    <div class="buttons-panel">
+      <button type="submit" (click)="compileCode()">Compile</button>
+      <button type="submit" (click)="runCode()">Run Code</button>
+      <button type="submit" (click)="resetCode()">Reset Code</button>
+      <button type="submit" (click)="endSession()">End Session</button>
+      <label> JDK Version: {{ jdkVersion }}</label>
+      <label class="timer-label">Time Left: {{ timerDisplay }}</label>
+    </div>
+  </div>
+</div>
+
+<ng-template #verificationPending>
+  <div class="verification-message">
+    <p *ngIf="!verificationFailed">Verifying assessment link...</p>
+    <p *ngIf="verificationFailed" class="error-message">
+      Invalid or expired assessment link.
+    </p>
+  </div>
+</ng-template>
+
+<router-outlet></router-outlet>

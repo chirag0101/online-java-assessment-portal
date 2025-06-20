@@ -1,0 +1,25 @@
+<div class="login-container">
+  <div class="login-panel">
+    <h2>Admin Login</h2>
+    <form #loginForm="ngForm">
+      <div class="form-group">
+        <label for="adminId">Admin ID:</label>
+        <input type="text" id="adminId" name="adminId" [(ngModel)]="adminId" required #adminIdInput="ngModel">
+        <div *ngIf="adminIdInput.invalid && (adminIdInput.dirty || adminIdInput.touched)" class="validation-message">
+          <div *ngIf="adminIdInput.errors?.['required']">Admin ID is required!</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="adminPassword">Admin Password:</label>
+        <input type="password" id="adminPassword" name="adminPassword" [(ngModel)]="adminPassword" required #adminPasswordInput="ngModel">
+        <div *ngIf="adminPasswordInput.invalid && (adminPasswordInput.dirty || adminPasswordInput.touched)" class="validation-message">
+          <div *ngIf="adminPasswordInput.errors?.['required']">Admin Password is required!</div>
+        </div>
+      </div>
+
+      <button type="submit" class="login-btn" (click)="onLogin(loginForm)">Login</button>
+      <button type="submit" class="reset-btn" (click)="resetPassword()">Reset Password</button>
+    </form>
+    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+  </div>
+</div>
