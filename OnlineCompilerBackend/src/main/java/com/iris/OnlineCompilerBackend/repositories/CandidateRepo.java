@@ -19,7 +19,7 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
             "ORDER BY c.assessmentEndTime")
     Optional<Candidate> findByCandidateIdLatestEntry(@Param("candidateId") String candidateId);
 
-    @Query("FROM Candidate c" +
+    @Query("FROM Candidate c " +
             "WHERE c.candidateId=:candidateId AND c.urlIsActive=true")
     Optional<Candidate> findByCandidateIdAndIsActive(@Param("candidateId") String candidateId);
 
