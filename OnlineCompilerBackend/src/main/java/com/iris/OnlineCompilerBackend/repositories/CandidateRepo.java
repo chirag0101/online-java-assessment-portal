@@ -20,7 +20,7 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
     Optional<Candidate> findByCandidateIdLatestEntry(@Param("candidateId") String candidateId);
 
     @Query("FROM Candidate c" +
-            " WHERE c.candidateId=:candidateId AND c.urlIsActive=true")
+            "WHERE c.candidateId=:candidateId AND c.urlIsActive=true")
     Optional<Candidate> findByCandidateIdAndIsActive(@Param("candidateId") String candidateId);
 
     @Query("SELECT c.userId " +
@@ -36,7 +36,9 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
     @Query("FROM Candidate c WHERE c.urlIsActive=true AND c.assessmentIsStarted=true")
     List<Candidate> findAllActiveAssessmentCandidates();
 
-    @Query("SELECT new com.iris.OnlineCompilerBackend.dtos.CandidateDetailsResDTO(c.candidateId,c.candidateFullName,c.technology,c.yearsOfExperience,c.candidateEmailId) FROM Candidate c WHERE c.urlIsActive=true AND c.urlHashCode=:hashCode")
+    @Query("SELECT new com.iris.OnlineCompilerBackend.dtos.CandidateDetailsResDTO(c.candidateId,c.candidateFullName,c.technology,c.yearsOfExperience,c.candidateEmailId) " +
+            "FROM Candidate c " +
+            "WHERE c.urlIsActive=true AND c.urlHashCode=:hashCode")
     CandidateDetailsResDTO findDetailsByUrl(@Param("hashCode") String hashCode);
 
     @Query("SELECT new com.iris.OnlineCompilerBackend.dtos.CandidateDetailsResDTO(c.candidateId,c.candidateFullName,c.technology,c.yearsOfExperience,c.candidateEmailId) " +
