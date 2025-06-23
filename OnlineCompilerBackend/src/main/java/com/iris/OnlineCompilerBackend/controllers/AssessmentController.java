@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("AssessmentService")
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin("${frontend.url}")
 public class AssessmentController {
 
     private static final Logger log = LoggerFactory.getLogger(AssessmentController.class);

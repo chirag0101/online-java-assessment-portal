@@ -102,10 +102,10 @@ export class AssessmentHomepageComponent
   ngOnInit(): void {
 
     if (sessionStorage.getItem('assessmentEnded')) {
-      const currentAssessmentCode = this.route.snapshot.queryParamMap.get('assessmentCode');
-        window.location.reload();
+        const currentAssessmentCode = this.route.snapshot.queryParamMap.get('assessmentCode');
         sessionStorage.removeItem('assessmentEnded');
         sessionStorage.removeItem('assessmentEndTime');
+        window.location.reload();
     }
     this.assessmentCode = this.route.snapshot.queryParamMap.get('assessmentCode') ?? '';
 

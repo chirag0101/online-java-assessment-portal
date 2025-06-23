@@ -41,7 +41,7 @@ public class AssessmentService {
     private AdminRepo adminRepo;
 
     //frontend-url
-    @Value("${assessmentUrl}")
+    @Value("${assessment.url}")
     private String assessmentUrl;
 
 

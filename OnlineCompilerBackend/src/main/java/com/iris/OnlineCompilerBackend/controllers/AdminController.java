@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("AdminService")
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin("${frontend.url}")
 public class AdminController {
     @Autowired
     private AdminService adminService;
