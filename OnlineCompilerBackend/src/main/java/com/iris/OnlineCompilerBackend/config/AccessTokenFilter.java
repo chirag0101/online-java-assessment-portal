@@ -49,15 +49,13 @@ public class AccessTokenFilter implements Filter {
 
         List<String> paths = List.of(
                 "/AdminService/authenticate-admin",
-                "/AdminService/reset-admin",
-                "/AssessmentService/end-assessment-by-admin",
-                "/CompilerService",
+                "/AdminService/reset-password",
                 "/AssessmentService/assessment"
         );
 
         String path = httpServletRequest.getRequestURI();
 
-        if (paths.contains(path) || path.contains("/CompilerService")) {
+        if (paths.contains(path) || path.contains("/CompilerService") || path.contains("/AssessmentService/end-assessment")) {
             filterChain.doFilter(httpServletRequest, httpResponse);
             return;
         }

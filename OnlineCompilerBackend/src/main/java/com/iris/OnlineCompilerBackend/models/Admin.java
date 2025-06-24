@@ -42,10 +42,14 @@ public class Admin {
     @Column(name = "IS_EXPIRED")
     private Boolean accessTokenIsExpired;
 
+    @JoinColumn(name = "CREATED_BY_FK")
+    @ManyToOne
+    private Admin createdByFk;
+
     public Admin() {
     }
 
-    public Admin(Long id, String adminId, String adminPassword, String salt, Date lastLogin, String fullName, Boolean isAdmin, String lastAccesstoken, Date accessTokenCreatedOn, Date accessTokenLastAccessedOn, Boolean accessTokenIsExpired) {
+    public Admin(Long id, String adminId, String adminPassword, String salt, Date lastLogin, String fullName, Boolean isAdmin, String lastAccesstoken, Date accessTokenCreatedOn, Date accessTokenLastAccessedOn, Boolean accessTokenIsExpired, Admin createdByFk) {
         this.id = id;
         this.adminId = adminId;
         this.adminPassword = adminPassword;
@@ -57,6 +61,7 @@ public class Admin {
         this.accessTokenCreatedOn = accessTokenCreatedOn;
         this.accessTokenLastAccessedOn = accessTokenLastAccessedOn;
         this.accessTokenIsExpired = accessTokenIsExpired;
+        this.createdByFk = createdByFk;
     }
 
     public Long getId() {
@@ -145,5 +150,13 @@ public class Admin {
 
     public void setAccessTokenIsExpired(Boolean accessTokenIsExpired) {
         this.accessTokenIsExpired = accessTokenIsExpired;
+    }
+
+    public Admin getCreatedByFk() {
+        return createdByFk;
+    }
+
+    public void setCreatedByFk(Admin createdByFk) {
+        this.createdByFk = createdByFk;
     }
 }

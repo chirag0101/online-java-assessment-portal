@@ -9,6 +9,7 @@ import { NewAdminDetails } from '../models/admin-details.model';
 import { isPlatformBrowser } from '@angular/common';
 import { ResetAdminRes } from '../models/reset-admin-res.model';
 import { ResetAdminReq } from '../models/reset-admin-req.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,7 @@ export class AdminService {
 
   constructor(
     private http: HttpClient,
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     if (this.isBrowser()) {
@@ -88,7 +90,6 @@ export class AdminService {
   }
 
   isAuthenticated(): boolean {
-    // debugger;
     if (this.isBrowser()) {
       const value = sessionStorage.getItem('isAuthenticatedUser');
       return value === 'true';
@@ -124,8 +125,6 @@ export class AdminService {
   }
 
   getAllAdmins(): Observable<AdminDetailsResponse> {
-    debugger;
-
     const header = new HttpHeaders({
       accessToken: sessionStorage.getItem('accessToken') || '',
       adminId: sessionStorage.getItem('adminId') || '',
@@ -137,5 +136,11 @@ export class AdminService {
         headers: header,
       }
     );
+  }
+
+  onSessionTimeout():void{
+        sessionStorage.clear();
+        alert('Session Timeout!');
+        this.router.navigate(['/admin-login']);
   }
 }

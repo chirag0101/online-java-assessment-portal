@@ -25,7 +25,7 @@ public class AdminService {
     @Autowired
     private AdminRepo adminRepo;
 
-    public ApiResponse createAdmin(NewAdminReqDTO adminCredsReqDTO) {
+    public ApiResponse createAdmin(String adminId, NewAdminReqDTO adminCredsReqDTO) {
         try {
 
             if (adminRepo.findByAdminId(adminCredsReqDTO.getAdminId()) != null) {
@@ -45,6 +45,8 @@ public class AdminService {
 
             admin.setFullName(adminCredsReqDTO.getAdminFullName());
             admin.setIsAdmin(adminCredsReqDTO.getIsAdmin());
+
+            admin.setCreatedByFk(adminRepo.findByAdminId(adminId));
 
             admin.setLastLogin(null);
 

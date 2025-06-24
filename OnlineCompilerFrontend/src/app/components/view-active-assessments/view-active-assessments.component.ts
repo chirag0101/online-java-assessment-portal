@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ExtendAssessmentDialogComponent } from '../extend-assessment-dialog/extend-assessment-dialog.component';
 import { MatIconModule } from '@angular/material/icon';
+import { AdminService } from '../../services/admin.service';
 
 @Component({
   selector: 'app-view-active-assessments',
@@ -33,7 +34,8 @@ export class ViewActiveAssessmentsComponent implements OnInit {
   constructor(
     private assessmentService: AssessmentService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private adminService:AdminService
   ) {}
 
   ngOnInit(): void {
@@ -62,10 +64,9 @@ export class ViewActiveAssessmentsComponent implements OnInit {
             this.isLoading = false;
           },
           error: (err) => {
-            alert('Session Timeout!');
-            this.router.navigate(['/admin-login']);
             this.isLoading = false;
             this.activeAssessments = [];
+            this.adminService.onSessionTimeout();
           },
         });
       return;
@@ -73,6 +74,7 @@ export class ViewActiveAssessmentsComponent implements OnInit {
 
     this.assessmentService.getActiveAssessments().subscribe({
       next: (data: ActiveAssessmentsResponse) => {
+        debugger;
         if (data.statusMessage === 'SUCCESS' && data.response) {
           debugger;
           this.activeAssessments = data.response;
@@ -84,10 +86,8 @@ export class ViewActiveAssessmentsComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        alert('Session Timeout!');
-        this.router.navigate(['/admin-login']);
-        this.isLoading = false;
         this.activeAssessments = [];
+        this.adminService.onSessionTimeout();
       },
     });
   }
@@ -160,8 +160,7 @@ export class ViewActiveAssessmentsComponent implements OnInit {
             this.fetchActiveAssessments();
           },
           error: (err) => {
-            console.error('Error extending assessment:', err);
-            alert('Failed to extend assessment.');
+            this.adminService.onSessionTimeout();
           },
         });
       } else if (minutes === null) {

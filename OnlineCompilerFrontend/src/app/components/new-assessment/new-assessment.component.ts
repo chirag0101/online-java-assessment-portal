@@ -127,7 +127,8 @@ export class NewAssessmentComponent implements OnInit {
     this.candidateDetialsReq.candidateEmailId = this.candidateEmail;
     this.candidateDetialsReq.candidateFullName = this.candidateFullName;
     this.candidateDetialsReq.candidateTechnology = this.technology;
-    this.candidateDetialsReq.candidateYearsOfExpInMonths = this.yearsOfExperience;
+    this.candidateDetialsReq.candidateYearsOfExpInMonths =
+      this.yearsOfExperience;
     this.candidateDetialsReq.interviewerId = this.interviewerId;
     this.candidateDetialsReq.interviewRound = this.interviewRound;
 
@@ -139,9 +140,7 @@ export class NewAssessmentComponent implements OnInit {
           alert('Candidate created & URL created!');
         },
         error: (err) => {
-          sessionStorage.clear();
-          alert('Failed to create assessment.');
-          this.router.navigate(['/admin-login']);
+          this.adminService.onSessionTimeout();
         },
       });
 
@@ -192,7 +191,8 @@ export class NewAssessmentComponent implements OnInit {
     }
 
     this.assessmentService
-      .getCandidateDetByEmail(this.candidateEmail).subscribe({
+      .getCandidateDetByEmail(this.candidateEmail)
+      .subscribe({
         next: (response) => {
           debugger;
           if (response.status) {
@@ -209,8 +209,7 @@ export class NewAssessmentComponent implements OnInit {
         },
         error: (err) => {
           this.isCandidateDetailsLoaded = false;
-          alert("Session Expired!");
-          this.router.navigate(['/admin-login']);
+          this.adminService.onSessionTimeout();
         },
       });
   }
@@ -228,9 +227,7 @@ export class NewAssessmentComponent implements OnInit {
         }
       },
       error: (err: any) => {
-        debugger;
-        alert("Session Expired!");
-        this.router.navigate(['/admin-login']);
+        this.adminService.onSessionTimeout();
       },
     });
   }

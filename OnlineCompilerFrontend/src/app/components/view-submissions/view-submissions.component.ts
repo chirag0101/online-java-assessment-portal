@@ -6,6 +6,7 @@ import { AssessmentService } from '../../services/assessment.service';
 import { Router } from '@angular/router';
 import { SubmissionDetails } from '../../models/submission-details.model';
 import { MatIconModule } from '@angular/material/icon';
+import { AdminService } from '../../services/admin.service';
 
 @Component({
   selector: 'app-view-submissions',
@@ -27,7 +28,7 @@ export class ViewSubmissionsComponent implements OnInit {
   error: boolean = false;
   todayDate: string;
 
-  constructor(private router: Router, private assessmentService: AssessmentService) {
+  constructor(private router: Router, private assessmentService: AssessmentService,private adminService:AdminService) {
     debugger;
     const today = new Date();
     this.todayDate = today.toISOString().split('T')[0];
@@ -65,6 +66,7 @@ export class ViewSubmissionsComponent implements OnInit {
         console.error('Error fetching submissions:', err);
         this.error = true;
         this.loading = false;
+        this.adminService.onSessionTimeout();
       },
     });
   }

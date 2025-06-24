@@ -19,8 +19,8 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("/new-admin")
-    public ApiResponse newAdmin(@RequestBody NewAdminReqDTO newAdminReqDTO) {
-        return adminService.createAdmin(newAdminReqDTO);
+    public ApiResponse newAdmin(@RequestHeader("adminId") String adminId, @RequestBody NewAdminReqDTO newAdminReqDTO) {
+        return adminService.createAdmin(adminId, newAdminReqDTO);
     }
 
     @PostMapping("/authenticate-admin")
@@ -29,7 +29,7 @@ public class AdminController {
     }
 
     @GetMapping("/all-admins")
-    public ApiResponse getAllAdmins(@RequestHeader("adminId") String adminId,@RequestHeader("accessToken") String accessToken) {
+    public ApiResponse getAllAdmins() {
         return adminService.fetchAllAdmins();
     }
 

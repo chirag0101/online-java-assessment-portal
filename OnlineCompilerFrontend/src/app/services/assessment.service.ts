@@ -167,8 +167,8 @@ export class AssessmentService {
 
     return this.http.post(
       `${this.assessmentUrl}/end-assessment-by-admin/${candidateId}`,
-        null,
-        {headers:header}
+      null,
+      { headers: header }
     );
   }
 
@@ -188,11 +188,14 @@ export class AssessmentService {
   getActiveAssessmentsForCurrentAdmin(
     adminId: string
   ): Observable<ActiveAssessmentsResponse> {
-    const interviewerId = sessionStorage.getItem('adminId') ?? '';
-    let params = new HttpParams().set('interviewer-id', interviewerId);
+    const header = {
+      accessToken: sessionStorage.getItem('accessToken') || '',
+      adminId: sessionStorage.getItem('adminId') || '',
+    };
+
     return this.http.get<ActiveAssessmentsResponse>(
       `${this.assessmentUrl}/interviewer-active-assessments`,
-      { params }
+      { headers:header }
     );
   }
 
@@ -233,8 +236,14 @@ export class AssessmentService {
   }
 
   getSubmissionsByAdminId(adminId: string): Observable<AllSubmissions> {
+    const header = {
+      accessToken: sessionStorage.getItem('accessToken') || '',
+      adminId: sessionStorage.getItem('adminId') || '',
+    };
+
     return this.http.get<AllSubmissions>(
-      `${this.assessmentUrl}/view-submissions-for-interviewer/${adminId}`
+      `${this.assessmentUrl}/view-submissions-for-interviewer/${adminId}`,
+      { headers: header }
     );
   }
 
@@ -259,8 +268,13 @@ export class AssessmentService {
   }
 
   getUrlByCandidateId(candidateId: string): Observable<UrlRes> {
+    const headers = new HttpHeaders({
+      accessToken: sessionStorage.getItem('accessToken') || '',
+      adminId: sessionStorage.getItem('adminId') || '',
+    });
+
     return this.http.get<UrlRes>(
-      `${this.assessmentUrl}/candidate-url/${candidateId}`
+      `${this.assessmentUrl}/candidate-url/${candidateId}`,{headers:headers}
     );
   }
 }

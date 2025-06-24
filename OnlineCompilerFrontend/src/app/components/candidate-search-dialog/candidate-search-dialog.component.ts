@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { AssessmentService } from '../../services/assessment.service';
 import { CandidateDetails } from '../../models/candidate-details.model';
 import { Router } from '@angular/router';
+import { AdminService } from '../../services/admin.service';
 
 @Component({
   selector: 'app-candidate-search-dialog',
@@ -40,6 +41,7 @@ export class CandidateSearchDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<CandidateSearchDialogComponent>,
+    private adminService:AdminService,
     private router:Router,
     private assessmentService: AssessmentService,
     @Inject(MAT_DIALOG_DATA) public data: { message: string }
@@ -52,11 +54,8 @@ export class CandidateSearchDialogComponent implements OnInit {
         this.filteredCandidates = [...this.allCandidates];
       },
       error: (error) => {
-        debugger;
-        sessionStorage.clear();
-        alert("Session Expired");
-        this.router.navigate(['/admin-login']);
         this.filteredCandidates = [];
+        this.adminService.onSessionTimeout();
       }
     });
   }

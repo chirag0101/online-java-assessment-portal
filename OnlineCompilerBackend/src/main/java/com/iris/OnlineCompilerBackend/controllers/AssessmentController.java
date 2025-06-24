@@ -41,7 +41,7 @@ public class AssessmentController {
     }
 
     @GetMapping("/interviewer-active-assessments")
-    public ApiResponse viewActiveAssessmentsByAdminId(@RequestParam("interviewer-id") String adminId) {
+    public ApiResponse viewActiveAssessmentsByAdminId(@RequestHeader("adminId") String adminId) {
         return assessmentService.getActiveAssessmentsByAdminId(adminId);
     }
 
