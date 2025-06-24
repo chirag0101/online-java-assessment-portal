@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,7 +13,7 @@ import { StatusConstants } from '../../models/constants/status.constants';
   templateUrl: './admin-login.component.html',
   styleUrl: './admin-login.component.css',
 })
-export class AdminLoginComponent {
+export class AdminLoginComponent implements OnInit{
   adminId: string = '';
   adminPassword: string = '';
   errorMessage: string = '';
@@ -24,6 +24,10 @@ export class AdminLoginComponent {
   };
 
   constructor(private router: Router, private adminService: AdminService) {}
+
+  ngOnInit(): void {
+    // sessionStorage.clear();
+  }
 
   onLogin(form: NgForm): void {
     form.form.markAllAsTouched();
@@ -41,6 +45,7 @@ export class AdminLoginComponent {
         if (response.status) {
           this.adminId = response.response.adminId;
           this.adminService.setIsLoggedIn(true);
+          sessionStorage.setItem("accessToken",response.response.accessToken);
           this.router.navigate(['/admin-panel']);
         } else {
           this.errorMessage = response.statusMessage;

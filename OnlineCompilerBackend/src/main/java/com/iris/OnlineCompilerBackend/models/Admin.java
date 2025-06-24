@@ -30,10 +30,22 @@ public class Admin {
     @Column(name = "IS_ADMIN")
     private Boolean isAdmin;
 
+    @Column(name = "LAST_ACCESS_TOKEN")
+    private String lastAccesstoken;
+
+    @Column(name = "ACCESS_TOKEN_CREATED_ON")
+    private Date accessTokenCreatedOn;
+
+    @Column(name = "ACCESS_TOKEN_LAST_ACCESSED_ON")
+    private Date accessTokenLastAccessedOn;
+
+    @Column(name = "IS_EXPIRED")
+    private Boolean accessTokenIsExpired;
+
     public Admin() {
     }
 
-    public Admin(Long id, String adminId, String adminPassword, String salt, Date lastLogin, String fullName, Boolean isAdmin) {
+    public Admin(Long id, String adminId, String adminPassword, String salt, Date lastLogin, String fullName, Boolean isAdmin, String lastAccesstoken, Date accessTokenCreatedOn, Date accessTokenLastAccessedOn, Boolean accessTokenIsExpired) {
         this.id = id;
         this.adminId = adminId;
         this.adminPassword = adminPassword;
@@ -41,6 +53,10 @@ public class Admin {
         this.lastLogin = lastLogin;
         this.fullName = fullName;
         this.isAdmin = isAdmin;
+        this.lastAccesstoken = lastAccesstoken;
+        this.accessTokenCreatedOn = accessTokenCreatedOn;
+        this.accessTokenLastAccessedOn = accessTokenLastAccessedOn;
+        this.accessTokenIsExpired = accessTokenIsExpired;
     }
 
     public Long getId() {
@@ -97,5 +113,37 @@ public class Admin {
 
     public void setIsAdmin(Boolean admin) {
         isAdmin = admin;
+    }
+
+    public String getLastAccesstoken() {
+        return lastAccesstoken;
+    }
+
+    public void setLastAccesstoken(String lastAccesstoken) {
+        this.lastAccesstoken = lastAccesstoken;
+    }
+
+    public Date getAccessTokenCreatedOn() {
+        return accessTokenCreatedOn;
+    }
+
+    public void setAccessTokenCreatedOn(Date accessTokenCreatedOn) {
+        this.accessTokenCreatedOn = accessTokenCreatedOn;
+    }
+
+    public Date getAccessTokenLastAccessedOn() {
+        return accessTokenLastAccessedOn;
+    }
+
+    public void setAccessTokenLastAccessedOn(Date accessTokenLastAccessedOn) {
+        this.accessTokenLastAccessedOn = accessTokenLastAccessedOn;
+    }
+
+    public Boolean getAccessTokenIsExpired() {
+        return accessTokenIsExpired;
+    }
+
+    public void setAccessTokenIsExpired(Boolean accessTokenIsExpired) {
+        this.accessTokenIsExpired = accessTokenIsExpired;
     }
 }

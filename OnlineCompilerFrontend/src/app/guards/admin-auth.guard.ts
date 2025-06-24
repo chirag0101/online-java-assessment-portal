@@ -14,7 +14,6 @@ export class AdminAuthGuard implements CanActivate {
     state: RouterStateSnapshot): boolean | UrlTree {
 
     if (this.adminService.isAuthenticated()) {
-      debugger;
       return true;
     } else {
       this.router.navigate(['/admin-login']);

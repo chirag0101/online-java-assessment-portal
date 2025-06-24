@@ -230,7 +230,7 @@ public class AssessmentService {
 
     public ApiResponse expireAssessment(String candidateId) {
         try {
-            Candidate candidate = candidateRepo.findByCandidateIdAndIsActive(candidateId).orElseThrow(() -> new Exception("CANDIDATE NOT FOUND"));
+            Candidate candidate = candidateRepo.findByCandidateIdAndIsActive(candidateId).orElseThrow(() -> new Exception("NO ACTIVE ASSESSMENT"));
             candidate.setUrlIsActive(false);
             candidate.setAssessmentEndTime(new Date());
             candidateRepo.save(candidate);
@@ -259,10 +259,10 @@ public class AssessmentService {
 
     public ApiResponse fetchAllCandidates() {
         try {
-            return new ApiResponse.Builder().response(candidateRepo.findAllCandidates()).build();
+            return new ApiResponse.Builder().status(true).response(candidateRepo.findAllCandidates()).build();
         } catch (Exception e) {
             log.info(e.getMessage());
-            return new ApiResponse.Builder().statusMessage(e.getMessage()).response(null).build();
+            return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).response(null).build();
         }
     }
 
@@ -289,7 +289,7 @@ public class AssessmentService {
         }
     }
 
-    @Scheduled(cron = "* * * * * *")
+    @Scheduled(cron = "${assessement.scheduler.cron}")
     private void validateActiveAssessments() {
         List<Candidate> activeCandidateAssessments = candidateRepo.findAllActiveAssessmentCandidates();
         for (Candidate candidate : activeCandidateAssessments) {

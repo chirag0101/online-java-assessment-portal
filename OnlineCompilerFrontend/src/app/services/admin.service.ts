@@ -1,7 +1,7 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { AdminLoginCreds } from '../../app/models/admin-login-creds.model';
 import { AdminLoginResponse } from '../../app/models/admin-login-response.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NewAdminResponse } from '../../app/components/new-admin/new-admin.component';
 import { Observable, BehaviorSubject, of, catchError, tap } from 'rxjs';
 import { AdminDetailsResponse } from '../models/all-admins-res.model';
@@ -30,10 +30,11 @@ export class AdminService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     if (this.isBrowser()) {
-      this.isAuthenticatedUser = sessionStorage.getItem('isAuthenticatedUser') === 'true';
-      this._isLoggedIn.next(this.isAuthenticatedUser); 
+      this.isAuthenticatedUser =
+        sessionStorage.getItem('isAuthenticatedUser') === 'true';
+      this._isLoggedIn.next(this.isAuthenticatedUser);
     } else {
-      this.isAuthenticatedUser = false; 
+      this.isAuthenticatedUser = false;
     }
   }
 
@@ -69,8 +70,8 @@ export class AdminService {
             this.setIsLoggedIn(true);
             console.log('Admin authenticated successfully!');
           } else {
-            if (this.isBrowser()) { 
-                sessionStorage.setItem('isAuthenticatedUser', 'false');
+            if (this.isBrowser()) {
+              sessionStorage.setItem('isAuthenticatedUser', 'false');
             }
             console.log('Admin authentication failed:', response.statusMessage);
           }
@@ -78,7 +79,7 @@ export class AdminService {
         catchError((error) => {
           this.setIsLoggedIn(false);
           if (this.isBrowser()) {
-              sessionStorage.setItem('isAuthenticatedUser', 'false');
+            sessionStorage.setItem('isAuthenticatedUser', 'false');
           }
           console.error('Authentication API error:', error);
           throw error;
@@ -87,37 +88,54 @@ export class AdminService {
   }
 
   isAuthenticated(): boolean {
-    debugger;
-    if (this.isBrowser()) { 
+    // debugger;
+    if (this.isBrowser()) {
       const value = sessionStorage.getItem('isAuthenticatedUser');
-      return value === 'true'; 
+      return value === 'true';
     }
     return false;
   }
 
   logoutAdmin(): void {
-    debugger;
     this._isLoggedIn.next(false);
-    if (this.isBrowser()) { 
+    if (this.isBrowser()) {
       sessionStorage.clear();
     }
     console.log('Admin logged out.');
   }
 
   newAdmin(newAdminDetails: NewAdminDetails): Observable<NewAdminResponse> {
+    const header = {
+      accessToken: sessionStorage.getItem('accessToken') || '',
+      adminId: sessionStorage.getItem('adminId') || '',
+    };
     return this.http.post<NewAdminResponse>(
       `${this.adminServiceUrl}/new-admin`,
-      newAdminDetails
+      newAdminDetails,
+      {headers:header}
     );
   }
 
-  resetPassword(resetAdminReq:ResetAdminReq):Observable<ResetAdminRes>{
-    return this.http.post<ResetAdminRes>(`${this.adminServiceUrl}/reset-password`,resetAdminReq);
+  resetPassword(resetAdminReq: ResetAdminReq): Observable<ResetAdminRes> {
+    return this.http.post<ResetAdminRes>(
+      `${this.adminServiceUrl}/reset-password`,
+      resetAdminReq
+    );
   }
 
   getAllAdmins(): Observable<AdminDetailsResponse> {
+    debugger;
+
+    const header = new HttpHeaders({
+      accessToken: sessionStorage.getItem('accessToken') || '',
+      adminId: sessionStorage.getItem('adminId') || '',
+    });
+
     return this.http.get<AdminDetailsResponse>(
-      `${this.adminServiceUrl}/all-admins`
+      `${this.adminServiceUrl}/all-admins`,
+      {
+        headers: header,
+      }
     );
   }
 }

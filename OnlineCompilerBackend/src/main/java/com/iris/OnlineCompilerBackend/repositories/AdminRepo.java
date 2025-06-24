@@ -17,4 +17,10 @@ public interface AdminRepo extends JpaRepository<Admin, Long> {
 
     @Query("SELECT new com.iris.OnlineCompilerBackend.dtos.AllAdminResDTO(a.fullName, a.adminId) FROM Admin a ")
     List<AllAdminResDTO> findAllAdminsDet();
+
+    @Query("FROM Admin a " +
+            "WHERE a.accessTokenIsExpired=false " +
+            "AND a.accessTokenCreatedOn IS NOT NULL " +
+            "AND a.accessTokenLastAccessedOn IS NOT NULL")
+    List<Admin> findAllActiveAdmins();
 }

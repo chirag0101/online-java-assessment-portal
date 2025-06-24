@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/CompilerService")
-@CrossOrigin("${frontend.url}")
 public class CompilerController {
 
     private final Logger logger = LoggerFactory.getLogger(CompilerController.class);

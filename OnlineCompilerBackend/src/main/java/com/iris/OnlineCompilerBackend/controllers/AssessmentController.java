@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("AssessmentService")
-@CrossOrigin("${frontend.url}")
 public class AssessmentController {
 
     private static final Logger log = LoggerFactory.getLogger(AssessmentController.class);
@@ -63,6 +62,11 @@ public class AssessmentController {
 
     @PostMapping("/end-assessment/{candidate-id}")
     public ApiResponse endAssessment(@PathVariable(name = "candidate-id") String candidateId) {
+        return assessmentService.expireAssessment(candidateId);
+    }
+
+    @PostMapping("/end-assessment-by-admin/{candidate-id}")
+    public ApiResponse endAssessmentByAdmin(@PathVariable(name = "candidate-id") String candidateId) {
         return assessmentService.expireAssessment(candidateId);
     }
 

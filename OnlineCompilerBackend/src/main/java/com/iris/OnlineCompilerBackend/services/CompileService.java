@@ -29,7 +29,7 @@ public class CompileService {
     @Autowired
     private CandidateRepo candidateRepo;
 
-    @Value("${dir.path}")
+    @Value("${assessment.programs.dir.path}")
     private String dirPath;
 
     public ApiResponse getJdkVersion() {

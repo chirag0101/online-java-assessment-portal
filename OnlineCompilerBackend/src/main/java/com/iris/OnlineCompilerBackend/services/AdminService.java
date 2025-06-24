@@ -1,18 +1,23 @@
 package com.iris.OnlineCompilerBackend.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iris.OnlineCompilerBackend.config.AESV2;
 import com.iris.OnlineCompilerBackend.config.PasswordHashing;
 import com.iris.OnlineCompilerBackend.constants.PasswordSuffix;
 import com.iris.OnlineCompilerBackend.dtos.*;
+import com.iris.OnlineCompilerBackend.models.AccessTokenJSON;
 import com.iris.OnlineCompilerBackend.models.Admin;
 import com.iris.OnlineCompilerBackend.models.ApiResponse;
 import com.iris.OnlineCompilerBackend.repositories.AdminRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AdminService {
@@ -62,9 +67,28 @@ public class AdminService {
 
             if (PasswordHashing.validatePassword(admin.getSalt(), admin.getAdminPassword(), PasswordHashing.createHash(adminLoginReqDto.getAdminPassword(), admin.getSalt(), Boolean.TRUE))) {
                 admin.setLastLogin(new Date());
+
+                UUID uuid=UUID.randomUUID();
+
+                AccessTokenJSON accessTokenJSON=new AccessTokenJSON(admin.getFullName(),admin.getIsAdmin(),new Date(),uuid);
+
+                ObjectMapper objectMapper=new ObjectMapper();
+
+                String jsonString=objectMapper.writeValueAsString(accessTokenJSON);
+
+                String encryptedString= AESV2.getInstance().encrypt(jsonString);
+
+                String accessToken=PasswordHashing.createHash(encryptedString,admin.getSalt(),Boolean.TRUE);
+
+                admin.setLastAccesstoken(accessToken);
+
+                admin.setAccessTokenIsExpired(false);
+
+                admin.setAccessTokenCreatedOn(new Date());
+
                 adminRepo.save(admin);
 
-                return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(new AdminAuthenticationResDTO(admin.getAdminId(), admin.getIsAdmin(), admin.getFullName())).build();
+                return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(new AdminAuthenticationResDTO(admin.getAdminId(), admin.getIsAdmin(), admin.getFullName(),admin.getLastAccesstoken())).build();
             }
 
             throw new Exception("INVALID CREDENTIALS!");
@@ -115,6 +139,22 @@ public class AdminService {
         } catch (Exception e) {
             log.info(e.getMessage());
             return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
+        }
+    }
+
+    @Scheduled(cron = "${admin.sesssion.scheduler.cron}")
+    private void processAdminSessions(){
+        try{
+            List<Admin> admins=adminRepo.findAllActiveAdmins();
+            for(Admin admin:admins){
+                //checking if user is idle for 15 mins from last api accessed for those admins whose last api call was 15 mins ago
+                if((admin.getAccessTokenLastAccessedOn().getTime())-(new Date().getTime())>=(15*60*1000)){
+                    admin.setAccessTokenIsExpired(true);
+                }
+            }
+            adminRepo.saveAll(admins);
+        } catch (Exception e) {
+            log.info(e.getMessage());
         }
     }
 }
