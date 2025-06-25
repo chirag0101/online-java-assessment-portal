@@ -12,6 +12,7 @@ import com.iris.OnlineCompilerBackend.repositories.AdminRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,9 @@ public class AdminService {
     @Autowired
     private AdminRepo adminRepo;
 
+    @Value("${password.suffix}")
+    private String passwordSuffix;
+
     public ApiResponse createAdmin(String adminId, NewAdminReqDTO adminCredsReqDTO) {
         try {
 
@@ -35,7 +39,7 @@ public class AdminService {
             Admin admin = new Admin();
             admin.setAdminId(adminCredsReqDTO.getAdminId());
 
-            String defaultPassword = adminCredsReqDTO.getAdminId() + PasswordSuffix.DefaultPassword;
+            String defaultPassword = adminCredsReqDTO.getAdminId() + passwordSuffix;
 
             String salt = PasswordHashing.getSalt();
             String hashPassword = PasswordHashing.createHash(defaultPassword, salt, Boolean.TRUE);

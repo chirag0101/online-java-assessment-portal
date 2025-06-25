@@ -12,7 +12,7 @@ public class Admin {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "ADMIN_ID")
+    @Column(name = "USER_ID")
     private String adminId;
 
     @Column(name = "ADMIN_PASSWORD")
