@@ -80,7 +80,7 @@ public class AccessTokenFilter implements Filter {
 
         Admin admin = adminRepo.findByAdminId(userId);
 
-        if(admin==null){
+        if (admin == null) {
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }

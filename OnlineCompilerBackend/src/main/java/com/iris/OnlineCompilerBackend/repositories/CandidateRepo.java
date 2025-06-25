@@ -44,9 +44,9 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
     @Query("SELECT new com.iris.OnlineCompilerBackend.dtos.CandidateDetailsResDTO(c.candidateId,c.candidateFullName,c.technology,c.yearsOfExperience,c.candidateEmailId) " +
             "FROM Candidate c " +
             "WHERE c.urlCreatedTime = " +
-                "(SELECT MAX(c2.urlCreatedTime) " +
-                "FROM Candidate c2 " +
-                "WHERE c2.candidateId=c.candidateId) " +
+            "(SELECT MAX(c2.urlCreatedTime) " +
+            "FROM Candidate c2 " +
+            "WHERE c2.candidateId=c.candidateId) " +
             "ORDER BY c.candidateFullName")
     List<CandidateDetailsResDTO> findAllCandidates();
 

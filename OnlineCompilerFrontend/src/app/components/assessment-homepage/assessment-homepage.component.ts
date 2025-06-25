@@ -89,6 +89,8 @@ export class AssessmentHomepageComponent
 
   warned5Min: boolean = false;
 
+  // private fullscreenChangeListener: () => void;
+
   private dialogResolve: ((value: boolean) => void) | null = null;
 
   constructor(
@@ -97,7 +99,9 @@ export class AssessmentHomepageComponent
     private router: Router,
     private dialog: MatDialog,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    // this.fullscreenChangeListener = this.onFullscreenChange.bind(this);
+  }
 
   ngOnInit(): void {
 

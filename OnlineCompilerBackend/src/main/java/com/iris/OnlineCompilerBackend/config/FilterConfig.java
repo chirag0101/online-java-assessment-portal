@@ -1,5 +1,6 @@
 package com.iris.OnlineCompilerBackend.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,13 +8,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FilterConfig {
 
-    // Spring will now inject AccessTokenFilter as a bean
-    private final AccessTokenFilter accessTokenFilter;
+    @Autowired
+    private AccessTokenFilter accessTokenFilter;
 
-    // Use constructor injection for the AccessTokenFilter
-    public FilterConfig(AccessTokenFilter accessTokenFilter) {
-        this.accessTokenFilter = accessTokenFilter;
-    }
+//    // Spring will now inject AccessTokenFilter as a bean
+//    private final AccessTokenFilter accessTokenFilter;
+//
+//    // Use constructor injection for the AccessTokenFilter
+//    public FilterConfig(AccessTokenFilter accessTokenFilter) {
+//        this.accessTokenFilter = accessTokenFilter;
+//    }
 
     @Bean
     public FilterRegistrationBean<AccessTokenFilter> accessTokenFilterBean() {

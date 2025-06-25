@@ -55,6 +55,7 @@ export class CandidateSearchDialogComponent implements OnInit {
       },
       error: (error) => {
         this.filteredCandidates = [];
+        this.onCancel();
         this.adminService.onSessionTimeout();
       }
     });
