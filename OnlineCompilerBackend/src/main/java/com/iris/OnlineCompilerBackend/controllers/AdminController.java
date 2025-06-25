@@ -19,8 +19,8 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("/new-admin")
-    public ApiResponse newAdmin(@RequestHeader("adminId") String adminId, @RequestBody NewAdminReqDTO newAdminReqDTO) {
-        return adminService.createAdmin(adminId, newAdminReqDTO);
+    public ApiResponse newAdmin(@RequestHeader("adminId") String existingAdminId, @RequestBody NewAdminReqDTO newAdminReqDTO) {
+        return adminService.createAdmin(existingAdminId, newAdminReqDTO);
     }
 
     @PostMapping("/authenticate-admin")

@@ -35,7 +35,7 @@ public class AdminService {
     @Value("${zone.id}")
     private String timeZone;
 
-    public ApiResponse createAdmin(String adminId, NewAdminReqDTO adminCredsReqDTO) {
+    public ApiResponse createAdmin(String existingAdminId, NewAdminReqDTO adminCredsReqDTO) {
         try {
 
             if (adminRepo.findByAdminId(adminCredsReqDTO.getAdminId()) != null) {
@@ -56,7 +56,7 @@ public class AdminService {
             admin.setFullName(adminCredsReqDTO.getAdminFullName());
             admin.setIsAdmin(adminCredsReqDTO.getIsAdmin());
 
-            admin.setCreatedByFk(adminRepo.findByAdminId(adminId));
+            admin.setCreatedByFk(adminRepo.findByAdminId(existingAdminId));
 
             admin.setLastLogin(null);
 
