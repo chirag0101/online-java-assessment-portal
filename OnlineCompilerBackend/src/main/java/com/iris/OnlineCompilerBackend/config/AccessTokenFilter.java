@@ -49,7 +49,7 @@ public class AccessTokenFilter implements Filter {
         if ("OPTIONS".equalsIgnoreCase(method)) {
             httpResponse.setHeader("Access-Control-Allow-Origin", "*");
             httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-            httpResponse.setHeader("Access-Control-Allow-Headers", "accessToken, adminId");
+            httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, accessToken, adminId");
             httpResponse.setStatus(HttpServletResponse.SC_OK);
             return;
         }

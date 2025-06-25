@@ -2,8 +2,6 @@ package com.iris.OnlineCompilerBackend.models;
 
 import jakarta.persistence.*;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity

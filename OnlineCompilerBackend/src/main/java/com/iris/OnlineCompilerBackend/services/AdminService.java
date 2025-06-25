@@ -60,6 +60,11 @@ public class AdminService {
 
             admin.setLastLogin(null);
 
+            admin.setLastAccesstoken(null);
+            admin.setAccessTokenIsExpired(false);
+            admin.setAccessTokenCreatedOn(null);
+            admin.setAccessTokenLastAccessedOn(null);
+
             adminRepo.save(admin);
 
             return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(null).build();
