@@ -19,8 +19,6 @@ public interface AdminRepo extends JpaRepository<Admin, Long> {
     List<AllAdminResDTO> findAllAdminsDet();
 
     @Query("FROM Admin a " +
-            "WHERE a.accessTokenIsExpired=false " +
-            "AND a.accessTokenCreatedOn IS NOT NULL " +
-            "AND a.accessTokenLastAccessedOn IS NOT NULL")
+            "WHERE a.accessTokenIsExpired=false")
     List<Admin> findAllActiveAdmins();
 }
