@@ -2,6 +2,8 @@ package com.iris.OnlineCompilerBackend.models;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -34,10 +36,10 @@ public class Admin {
     private String lastAccesstoken;
 
     @Column(name = "ACCESS_TOKEN_CREATED_ON")
-    private Date accessTokenCreatedOn;
+    private String accessTokenCreatedOn;
 
     @Column(name = "ACCESS_TOKEN_LAST_ACCESSED_ON")
-    private Date accessTokenLastAccessedOn;
+    private String accessTokenLastAccessedOn;
 
     @Column(name = "IS_EXPIRED")
     private Boolean accessTokenIsExpired;
@@ -49,7 +51,7 @@ public class Admin {
     public Admin() {
     }
 
-    public Admin(Long id, String adminId, String adminPassword, String salt, Date lastLogin, String fullName, Boolean isAdmin, String lastAccesstoken, Date accessTokenCreatedOn, Date accessTokenLastAccessedOn, Boolean accessTokenIsExpired, Admin createdByFk) {
+    public Admin(Long id, String adminId, String adminPassword, String salt, Date lastLogin, String fullName, Boolean isAdmin, String lastAccesstoken, String accessTokenCreatedOn, String accessTokenLastAccessedOn, Boolean accessTokenIsExpired, Admin createdByFk) {
         this.id = id;
         this.adminId = adminId;
         this.adminPassword = adminPassword;
@@ -128,19 +130,19 @@ public class Admin {
         this.lastAccesstoken = lastAccesstoken;
     }
 
-    public Date getAccessTokenCreatedOn() {
+    public String getAccessTokenCreatedOn() {
         return accessTokenCreatedOn;
     }
 
-    public void setAccessTokenCreatedOn(Date accessTokenCreatedOn) {
+    public void setAccessTokenCreatedOn(String accessTokenCreatedOn) {
         this.accessTokenCreatedOn = accessTokenCreatedOn;
     }
 
-    public Date getAccessTokenLastAccessedOn() {
+    public String getAccessTokenLastAccessedOn() {
         return accessTokenLastAccessedOn;
     }
 
-    public void setAccessTokenLastAccessedOn(Date accessTokenLastAccessedOn) {
+    public void setAccessTokenLastAccessedOn(String accessTokenLastAccessedOn) {
         this.accessTokenLastAccessedOn = accessTokenLastAccessedOn;
     }
 

@@ -289,7 +289,7 @@ public class AssessmentService {
         }
     }
 
-    @Scheduled(cron = "${assessement.scheduler.cron}")
+    @Scheduled(cron = "${assessement.expiry.scheduler.cron}")
     private void validateActiveAssessments() {
         List<Candidate> activeCandidateAssessments = candidateRepo.findAllActiveAssessmentCandidates();
         for (Candidate candidate : activeCandidateAssessments) {

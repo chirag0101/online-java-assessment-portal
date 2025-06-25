@@ -10,12 +10,14 @@ import { isPlatformBrowser } from '@angular/common';
 import { ResetAdminRes } from '../models/reset-admin-res.model';
 import { ResetAdminReq } from '../models/reset-admin-req.model';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdminService {
-  private adminServiceUrl = 'http://localhost:8080/AdminService';
+  
+  private adminServiceUrl = environment.adminServiceUrl;
 
   public _isLoggedIn = new BehaviorSubject<boolean>(false);
   _isLoggedIn$ = this._isLoggedIn.asObservable();

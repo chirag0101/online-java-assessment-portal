@@ -8,9 +8,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +24,9 @@ public class AccessTokenFilter implements Filter {
     private final AdminRepo adminRepo;
 
     Logger logger = LoggerFactory.getLogger(AccessTokenFilter.class);
+
+    @Value("${zone.id}")
+    String timeZone;
 
     public AccessTokenFilter(AdminRepo adminRepo) {
         this.adminRepo = adminRepo;
@@ -42,7 +49,7 @@ public class AccessTokenFilter implements Filter {
         if ("OPTIONS".equalsIgnoreCase(method)) {
             httpResponse.setHeader("Access-Control-Allow-Origin", "*");
             httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-            httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, accessToken, adminId");
+            httpResponse.setHeader("Access-Control-Allow-Headers", "accessToken, adminId");
             httpResponse.setStatus(HttpServletResponse.SC_OK);
             return;
         }
@@ -73,7 +80,12 @@ public class AccessTokenFilter implements Filter {
         }
 
         Admin admin = adminRepo.findByAdminId(userId);
-        admin.setAccessTokenLastAccessedOn(new Date());
+
+        OffsetDateTime offsetDateTime = Instant.now().atZone(ZoneId.of(timeZone)).toOffsetDateTime();
+        String formattedWithOffset = offsetDateTime.toString();
+
+        admin.setAccessTokenLastAccessedOn(formattedWithOffset);
+
         adminRepo.save(admin);
 
         if ((admin.getAdminId().equals(userId)) && (admin.getLastAccesstoken().equals(accessToken)) && (admin.getAccessTokenIsExpired() == false)) {

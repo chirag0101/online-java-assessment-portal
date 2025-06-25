@@ -3,7 +3,6 @@ package com.iris.OnlineCompilerBackend.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iris.OnlineCompilerBackend.config.AESV2;
 import com.iris.OnlineCompilerBackend.config.PasswordHashing;
-import com.iris.OnlineCompilerBackend.constants.PasswordSuffix;
 import com.iris.OnlineCompilerBackend.dtos.*;
 import com.iris.OnlineCompilerBackend.models.AccessTokenJSON;
 import com.iris.OnlineCompilerBackend.models.Admin;
@@ -16,6 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +31,9 @@ public class AdminService {
 
     @Value("${password.suffix}")
     private String passwordSuffix;
+
+    @Value("${zone.id}")
+    private String timeZone;
 
     public ApiResponse createAdmin(String adminId, NewAdminReqDTO adminCredsReqDTO) {
         try {
@@ -74,27 +80,30 @@ public class AdminService {
             if (PasswordHashing.validatePassword(admin.getSalt(), admin.getAdminPassword(), PasswordHashing.createHash(adminLoginReqDto.getAdminPassword(), admin.getSalt(), Boolean.TRUE))) {
                 admin.setLastLogin(new Date());
 
-                UUID uuid=UUID.randomUUID();
+                UUID uuid = UUID.randomUUID();
 
-                AccessTokenJSON accessTokenJSON=new AccessTokenJSON(admin.getFullName(),admin.getIsAdmin(),new Date(),uuid);
+                AccessTokenJSON accessTokenJSON = new AccessTokenJSON(admin.getFullName(), admin.getIsAdmin(), new Date(), uuid);
 
-                ObjectMapper objectMapper=new ObjectMapper();
+                ObjectMapper objectMapper = new ObjectMapper();
 
-                String jsonString=objectMapper.writeValueAsString(accessTokenJSON);
+                String jsonString = objectMapper.writeValueAsString(accessTokenJSON);
 
-                String encryptedString= AESV2.getInstance().encrypt(jsonString);
+                String encryptedString = AESV2.getInstance().encrypt(jsonString);
 
-                String accessToken=PasswordHashing.createHash(encryptedString,admin.getSalt(),Boolean.TRUE);
+                String accessToken = PasswordHashing.createHash(encryptedString, admin.getSalt(), Boolean.TRUE);
 
                 admin.setLastAccesstoken(accessToken);
 
                 admin.setAccessTokenIsExpired(false);
 
-                admin.setAccessTokenCreatedOn(new Date());
+                OffsetDateTime offsetDateTime = Instant.now().atZone(ZoneId.of(timeZone)).toOffsetDateTime();
+                String formattedTimeWithOffset = offsetDateTime.toString();
+
+                admin.setAccessTokenCreatedOn(formattedTimeWithOffset);
 
                 adminRepo.save(admin);
 
-                return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(new AdminAuthenticationResDTO(admin.getAdminId(), admin.getIsAdmin(), admin.getFullName(),admin.getLastAccesstoken())).build();
+                return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(new AdminAuthenticationResDTO(admin.getAdminId(), admin.getIsAdmin(), admin.getFullName(), admin.getLastAccesstoken())).build();
             }
 
             throw new Exception("INVALID CREDENTIALS!");
@@ -107,13 +116,13 @@ public class AdminService {
     public ApiResponse resetAdminPassword(ResetAdminPasswordReqDTO resetAdminPasswordReqDTO) {
         try {
             //checking if new & confirm password match
-            if(!(resetAdminPasswordReqDTO.getAdminNewPassword().equals(resetAdminPasswordReqDTO.getAdminNewConfirmPassword()))){
+            if (!(resetAdminPasswordReqDTO.getAdminNewPassword().equals(resetAdminPasswordReqDTO.getAdminNewConfirmPassword()))) {
                 throw new Exception("PASSWORDS DON'T MATCH!");
             }
 
             //checking if admin exists
             Admin admin = adminRepo.findByAdminId(resetAdminPasswordReqDTO.getAdminId());
-            if (admin==null) {
+            if (admin == null) {
                 throw new Exception("ADMIN DOESN'T EXISTS!");
             }
 
@@ -124,8 +133,8 @@ public class AdminService {
 
             //storing new password & salt
 
-            String newSalt=PasswordHashing.getSalt();
-            String newHashPassword=PasswordHashing.createHash(resetAdminPasswordReqDTO.getAdminNewPassword(),newSalt,Boolean.TRUE);
+            String newSalt = PasswordHashing.getSalt();
+            String newHashPassword = PasswordHashing.createHash(resetAdminPasswordReqDTO.getAdminNewPassword(), newSalt, Boolean.TRUE);
 
             admin.setSalt(newSalt);
             admin.setAdminPassword(newHashPassword);
@@ -149,12 +158,12 @@ public class AdminService {
     }
 
     @Scheduled(cron = "${admin.sesssion.scheduler.cron}")
-    private void processAdminSessions(){
-        try{
-            List<Admin> admins=adminRepo.findAllActiveAdmins();
-            for(Admin admin:admins){
-                //checking if user is idle for 15 mins from last api accessed for those admins whose last api call was 15 mins ago
-                if((admin.getAccessTokenLastAccessedOn().getTime())-(new Date().getTime())>=(15*60*1000)){
+    private void processAdminSessions() {
+        try {
+            List<Admin> admins = adminRepo.findAllActiveAdmins();
+            for (Admin admin : admins) {
+                //checking if user is idle for 15 mins from last api call
+                if (Duration.between(OffsetDateTime.parse(admin.getAccessTokenLastAccessedOn()), OffsetDateTime.now(ZoneId.of(timeZone))).toMinutes() >= 15) {
                     admin.setAccessTokenIsExpired(true);
                 }
             }
