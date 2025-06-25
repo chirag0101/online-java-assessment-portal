@@ -61,7 +61,7 @@ public class AccessTokenFilter implements Filter {
 
         String path = httpServletRequest.getRequestURI();
 
-        if (paths.contains(path) || path.contains("/CompilerService") || path.contains("/AssessmentService/end-assessment")) {
+        if (paths.contains(path) || path.contains("/CompilerService") || path.contains("/AssessmentService/end-assessment/")) {
             filterChain.doFilter(httpServletRequest, httpResponse);
             return;
         }
@@ -79,6 +79,11 @@ public class AccessTokenFilter implements Filter {
         }
 
         Admin admin = adminRepo.findByAdminId(userId);
+
+        if(admin==null){
+            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
 
         OffsetDateTime offsetDateTime = Instant.now().atZone(ZoneId.of(timeZone)).toOffsetDateTime();
         String formattedWithOffset = offsetDateTime.toString();

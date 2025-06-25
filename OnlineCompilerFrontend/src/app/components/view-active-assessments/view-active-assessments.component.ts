@@ -35,7 +35,7 @@ export class ViewActiveAssessmentsComponent implements OnInit {
     private assessmentService: AssessmentService,
     private router: Router,
     private dialog: MatDialog,
-    private adminService:AdminService
+    private adminService: AdminService
   ) {}
 
   ngOnInit(): void {

@@ -16,7 +16,6 @@ import { environment } from '../../environments/environment.development';
   providedIn: 'root',
 })
 export class AdminService {
-  
   private adminServiceUrl = environment.adminServiceUrl;
 
   public _isLoggedIn = new BehaviorSubject<boolean>(false);
@@ -115,7 +114,7 @@ export class AdminService {
     return this.http.post<NewAdminResponse>(
       `${this.adminServiceUrl}/new-admin`,
       newAdminDetails,
-      {headers:header}
+      { headers: header }
     );
   }
 
@@ -140,9 +139,9 @@ export class AdminService {
     );
   }
 
-  onSessionTimeout():void{
-        sessionStorage.clear();
-        alert('Session Timeout!');
-        this.router.navigate(['/admin-login']);
+  onSessionTimeout(): void {
+    sessionStorage.clear();
+    alert('Session Timeout!');
+    this.router.navigate(['/admin-login']);
   }
 }
