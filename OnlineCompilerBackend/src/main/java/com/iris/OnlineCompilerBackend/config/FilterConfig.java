@@ -11,14 +11,6 @@ public class FilterConfig {
     @Autowired
     private AccessTokenFilter accessTokenFilter;
 
-//    // Spring will now inject AccessTokenFilter as a bean
-//    private final AccessTokenFilter accessTokenFilter;
-//
-//    // Use constructor injection for the AccessTokenFilter
-//    public FilterConfig(AccessTokenFilter accessTokenFilter) {
-//        this.accessTokenFilter = accessTokenFilter;
-//    }
-
     @Bean
     public FilterRegistrationBean<AccessTokenFilter> accessTokenFilterBean() {
         FilterRegistrationBean<AccessTokenFilter> accessTokenFilterFilterRegistrationBean = new FilterRegistrationBean<>();

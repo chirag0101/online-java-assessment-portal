@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,16 +21,13 @@ import java.util.List;
 @Configuration
 public class AccessTokenFilter implements Filter {
 
-    private final AdminRepo adminRepo;
+    @Autowired
+    private AdminRepo adminRepo;
 
     Logger logger = LoggerFactory.getLogger(AccessTokenFilter.class);
 
     @Value("${zone.id}")
     String timeZone;
-
-    public AccessTokenFilter(AdminRepo adminRepo) {
-        this.adminRepo = adminRepo;
-    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

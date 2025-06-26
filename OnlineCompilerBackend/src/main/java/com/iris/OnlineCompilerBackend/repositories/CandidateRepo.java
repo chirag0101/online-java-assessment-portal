@@ -33,7 +33,7 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
             "WHERE c.urlIsActive=true")
     List<ActiveAssessmentsResDTO> findAllActiveAssessments();
 
-    @Query("FROM Candidate c WHERE c.urlIsActive=true AND c.assessmentIsStarted=true")
+    @Query("FROM Candidate c WHERE c.urlIsActive=true")
     List<Candidate> findAllActiveAssessmentCandidates();
 
     @Query("SELECT new com.iris.OnlineCompilerBackend.dtos.CandidateDetailsResDTO(c.candidateId,c.candidateFullName,c.technology,c.yearsOfExperience,c.candidateEmailId) " +

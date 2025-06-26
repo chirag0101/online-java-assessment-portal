@@ -65,6 +65,7 @@ public class AssessmentService {
                 Date currentTime = new Date();
                 candidate.setAssessmentStartTime(currentTime);
                 candidate.setAssessmentEndTime(new Date(currentTime.getTime() + 120L * 60 * 1000));
+                candidate.setUrlExpiryTime(candidate.getAssessmentEndTime());
             }
 
             candidateRepo.save(candidate);

@@ -31,6 +31,9 @@ export class AdminLoginComponent implements OnInit{
 
   onLogin(form: NgForm): void {
     form.form.markAllAsTouched();
+    if(!form.valid){
+      return;
+    }
     if (!this.adminId || !this.adminPassword) {
       this.errorMessage = 'Admin Details are required!';
       return;
