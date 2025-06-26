@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ExceptionHandler {
-    private final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
+    private final Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
 
     @org.springframework.web.bind.annotation.ExceptionHandler(GlobalException.class)
     public ApiResponse globalExceptionHandler(GlobalException globalException) {
-        logger.info(globalException.getMessage());
+        log.info(globalException.getMessage());
         return new ApiResponse.Builder().status(false).statusMessage(globalException.getMessage()).build();
     }
 

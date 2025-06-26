@@ -90,7 +90,7 @@ public class CompileService {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
         //getting the jdk version
-        //logger.info(System.getProperty("java.version"));
+        //logger.info("JDK version: "+System.getProperty("java.version"));
 
         if (compiler == null) {
 
@@ -113,6 +113,7 @@ public class CompileService {
         boolean success = task.call();  //if code contains errors: the method returns false
         fileManager.close();
 
+        //if any errors are thrown
         StringBuilder diagnosticMessages = new StringBuilder();
         for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
             diagnosticMessages.append(diagnostic.getKind())
@@ -128,7 +129,7 @@ public class CompileService {
         CodeSnippetResDTO.Builder builder = new CodeSnippetResDTO.Builder()
                 .status(success ? "SUCCESS" : "FAILURE");
 
-        //if any error occurs or if the compilerAction is just to COMPILE then return
+        //if any error occurs or if the compilerAction is just to COMPILE then return response
         if (!success || actionId.equals(CompilerActions.getIdByAction("COMPILE"))) {
             return builder.statusMessage(compileOutput).build();
         }

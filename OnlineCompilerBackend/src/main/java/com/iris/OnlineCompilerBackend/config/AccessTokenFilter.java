@@ -6,8 +6,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +21,6 @@ public class AccessTokenFilter implements Filter {
 
     @Autowired
     private AdminRepo adminRepo;
-
-    Logger logger = LoggerFactory.getLogger(AccessTokenFilter.class);
 
     @Value("${zone.id}")
     String timeZone;
@@ -64,14 +60,11 @@ public class AccessTokenFilter implements Filter {
             return;
         }
 
-        logger.info(httpServletRequest.getHeader("accessToken"));
-
         String accessToken = httpServletRequest.getHeader("accessToken");
 
         String userId = httpServletRequest.getHeader("adminId");
 
         if ((accessToken == null || accessToken.isEmpty()) || ((userId == null) || (userId.isEmpty()))) {
-            logger.warn("Missing accessToken header. Blocking request.");
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }

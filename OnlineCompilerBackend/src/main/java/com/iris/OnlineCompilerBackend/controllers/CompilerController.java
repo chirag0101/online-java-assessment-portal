@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/CompilerService")
 public class CompilerController {
 
-    private final Logger logger = LoggerFactory.getLogger(CompilerController.class);
+    private final Logger log = LoggerFactory.getLogger(CompilerController.class);
 
     @Autowired
     private CompileService compileService;
@@ -37,7 +37,7 @@ public class CompilerController {
         try {
             return compileService.executeCompilerAction(codeSnippetReqDTO, actionId);
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            log.info(e.getMessage());
             return new CodeSnippetResDTO.Builder().status("FAILURE").statusMessage(e.getMessage()).build();
         }
     }
