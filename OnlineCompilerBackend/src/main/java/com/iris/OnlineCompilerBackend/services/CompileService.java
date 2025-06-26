@@ -171,11 +171,9 @@ public class CompileService {
 //  method for fetching class name from code, on the basis of space and \n
 
     private String getClassNameFromCode(String code) throws Exception {
-
         try {
             String[] lines = code.split("\n");
 
-//            String[] codeArray = code.split(" ");
             String filename = null;
 
             for (String line : lines) {
