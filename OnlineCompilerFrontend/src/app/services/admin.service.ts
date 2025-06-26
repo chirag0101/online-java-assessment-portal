@@ -69,12 +69,10 @@ export class AdminService {
               );
             }
             this.setIsLoggedIn(true);
-            console.log('Admin authenticated successfully!');
           } else {
             if (this.isBrowser()) {
               sessionStorage.setItem('isAuthenticatedUser', 'false');
             }
-            console.log('Admin authentication failed:', response.statusMessage);
           }
         }),
         catchError((error) => {
@@ -101,7 +99,6 @@ export class AdminService {
     if (this.isBrowser()) {
       sessionStorage.clear();
     }
-    console.log('Admin logged out.');
   }
 
   newAdmin(newAdminDetails: NewAdminDetails): Observable<NewAdminResponse> {

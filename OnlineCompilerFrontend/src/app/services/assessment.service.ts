@@ -116,7 +116,6 @@ export class AssessmentService {
   ): Observable<CodeSnippetResDTO> {
     if (codeSnippetReqDTO.code == '') {
       alert("Code can't be empty!");
-      console.log('Code Empty!');
       return EMPTY;
     }
     return this.http.post<CodeSnippetResDTO>(
@@ -128,7 +127,6 @@ export class AssessmentService {
   runCode(codeSnippetReqDTO: CodeSnippetReqDTO): Observable<CodeSnippetResDTO> {
     if (codeSnippetReqDTO.code == '') {
       alert("Code can't be empty!");
-      console.log('Code Empty!');
       return EMPTY;
     }
     return this.http.post<CodeSnippetResDTO>(

@@ -252,7 +252,6 @@ export class AssessmentHomepageComponent
         this.assessmentService.verifyAssessmentCode(this.assessmentCode).subscribe({
           next: (apiResponse) => {
             if (apiResponse.statusMessage !== 'SUCCESS' || !apiResponse.status) {
-              console.log('Assessment code inactive during periodic check. Ending session.');
               this.endSessionByTimer();
             }
           },

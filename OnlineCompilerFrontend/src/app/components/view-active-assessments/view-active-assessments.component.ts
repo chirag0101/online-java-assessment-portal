@@ -142,9 +142,6 @@ export class ViewActiveAssessmentsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((minutes) => {
       if (minutes !== null && minutes > 0) {
-        console.log(
-          `Extending assessment for ${candidateId} by ${minutes} minutes.`
-        );
         const extendAssessmentObj: ExtendAssessment = {
           candidateId: candidateId,
           minutes: minutes,
