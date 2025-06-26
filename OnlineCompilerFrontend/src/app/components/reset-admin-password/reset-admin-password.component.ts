@@ -43,7 +43,6 @@ export class ResetAdminPasswordComponent {
 
     this.adminService.resetPassword(this.resetAdminReq).subscribe({
       next: (response) => {
-        debugger;
         if (response.status) {
           alert("Password Resetted Successfully!");
           this.router.navigate(['/admin-login']);

@@ -29,7 +29,6 @@ export class ViewSubmissionsComponent implements OnInit {
   todayDate: string;
 
   constructor(private router: Router, private assessmentService: AssessmentService,private adminService:AdminService) {
-    debugger;
     const today = new Date();
     this.todayDate = today.toISOString().split('T')[0];
   }
@@ -106,9 +105,8 @@ export class ViewSubmissionsComponent implements OnInit {
   applyGlobalFilter(): void {
     const filterText = this.globalFilterText.toLowerCase().trim();
 
-    debugger;
-
-    if (!filterText) {  //if filter contains nothing, storing filteredSubmissions based on dates or storing all the submissions
+    if (!filterText) {  
+      //if filter contains nothing, storing filteredSubmissions based on dates or else storing all the submissions
       this.globallyFilteredSubmissions = [...this.filteredSubmissions];
       return;
     }

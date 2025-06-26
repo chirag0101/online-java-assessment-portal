@@ -122,7 +122,6 @@ export class AssessmentHomepageComponent
               this.isVerified = true;
 
               if (apiResponse.status) {
-                debugger;
                 this.candidateId = apiResponse.response.candidateId;
                 this.candidateName = apiResponse.response.candidateFullName;
                 this.candidateExperience =
@@ -167,8 +166,6 @@ export class AssessmentHomepageComponent
         if (this.editorView) {
           this.editorView.destroy();
         }
-
-        debugger;
 
         this.editorView = new EditorView({
           doc: this.codeContent,
@@ -230,7 +227,6 @@ export class AssessmentHomepageComponent
   }
 
   getJdkVersion(): void {
-    debugger;
     this.assessmentService.getJdkVersion().subscribe({
       next: (res) => {
         this.jdkVersion = res.response;
@@ -243,7 +239,6 @@ export class AssessmentHomepageComponent
 
     private startAssessmentVerificationPolling(): void {
 
-      debugger;
       this.assessmentVerificationIntervalId = setInterval(() => {
         if (this.assessmentVerificationIntervalId) {
         clearInterval(this.assessmentVerificationIntervalId);
@@ -388,7 +383,6 @@ export class AssessmentHomepageComponent
 
   private startTimer(): void {
     let endTime = sessionStorage.getItem('assessmentEndTime');
-    // debugger;
 
     if (!endTime) {
       const newEndTime = Date.now() + this.timerDuration;

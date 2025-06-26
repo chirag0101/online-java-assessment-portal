@@ -173,7 +173,6 @@ export class AssessmentService {
   }
 
   getActiveAssessments(): Observable<ActiveAssessmentsResponse> {
-    debugger;
     const header = {
       accessToken: sessionStorage.getItem('accessToken') || '',
       adminId: sessionStorage.getItem('adminId') || '',
@@ -213,7 +212,6 @@ export class AssessmentService {
   }
 
   getAllCandidates(): Observable<AllCandidates> {
-    debugger;
     const header = {
       accessToken: sessionStorage.getItem('accessToken') || '',
       adminId: sessionStorage.getItem('adminId') || '',

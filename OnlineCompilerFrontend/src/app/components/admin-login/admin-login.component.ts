@@ -44,7 +44,6 @@ export class AdminLoginComponent implements OnInit{
 
     this.adminService.authenticateAdmin(this.adminLoginCreds).subscribe({
       next: (response) => {
-        debugger;
         if (response.status) {
           this.adminId = response.response.adminId;
           this.adminService.setIsLoggedIn(true);

@@ -6,7 +6,7 @@ import {
   ActiveAssessment,
   ActiveAssessmentsResponse,
   ExtendAssessment,
-  UrlRes,
+  UrlRes
 } from '../../services/assessment.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -45,7 +45,6 @@ export class ViewActiveAssessmentsComponent implements OnInit {
   fetchActiveAssessments(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    debugger;
 
     if (sessionStorage.getItem('isAdmin') === 'false') {
       this.assessmentService
@@ -74,9 +73,7 @@ export class ViewActiveAssessmentsComponent implements OnInit {
 
     this.assessmentService.getActiveAssessments().subscribe({
       next: (data: ActiveAssessmentsResponse) => {
-        debugger;
         if (data.statusMessage === 'SUCCESS' && data.response) {
-          debugger;
           this.activeAssessments = data.response;
         } else {
           this.activeAssessments = [];
@@ -97,11 +94,9 @@ export class ViewActiveAssessmentsComponent implements OnInit {
     const finalCandidateId = match ? match[1] : candidateId;
 
     if (finalCandidateId !== null) {
-      debugger;
       this.assessmentService.getUrlByCandidateId(finalCandidateId).subscribe({
         next: (response: UrlRes) => {
           if (response) {
-            debugger;
             navigator.clipboard
               .writeText(response.response)
               .then(() => {

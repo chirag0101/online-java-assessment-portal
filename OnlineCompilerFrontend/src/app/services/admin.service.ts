@@ -48,7 +48,6 @@ export class AdminService {
   authenticateAdmin(
     adminLoginCreds: AdminLoginCreds
   ): Observable<AdminLoginResponse> {
-    debugger;
     return this.http
       .post<AdminLoginResponse>(
         `${this.adminServiceUrl}/authenticate-admin`,
@@ -57,7 +56,6 @@ export class AdminService {
       .pipe(
         tap((response) => {
           if (response.status) {
-            debugger;
             if (this.isBrowser()) {
               sessionStorage.setItem('isAuthenticatedUser', 'true');
               sessionStorage.setItem('adminId', response.response.adminId);

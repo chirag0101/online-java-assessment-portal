@@ -55,7 +55,6 @@ export class NewAdminComponent implements OnInit{
 
     this.adminService.newAdmin(this.newAdminDetails).subscribe({
       next: (response) => {
-        debugger;
         if (response.status) {
           this.adminId='';
           alert('Admin Created Successfully!');

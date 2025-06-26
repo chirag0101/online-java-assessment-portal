@@ -81,7 +81,6 @@ export class NewAssessmentComponent implements OnInit {
       .afterClosed()
       .subscribe((selectedCandidate: CandidateDetails | null) => {
         if (selectedCandidate) {
-          debugger;
           this.candidateId = selectedCandidate.candidateId;
           this.candidateFullName = selectedCandidate.candidateFullName;
           this.candidateEmail = selectedCandidate.candidateEmailId;
@@ -115,7 +114,6 @@ export class NewAssessmentComponent implements OnInit {
   };
 
   createAssessment(form: NgForm): void {
-    debugger;
     form.control.markAllAsTouched();
 
     if (form.invalid) {
@@ -194,7 +192,6 @@ export class NewAssessmentComponent implements OnInit {
       .getCandidateDetByEmail(this.candidateEmail)
       .subscribe({
         next: (response) => {
-          debugger;
           if (response.status) {
             this.candidateId = response.response.candidateId;
             this.candidateFullName = response.response.candidateFullName;
