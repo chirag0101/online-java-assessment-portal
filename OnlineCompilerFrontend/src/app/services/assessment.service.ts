@@ -8,8 +8,7 @@ import { CompilerAction } from '../../app/models/constants/compiler-actions.cons
 import { AssessmentVerificationResponse } from '../../app/models/assessment-verification-res.model';
 import { CandidateDetails } from '../../app/models/candidate-details.model';
 import {
-  AllSubmissions,
-  SubmissionDetails,
+  AllSubmissions
 } from '../../app/models/submission-details.model';
 
 export interface ActiveAssessment {

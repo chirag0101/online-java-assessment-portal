@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface CandidateRepo extends JpaRepository<Candidate, Long> {
     @Query("FROM Candidate c " +
             "WHERE c.candidateId=:candidateId AND c.urlIsActive=true " +
-            "ORDER BY c.assessmentEndTime")
+            "ORDER BY c.assessmentEndTime LIMIT 1")
     Optional<Candidate> findByCandidateIdLatestEntry(@Param("candidateId") String candidateId);
 
     @Query("FROM Candidate c " +

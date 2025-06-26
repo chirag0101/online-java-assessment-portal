@@ -44,7 +44,6 @@ public class AssessmentService {
     @Value("${assessment.url}")
     private String assessmentUrl;
 
-
     public ApiResponse verifyUrl(String assessmentId) {
         try {
 
@@ -80,7 +79,7 @@ public class AssessmentService {
     public ApiResponse createNewAssessment(NewCandidateReqDTO newCandidateReqDTO) {
         try {
 
-            //if candidate exists, set it's url & assessement as inactive
+            //if candidate exists, set it's url & existing assessement as inactive
             if (candidateRepo.findByCandidateIdLatestEntry(newCandidateReqDTO.getCandidateId()).isPresent()) {
                 Candidate candidate = candidateRepo.findByCandidateIdLatestEntry(newCandidateReqDTO.getCandidateId()).get();
 
