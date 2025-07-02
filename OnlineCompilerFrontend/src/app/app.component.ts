@@ -16,8 +16,7 @@ import { BrowserModule } from '@angular/platform-browser';
     FormsModule,
     RouterModule,
     RouterOutlet,
-    DropdownModule,
-     
+    DropdownModule,   
 ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
