@@ -289,6 +289,16 @@ public class AssessmentService {
         }
     }
 
+    public ApiResponse getAssessmentEndTimeByCandId(String candidateId){
+        try{
+            Date time=candidateRepo.findAssessmentEndTimeByCandId(candidateId);
+            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(time).build();
+        }catch (Exception e){
+            log.info(e.getMessage());
+            return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
+        }
+    }
+
     @Scheduled(cron = "${assessement.expiry.scheduler.cron}")
     private void validateActiveAssessments() {
         List<Candidate> activeCandidateAssessments = candidateRepo.findAllActiveAssessmentCandidates();

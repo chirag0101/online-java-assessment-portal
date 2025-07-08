@@ -55,7 +55,7 @@ public class AccessTokenFilter implements Filter {
 
         String path = httpServletRequest.getRequestURI();
 
-        if (paths.contains(path) || path.contains("/CompilerService") || path.contains("/AssessmentService/end-assessment/")) {
+        if (paths.contains(path) || path.contains("/CompilerService") || path.contains("/AssessmentService/end-assessment/") || path.contains("AssessmentService/assessment-end-time-by-candidate-id")) {
             filterChain.doFilter(httpServletRequest, httpResponse);
             return;
         }

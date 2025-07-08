@@ -73,7 +73,8 @@ export class AssessmentHomepageComponent
   isVerified: boolean = false;
   verificationFailed: boolean = false;
 
-  codeContent: string = "import java.util.*;\nimport java.io.*;\nimport java.lang.*;\nimport java.sql.*;\n\n//write code from here\n";
+  codeContent: string =
+    'import java.util.*;\nimport java.io.*;\nimport java.lang.*;\nimport java.sql.*;\n\n//write code from here\n';
   editerOutput: string = 'OUTPUT WILL BE DISPLAYED HERE...';
 
   candidateId: string = '';
@@ -89,8 +90,6 @@ export class AssessmentHomepageComponent
 
   warned5Min: boolean = false;
 
-  // private fullscreenChangeListener: () => void;
-
   private dialogResolve: ((value: boolean) => void) | null = null;
 
   constructor(
@@ -99,19 +98,18 @@ export class AssessmentHomepageComponent
     private router: Router,
     private dialog: MatDialog,
     private route: ActivatedRoute
-  ) {
-    // this.fullscreenChangeListener = this.onFullscreenChange.bind(this);
-  }
+  ) {}
 
   ngOnInit(): void {
-
     if (sessionStorage.getItem('assessmentEnded')) {
-        const currentAssessmentCode = this.route.snapshot.queryParamMap.get('assessmentCode');
-        sessionStorage.removeItem('assessmentEnded');
-        sessionStorage.removeItem('assessmentEndTime');
-        window.location.reload();
+      const currentAssessmentCode =
+        this.route.snapshot.queryParamMap.get('assessmentCode');
+      sessionStorage.removeItem('assessmentEnded');
+      sessionStorage.removeItem('assessmentEndTime');
+      window.location.reload();
     }
-    this.assessmentCode = this.route.snapshot.queryParamMap.get('assessmentCode') ?? '';
+    this.assessmentCode =
+      this.route.snapshot.queryParamMap.get('assessmentCode') ?? '';
 
     if (this.assessmentCode) {
       this.assessmentService
@@ -136,7 +134,6 @@ export class AssessmentHomepageComponent
               }
 
               this.initializeCodeMirror();
-              //this.startUrlValidationPolling();
             } else {
               this.verificationFailed = true;
             }
@@ -212,6 +209,7 @@ export class AssessmentHomepageComponent
         this.startTimer();
         this.getJdkVersion();
         this.startAssessmentVerificationPolling();
+        this.assessmentEndTimeCheck();
       }
     }, 0);
   }
@@ -237,31 +235,40 @@ export class AssessmentHomepageComponent
     });
   }
 
-    private startAssessmentVerificationPolling(): void {
-
-      this.assessmentVerificationIntervalId = setInterval(() => {
-        if (this.assessmentVerificationIntervalId) {
+  private startAssessmentVerificationPolling(): void {
+    this.assessmentVerificationIntervalId = setInterval(() => {
+      if (this.assessmentVerificationIntervalId) {
         clearInterval(this.assessmentVerificationIntervalId);
       }
-        if (!this.assessmentCode) {
-          console.warn('Assessment code missing during periodic verification. Ending session.');
-          this.endSessionByTimer();
-          return;
-        }
+      if (!this.assessmentCode) {
+        console.warn(
+          'Assessment code missing during periodic verification. Ending session.'
+        );
+        this.endSessionByTimer();
+        return;
+      }
 
-        this.assessmentService.verifyAssessmentCode(this.assessmentCode).subscribe({
+      this.assessmentService
+        .verifyAssessmentCode(this.assessmentCode)
+        .subscribe({
           next: (apiResponse) => {
-            if (apiResponse.statusMessage !== 'SUCCESS' || !apiResponse.status) {
+            if (
+              apiResponse.statusMessage !== 'SUCCESS' ||
+              !apiResponse.status
+            ) {
               this.endSessionByTimer();
             }
           },
-          error: (err) => {            console.error('Error during periodic assessment verification:', err);
+          error: (err) => {
+            console.error(
+              'Error during periodic assessment verification:',
+              err
+            );
             this.endSessionByTimer();
           },
         });
-      }, 60 * 1000); // Polling interval: 60 seconds (1 minute)
+    }, 60 * 1000); // Polling interval: 60 seconds (1 minute)
   }
-
 
   compileCode(): void {
     if (!this.isVerified) {
@@ -355,9 +362,9 @@ export class AssessmentHomepageComponent
       }
       this.assessmentService.endAssessment(this.candidateId).subscribe({
         next: () => {
-        sessionStorage.removeItem('assessmentEndTime');
-        sessionStorage.setItem('assessmentEnded', 'true'); 
-  
+          sessionStorage.removeItem('assessmentEndTime');
+          sessionStorage.setItem('assessmentEnded', 'true');
+
           this.router.navigate(['/thank-you']);
         },
         error: (err) => {
@@ -396,7 +403,6 @@ export class AssessmentHomepageComponent
     this.timerIntervalId = setInterval(() => {
       const now = Date.now();
       const remaining = endTime - now;
-
       if (
         !this.warned5Min &&
         remaining <= 5 * 60 * 1000 &&
@@ -416,10 +422,31 @@ export class AssessmentHomepageComponent
     }, 1000);
   }
 
+  assessmentEndTimeCheck(): void {
+    this.assessmentService
+      .getAssessmentEndTimeByCandId(this.candidateId)
+      .subscribe({
+        next: (res) => {
+          if (res.status) {
+            const receivedDate = new Date(res.response);
+
+            const newEndTimeMillis = receivedDate.getTime();
+
+            sessionStorage.clear();
+
+            sessionStorage.setItem(
+              'assessmentEndTime',
+              newEndTimeMillis.toString()
+            );
+          }
+        },
+      });
+  }
+
   endSessionByTimer(): void {
-      sessionStorage.removeItem('assessmentEndTime');
-      sessionStorage.setItem('assessmentEnded', 'true'); 
-  
+    sessionStorage.removeItem('assessmentEndTime');
+    sessionStorage.setItem('assessmentEnded', 'true');
+
     this.assessmentService.endAssessment(this.candidateId).subscribe({
       next: () => {
         this.router.navigate(['/thank-you']);

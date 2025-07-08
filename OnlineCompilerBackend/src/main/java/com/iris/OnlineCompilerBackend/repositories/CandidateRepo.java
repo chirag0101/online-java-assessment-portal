@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,4 +84,7 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
             "AND " +
             "c.urlIsActive=true")
     String findActiveUrlById(@Param("candidateId") String candidateId);
+
+    @Query("SELECT c.assessmentEndTime FROM Candidate c WHERE c.candidateId=:candidateId AND c.urlIsActive=true AND c.assessmentIsStarted=true")
+    Date findAssessmentEndTimeByCandId(@Param("candidateId") String candidateId);
 }

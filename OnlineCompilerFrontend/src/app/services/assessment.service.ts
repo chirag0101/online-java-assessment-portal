@@ -84,6 +84,12 @@ export interface JdkVersionRes {
   response: string;
 }
 
+export interface AssessmentEndTimeRes{
+  status: string;
+  statusMessge: string;
+  response: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -271,5 +277,9 @@ export class AssessmentService {
     return this.http.get<UrlRes>(
       `${this.assessmentUrl}/candidate-url/${candidateId}`,{headers:headers}
     );
+  }
+
+  getAssessmentEndTimeByCandId(candidateId:string):Observable<AssessmentEndTimeRes>{
+    return this.http.get<AssessmentEndTimeRes>(`${this.assessmentUrl}/assessment-end-time-by-candidate-id/${candidateId}`);
   }
 }

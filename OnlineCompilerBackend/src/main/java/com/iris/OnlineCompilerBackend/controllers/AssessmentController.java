@@ -89,4 +89,9 @@ public class AssessmentController {
     public ApiResponse getCandidateActiveUrlById(@PathVariable(name = "candidate-id") String candidateId) {
         return assessmentService.fetchActiveAssessmentUrlByCandidateId(candidateId);
     }
+
+    @GetMapping("/assessment-end-time-by-candidate-id/{candidate-id}")
+    public ApiResponse getAssessmentEndTimeByCandidateId(@PathVariable(name = "candidate-id") String candidateId){
+        return assessmentService.getAssessmentEndTimeByCandId(candidateId);
+    }
 }
