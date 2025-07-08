@@ -16,10 +16,10 @@ import { BrowserModule } from '@angular/platform-browser';
     FormsModule,
     RouterModule,
     RouterOutlet,
-    DropdownModule,   
-],
+    DropdownModule,
+  ],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
   title = 'My Compiler App';
