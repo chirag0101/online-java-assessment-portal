@@ -89,6 +89,7 @@ tbody tr:hover {
 td {
   font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
   font-size: 0.95em;
+  /* word-wrap: break-word; */
 }
 
 th:last-child,
