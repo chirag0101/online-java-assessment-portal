@@ -81,6 +81,7 @@ export class AdminService {
             sessionStorage.setItem('isAuthenticatedUser', 'false');
           }
           console.error('Authentication API error:', error);
+          alert("Login Failed!");
           throw error;
         })
       );
