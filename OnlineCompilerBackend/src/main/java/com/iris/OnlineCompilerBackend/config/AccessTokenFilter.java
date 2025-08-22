@@ -76,14 +76,13 @@ public class AccessTokenFilter implements Filter {
             return;
         }
 
-        OffsetDateTime offsetDateTime = Instant.now().atZone(ZoneId.of(timeZone)).toOffsetDateTime();
-        String formattedWithOffset = offsetDateTime.toString();
-
-        admin.setAccessTokenLastAccessedOn(formattedWithOffset);
-
-        adminRepo.save(admin);
-
         if ((admin.getAdminId().equals(userId)) && (admin.getLastAccesstoken().equals(accessToken)) && (admin.getAccessTokenIsExpired() == false)) {
+            OffsetDateTime offsetDateTime = Instant.now().atZone(ZoneId.of(timeZone)).toOffsetDateTime();
+            String formattedWithOffset = offsetDateTime.toString();
+
+            admin.setAccessTokenLastAccessedOn(formattedWithOffset);
+
+            adminRepo.save(admin);
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);

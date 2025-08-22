@@ -65,7 +65,9 @@ public class CompileService {
     private CodeSnippetResDTO compileCode(String candidateId, String code, Integer actionId) throws Exception {
         String className = getClassNameFromCode(code);
 
-        File dir = new File(dirPath + File.separator + candidateId + "/");   //creating dir for candidate
+        String candidateDirPath=dirPath+File.separator+candidateId;
+
+        File dir = new File(candidateDirPath);   //creating dir for candidate
 
         if (!dir.exists()) {
             dir.mkdir();
@@ -73,7 +75,7 @@ public class CompileService {
 
         //file format: dirPath/candidateId/classname.java
 
-        File sourceFile = new File(dirPath + File.separator + candidateId + "/" + className + ".java");
+        File sourceFile = new File(candidateDirPath + File.separator + className + ".java");
 
         //Writing code to the java file
         try (FileWriter writer = new FileWriter(sourceFile)) {
