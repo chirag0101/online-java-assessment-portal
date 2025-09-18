@@ -28,7 +28,7 @@ public class CompilerController {
     private AssessmentService assessmentService;
 
     @GetMapping("/jdk-version")
-    public ApiResponse getJdkVersion(){
+    public ApiResponse getJdkVersion() {
         return compileService.getJdkVersion();
     }
 

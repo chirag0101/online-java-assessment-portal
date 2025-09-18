@@ -76,7 +76,7 @@ public class AccessTokenFilter implements Filter {
             return;
         }
 
-        if ((admin.getAdminId().equals(userId)) && (admin.getLastAccesstoken().equals(accessToken)) && (admin.getAccessTokenIsExpired() == false)) {
+        if ((admin.getAdminId().equals(userId)) && (admin.getLastAccesstoken().equals(accessToken)) && (admin.getAccessTokenIsExpired() == false) ) {
             OffsetDateTime offsetDateTime = Instant.now().atZone(ZoneId.of(timeZone)).toOffsetDateTime();
             String formattedWithOffset = offsetDateTime.toString();
 
