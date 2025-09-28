@@ -162,7 +162,7 @@ public class AdminService {
         }
     }
 
-    @Scheduled(cron = "${admin.sesssion.scheduler.cron}")
+    @Scheduled(cron = "${admin.session.scheduler.cron}")
     private void processAdminSessions() {
         try {
             List<Admin> admins = adminRepo.findAllActiveAdmins();

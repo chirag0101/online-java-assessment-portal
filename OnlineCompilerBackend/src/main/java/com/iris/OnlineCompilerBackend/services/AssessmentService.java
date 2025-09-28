@@ -78,7 +78,6 @@ public class AssessmentService {
 
     public ApiResponse createNewAssessment(NewCandidateReqDTO newCandidateReqDTO) {
         try {
-
             //if candidate exists, set it's url & existing assessement as inactive
             if (candidateRepo.findByCandidateIdLatestEntry(newCandidateReqDTO.getCandidateId()).isPresent()) {
                 Candidate candidate = candidateRepo.findByCandidateIdLatestEntry(newCandidateReqDTO.getCandidateId()).get();
@@ -299,7 +298,7 @@ public class AssessmentService {
         }
     }
 
-    @Scheduled(cron = "${assessement.expiry.scheduler.cron}")
+    @Scheduled(cron = "${assessment.expiry.scheduler.cron}")
     private void validateActiveAssessments() {
         List<Candidate> activeCandidateAssessments = candidateRepo.findAllActiveAssessmentCandidates();
         for (Candidate candidate : activeCandidateAssessments) {
