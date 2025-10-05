@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  assessmentServiceUrl: 'http://localhost:8080/AssessmentService',
-  adminServiceUrl: 'http://localhost:8080/AdminService',
-  compilerServiceUrl: 'http://localhost:8080/CompilerService'
+  assessmentServiceUrl: 'http://13.62.136.227/AssessmentService',
+  adminServiceUrl: 'http://13.62.136.227/AdminService',
+  compilerServiceUrl: 'http://13.62.136.227/CompilerService'
 };

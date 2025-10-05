@@ -94,8 +94,8 @@ export interface AssessmentEndTimeRes{
   providedIn: 'root',
 })
 export class AssessmentService {
-  private compilerActionUrl = 'http://localhost:8080/CompilerService';
-  private assessmentUrl = 'http://localhost:8080/AssessmentService';
+  private compilerActionUrl = 'http://13.62.136.227/CompilerService';
+  private assessmentUrl = 'http://13.62.136.227/AssessmentService';
 
   constructor(private http: HttpClient) {}
 
