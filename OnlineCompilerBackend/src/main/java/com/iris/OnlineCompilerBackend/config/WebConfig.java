@@ -1,6 +1,7 @@
 package com.iris.OnlineCompilerBackend.config;
 
-import org.aspectj.apache.bcel.classfile.Code;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,8 @@ public class WebConfig {
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
+        Logger logger= LogManager.getLogger();
+        logger.info("Frontend URL:",frontEndUrl);
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {

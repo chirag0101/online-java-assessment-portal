@@ -161,23 +161,32 @@ export class NewAssessmentComponent implements OnInit {
     this.isCandidateDetailsLoaded = false;
   }
 
-  copyUrl(): void {
-    if (this.assessmentUrl) {
-      navigator.clipboard
-        .writeText(this.assessmentUrl)
-        .then(() => {
-          this.copySuccess = true;
-          setTimeout(() => {
-            this.copySuccess = false;
-          }, 3000);
-        })
-        .catch((err) => {
-          console.error('Failed to copy URL: ', err);
-          this.copySuccess = false;
-          alert('Failed to copy URL. Please try again or copy manually.');
-        });
-    }
+copyUrl(): void {
+  if (!this.assessmentUrl) return;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(this.assessmentUrl)
+      .then(() => {
+        this.copySuccess = true;
+        setTimeout(() => this.copySuccess = false, 3000);
+      })
+      .catch(err => {
+        console.error('Failed to copy URL: ', err);
+        this.copySuccess = false;
+        alert('Failed to copy URL. Please try again.');
+      });
+  } else {
+    const textarea = document.createElement('textarea');
+    textarea.value = this.assessmentUrl;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    this.copySuccess = true;
+    setTimeout(() => this.copySuccess = false, 3000);
   }
+}
+
 
   fetchCandidateDetailsByEmail(): void {
     if (!this.candidateEmail) {
