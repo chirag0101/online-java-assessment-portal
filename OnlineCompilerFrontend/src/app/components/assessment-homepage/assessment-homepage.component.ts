@@ -1,7 +1,6 @@
 import { keymap, placeholder } from '@codemirror/view';
 import { CommonModule } from '@angular/common';
 import { CodeSnippetReqDTO } from '../../models/code-snippet-req.model';
-import { CodeSnippetResDTO } from '../../models/code-snippet-res.model';
 import { AssessmentService } from '../../services/assessment.service';
 import { StatusConstants } from '../../models/constants/status.constants';
 import {
@@ -101,6 +100,7 @@ export class AssessmentHomepageComponent
   ) {}
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
     if (sessionStorage.getItem('assessmentEnded')) {
       const currentAssessmentCode =
         this.route.snapshot.queryParamMap.get('assessmentCode');
@@ -148,7 +148,7 @@ export class AssessmentHomepageComponent
         });
     } else {
       this.verificationFailed = true;
-    }
+    }}
   }
 
   ngAfterViewInit(): void {}

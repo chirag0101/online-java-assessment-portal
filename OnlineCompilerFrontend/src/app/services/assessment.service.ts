@@ -10,6 +10,7 @@ import { CandidateDetails } from '../../app/models/candidate-details.model';
 import {
   AllSubmissions
 } from '../../app/models/submission-details.model';
+import { environment } from '../../environments/environment'
 
 export interface ActiveAssessment {
   candidateNameWithId: string;
@@ -94,8 +95,8 @@ export interface AssessmentEndTimeRes{
   providedIn: 'root',
 })
 export class AssessmentService {
-  private compilerActionUrl = 'http://13.62.136.227/CompilerService';
-  private assessmentUrl = 'http://13.62.136.227/AssessmentService';
+  private compilerActionUrl = environment.compilerServiceUrl;
+  private assessmentUrl = environment.assessmentServiceUrl;
 
   constructor(private http: HttpClient) {}
 

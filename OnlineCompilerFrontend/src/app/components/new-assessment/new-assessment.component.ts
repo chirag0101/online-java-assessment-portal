@@ -197,6 +197,7 @@ export class NewAssessmentComponent implements OnInit {
             this.candidateFullName = response.response.candidateFullName;
             this.technology = response.response.candidateTechnology;
             this.isCandidateDetailsLoaded = true;
+            this.yearsOfExperience=response.response.candidateYearsOfExpInMonths;
           } else {
             this.isCandidateDetailsLoaded = false;
             this.candidateId = '';
