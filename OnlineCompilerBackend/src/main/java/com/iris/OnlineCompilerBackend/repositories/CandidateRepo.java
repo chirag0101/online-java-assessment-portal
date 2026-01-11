@@ -61,11 +61,13 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
             "WHERE c.interviewerId=:interviewerId")
     List<SubmissionsResDTO> findAllSubmissionsByInterviewerId(@Param("interviewerId") String interviewerId);
 
-    @Query("SELECT new com.iris.OnlineCompilerBackend.dtos.CandidateDetailsResDTO(c.candidateId,c.candidateFullName,c.technology,c.yearsOfExperience,c.candidateEmailId) " +
-            "FROM Candidate c " +
-            "WHERE c.candidateEmailId =:candidateEmailId " +
-            "ORDER BY c.urlExpiryTime DESC " +
-            "LIMIT 1")
+    @Query("""
+            SELECT new com.iris.OnlineCompilerBackend.dtos.CandidateDetailsResDTO(c.candidateId,c.candidateFullName,c.technology,c.yearsOfExperience,c.candidateEmailId)
+            FROM Candidate c
+            WHERE c.candidateEmailId =:candidateEmailId
+            ORDER BY c.urlExpiryTime DESC
+            FETCH FIRST 1 ROWS ONLY
+            """)
     CandidateDetailsResDTO findByCandidateEmailIdAndLatest(@Param("candidateEmailId") String candidateEmailId);
 
     @Query("FROM Candidate c " +
