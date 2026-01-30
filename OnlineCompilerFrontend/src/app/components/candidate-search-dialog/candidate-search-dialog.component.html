@@ -1,4 +1,11 @@
-<h2 mat-dialog-title>Search Candidate</h2>
+<div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #005aaa; padding-right: 15px;">
+  <h2 mat-dialog-title style="border-bottom: none; margin-bottom: 0; flex: 1; text-align: center;">
+    Search Candidate
+  </h2>
+  <button mat-icon-button (click)="onCancel()" class="dialog-close-btn" style="color: #005aaa;">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
 
 <mat-dialog-content>
   <p>{{ data.message || 'Search for a candidate by ID, Name, or Technology:' }}</p>
@@ -52,10 +59,13 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></tr>
 
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" colspan="5">No candidates found matching "{{searchTerm}}"</td>
+<td class="mat-cell" colspan="6" style="text-align: center; padding: 30px; color: #666; font-style: italic;">
+            <span *ngIf="!searchTerm || searchTerm.trim() === ''">No records found</span>
+            <span *ngIf="searchTerm && searchTerm.trim() !== ''">No candidates found matching "{{searchTerm}}"</span>
+          </td>
         </tr>
       </table>
     </mat-radio-group>
@@ -63,6 +73,5 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancel</button>
   <button mat-flat-button color="primary" [disabled]="!selectedCandidate" (click)="onConfirm()">Select Candidate</button>
 </mat-dialog-actions>

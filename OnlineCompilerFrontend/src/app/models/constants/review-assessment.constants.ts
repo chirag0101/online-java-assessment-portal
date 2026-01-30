@@ -1,0 +1,6 @@
+
+export enum ReviewStatus{
+    TO_BE_REVIEWED='TO-BE-REVIEWED',
+    SELECTED='SELECTED',
+    REJECTED='REJECTED'
+}

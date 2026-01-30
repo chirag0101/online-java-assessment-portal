@@ -66,3 +66,13 @@
     background-color: #ff3d43 !important;
     transform: translateY(-1px) !important;
 }
+
+.text-pass {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.text-fail {
+  color: #dc3545;
+  font-weight: 600;
+}

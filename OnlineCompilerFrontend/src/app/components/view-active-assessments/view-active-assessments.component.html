@@ -1,60 +1,128 @@
-<div class="table-container">
-  <div class="table-panel">
-    <div class="header-section">
-      <h2>Active / InProgress Assessments</h2>
-    </div>
+<div class="page-wrapper">
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo-section">
+        <img src="images/iris_logo.png" alt="IRIS Logo" class="logo-img" />
+      </div>
+      <div class="portal-section">
+        <span class="portal-title">{{ portalTitle }}</span>
+      </div>
 
-    <div *ngIf="isLoading" class="loading-message">
-      <p>Loading active assessments...</p>
-    </div>
-
-    <div *ngIf="errorMessage" class="error-message">
-      <p>{{ errorMessage }}</p>
-      <button (click)="fetchActiveAssessments()" class="retry-button"><mat-icon>replay</mat-icon></button>
-    </div>
-
-    <div class="table-wrapper">
-      <table *ngIf="!isLoading && activeAssessments.length > 0">
-        <thead>
-          <tr>
-            <th>Candidate</th>
-            <th>Interviewer</th>
-            <th>Years of Experience</th>
-            <th>Technology</th>
-            <th>Round</th>
-            <th>Assessment Start Time</th>
-            <th>Assessment End Time</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let assessment of activeAssessments">
-            <td>{{ assessment.candidateNameWithId }}</td>
-            <td>{{ assessment.interviwerNameWithId }}</td>
-            <td>{{ assessment.yearsOfExperience }}</td>
-            <td>{{ assessment.technology }}</td>
-            <td>{{ assessment.round }}</td>
-            <td>{{ assessment.assessmentStartTime | date:'medium' }}</td>
-            <td>{{ assessment.assessmentEndTime | date:'medium' }}</td>            
-            <td>
-            <div class="action-buttons-group">
-              <button type="submit" class="copy-btn" (click)="copyUrl(assessment.candidateNameWithId)"><mat-icon>content_copy</mat-icon></button>
-              <button type="submit" class="extend-btn" (click)="extendAssessment(assessment.candidateNameWithId)" *ngIf="assessment.assessmentStartTime"><mat-icon>more_time</mat-icon></button>
-              <button type="submit" (click)="endAssessment(assessment.candidateNameWithId)"><mat-icon>stop</mat-icon></button>
-            </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div *ngIf="!isLoading && activeAssessments.length === 0 && !errorMessage" class="no-data-message">
-        <p>No active assessments found.</p>
+      <div class="user-profile-section">
+        <div class="user-info">
+          <span class="admin-name">{{ adminId }}</span>
+          <span class="last-login"
+            >Last Login: {{ lastLoggedIn | date: "medium" }}</span
+          >
+        </div>
+        <div class="nav-separator"></div>
+        <button class="nav-logout-btn" (click)="logOut()" title="Log Out">
+          <i class="fa fa-power-off"></i>
+        </button>
       </div>
     </div>
-    
-    <div class="table-footer-actions">
-        <button class="back-button" (click)="goBack()">Back</button>
-    </div>
+    <div class="navbar-underline"></div>
+  </nav>
 
+  <div class="table-container">
+    <div class="table-panel">
+      <div class="header-section">
+        <h2><span class="title">Active / In Progress Assessments</span></h2>
+      </div>
+
+      <div *ngIf="isLoading" class="loading-message">
+        <p>Loading active assessments...</p>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        <p>{{ errorMessage }}</p>
+        <button (click)="fetchActiveAssessments()" class="retry-button">
+          <mat-icon>replay</mat-icon>
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <table *ngIf="!isLoading && activeAssessments.length > 0">
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Interviewer</th>
+              <th>Years of Experience</th>
+              <th>Technology</th>
+              <th>Round</th>
+              <th>Scheduled Time</th>
+              <th>Assessment Start Time</th>
+              <th>Assessment End Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let assessment of activeAssessments">
+              <td>{{ assessment.candidateNameWithId }}</td>
+              <td>{{ assessment.interviewerNameWithId }}</td>
+              <td>{{ assessment.yearsOfExperience }}</td>
+              <td>{{ assessment.technology }}</td>
+              <td>{{ assessment.round }}</td>
+              <td>{{ assessment.assessmentScheduledTime | date: "medium" }}</td>
+              <td>{{ assessment.assessmentStartTime | date: "medium" }}</td>
+              <td>{{ assessment.assessmentEndTime | date: "medium" }}</td>
+              <td>
+                <div class="action-buttons-group">
+                  <button
+                    type="submit"
+                    class="copy-btn"
+                    (click)="copyUrl(assessment.url)"
+                    title="Copy URL"
+                  >
+                    <mat-icon>content_copy</mat-icon>
+                  </button>
+                  <button
+                    type="submit"
+                    class="extend-btn"
+                    (click)="extendAssessment(assessment.candidateNameWithId,assessment.round)"
+                    *ngIf="assessment.assessmentIsStarted"
+                    title="Extend Time"
+                  >
+                    <mat-icon>more_time</mat-icon>
+                  </button>
+                  <button
+                    type="submit"
+                    class="end-btn"
+                    (click)="
+                      endAssessment(
+                        assessment.candidateNameWithId,
+                        assessment.url,
+                        assessment.round
+                      )
+                    "
+                    title="End Assessment"
+                  >
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div
+          *ngIf="!isLoading && activeAssessments.length === 0 && !errorMessage"
+          class="no-data-message"
+        >
+          <p>No active assessments found.</p>
+        </div>
+      </div>
+
+      <div class="table-footer-actions">
+        <button class="back-button" (click)="goBack()">Back</button>
+      </div>
+    </div>
   </div>
+
+  <footer class="login-footer">
+    <div class="footer-content">
+      <span class="copyright">&copy; {{ copyright }}</span>
+      <span class="version-tag">{{ version }}</span>
+    </div>
+  </footer>
 </div>

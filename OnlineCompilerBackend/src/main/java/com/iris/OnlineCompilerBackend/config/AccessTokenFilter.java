@@ -48,14 +48,15 @@ public class AccessTokenFilter implements Filter {
         }
 
         List<String> paths = List.of(
-                "/AdminService/authenticate-admin",
-                "/AdminService/reset-password",
-                "/AssessmentService/assessment"
+                "/AdminService/authenticateAdmin",
+                "/AdminService/resetPassword",
+                "/AssessmentService/assessment",
+                "/AssessmentService/endAssessment"
         );
 
         String path = httpServletRequest.getRequestURI();
 
-        if (paths.contains(path) || path.contains("/CompilerService") || path.contains("/AssessmentService/end-assessment/") || path.contains("AssessmentService/assessment-end-time-by-candidate-id")) {
+        if (paths.contains(path) || path.contains("/CompilerService") || path.contains("/AssessmentService/endAssessment/") || path.contains("AssessmentService/assessmentEndTimeByCandidateId")) {
             filterChain.doFilter(httpServletRequest, httpResponse);
             return;
         }
@@ -76,7 +77,8 @@ public class AccessTokenFilter implements Filter {
             return;
         }
 
-        if ((accessToken.equals("ADMIN")) || (admin.getAdminId().equals(userId)) && (admin.getLastAccesstoken().equals(accessToken)) && (admin.getAccessTokenIsExpired() == false) ) {
+        //if ((accessToken.equals("ADMIN")) || (admin.getAdminId().equals(userId)) && (admin.getLastAccesstoken().equals(accessToken)) && (admin.getAccessTokenIsExpired() == false) ) {
+        if ((admin.getAdminId().equals(userId)) && (admin.getLastAccesstoken().equals(accessToken)) && (admin.getAccessTokenIsExpired() == false) ) {
             OffsetDateTime offsetDateTime = Instant.now().atZone(ZoneId.of(timeZone)).toOffsetDateTime();
             String formattedWithOffset = offsetDateTime.toString();
 

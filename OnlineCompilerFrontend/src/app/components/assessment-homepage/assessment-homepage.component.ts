@@ -1,6 +1,6 @@
 import { keymap, placeholder } from '@codemirror/view';
 import { CommonModule } from '@angular/common';
-import { CodeSnippetReqDTO } from '../../models/code-snippet-req.model';
+import { CodeSnippetReqDTO } from '../../models/request/code-snippet-req.model';
 import { AssessmentService } from '../../services/assessment.service';
 import { StatusConstants } from '../../models/constants/status.constants';
 import {
@@ -30,6 +30,8 @@ import { debug } from 'console';
 // import { materialLight } from '@ddietr/codemirror-themes/material-light';
 // import { solarizedLight } from '@ddietr/codemirror-themes/solarized-light';
 // import { vscodeDark } from '@uiw/codemirror-theme-vscode';
+import { eclipse } from '@uiw/codemirror-theme-eclipse';
+import { ExpireAssessmentReq } from '../../models/request/expire-assessment-req-model';
 
 @Component({
   selector: 'app-compiler-code-editor-homepage',
@@ -61,9 +63,12 @@ export class AssessmentHomepageComponent
   codeReq: CodeSnippetReqDTO = {
     candidateId: '',
     code: '',
+    codeType:1,
+    url:''
   };
 
   jdkVersion = '';
+  selectedTechnology: string = 'Java';
 
   private timerDuration: number = 120 * 60 * 1000;
   private timerIntervalId: any;
@@ -71,6 +76,7 @@ export class AssessmentHomepageComponent
 
   isVerified: boolean = false;
   verificationFailed: boolean = false;
+  verificationMessage: string = 'Verifying assessment link...';
 
   codeContent: string =
     'import java.util.*;\nimport java.io.*;\nimport java.lang.*;\nimport java.sql.*;\n\n//write code from here\n';
@@ -79,7 +85,8 @@ export class AssessmentHomepageComponent
   candidateId: string = '';
   candidateName: string = '';
   candidateExperience: string = '';
-  canidateTechnology: string = '';
+  candidateTechnology: string = '';
+  candidateRound:string='';
 
   showConfirmationDialog: boolean = false;
   dialogTitle: string = '';
@@ -88,6 +95,11 @@ export class AssessmentHomepageComponent
   assessmentCode: string = '';
 
   warned5Min: boolean = false;
+    req:ExpireAssessmentReq={
+          candidateId:'',
+          assessmentUrl:'',
+          interviewRound:''
+        };
 
   private dialogResolve: ((value: boolean) => void) | null = null;
 
@@ -116,6 +128,7 @@ export class AssessmentHomepageComponent
         .verifyAssessmentCode(this.assessmentCode)
         .subscribe({
           next: (apiResponse) => {
+            debugger
             if (apiResponse.statusMessage === 'SUCCESS') {
               this.isVerified = true;
 
@@ -126,25 +139,22 @@ export class AssessmentHomepageComponent
                   apiResponse.response.candidateYearsOfExpInMonths
                     .toString()
                     .concat(' Yrs');
-                this.canidateTechnology =
+                this.candidateTechnology =
                   apiResponse.response.candidateTechnology;
-              } else {
-                this.verificationFailed = true;
-                return;
+                this.candidateRound=apiResponse.response.interviewRound;
               }
-
               this.initializeCodeMirror();
             } else {
-              this.verificationFailed = true;
+                this.verificationFailed = true;
+                this.verificationMessage ='Invalid or expired assessment link.';
+                return;
             }
           },
           error: (err) => {
-            console.error('Verification error:', err);
+            this.isVerified = false;
             this.verificationFailed = true;
-            alert(
-              'Failed to verify assessment link. Please check the link or try again.'
-            );
-          },
+            this.verificationMessage ='Failed to verify assessment link. Please try again.';
+        },
         });
     } else {
       this.verificationFailed = true;
@@ -169,7 +179,7 @@ export class AssessmentHomepageComponent
           extensions: [
             basicSetup,
             java(),
-            dracula,
+            eclipse,
             placeholder('WRITE YOUR CODE HERE...'),
             keymap.of([
               { key: 'Mod-c', run: () => true, preventDefault: true },
@@ -279,6 +289,8 @@ export class AssessmentHomepageComponent
       const currentCode = this.editorView.state.doc.toString();
       this.codeReq.candidateId = this.candidateId;
       this.codeReq.code = currentCode;
+      this.codeReq.codeType = 1;
+      this.codeReq.url=this.assessmentCode;
 
       if (this.codeReq.code.trim() !== '') {
         this.editerOutput = 'COMPILING...';
@@ -314,6 +326,7 @@ export class AssessmentHomepageComponent
       const currentCode = this.editorView.state.doc.toString();
       this.codeReq.candidateId = this.candidateId;
       this.codeReq.code = currentCode;
+      this.codeReq.url=this.assessmentCode;
 
       if (this.codeReq.code.trim() !== '') {
         this.editerOutput = 'RUNNING...';
@@ -356,16 +369,19 @@ export class AssessmentHomepageComponent
   }
 
   endSession(): void {
+    this.req.candidateId=this.candidateId;
+    this.req.assessmentUrl=this.assessmentCode;
+    this.req.interviewRound=this.candidateRound;
     this.openConfirmationDialogBox().then((flag: boolean) => {
       if (!flag) {
         return;
       }
-      this.assessmentService.endAssessment(this.candidateId).subscribe({
+      this.assessmentService.endAssessment(this.req).subscribe({
         next: () => {
           sessionStorage.removeItem('assessmentEndTime');
           sessionStorage.setItem('assessmentEnded', 'true');
 
-          this.router.navigate(['/thank-you']);
+          this.router.navigate(['/thankYou']);
         },
         error: (err) => {
           alert('Failed to end assessment. Please try again.');
@@ -447,9 +463,13 @@ export class AssessmentHomepageComponent
     sessionStorage.removeItem('assessmentEndTime');
     sessionStorage.setItem('assessmentEnded', 'true');
 
-    this.assessmentService.endAssessment(this.candidateId).subscribe({
+    this.req.candidateId=this.candidateId;
+    this.req.interviewRound=this.candidateRound;
+    this.req.assessmentUrl=this.assessmentCode;
+
+    this.assessmentService.endAssessment(this.req).subscribe({
       next: () => {
-        this.router.navigate(['/thank-you']);
+        this.router.navigate(['/thankYou']);
       },
       error: () => alert('Failed to end assessment. Please try again.'),
     });
@@ -464,5 +484,17 @@ export class AssessmentHomepageComponent
 
   private padZero(num: number): string {
     return num < 10 ? `0${num}` : `${num}`;
+  }
+
+  openTextEditor(): void {
+    this.router.navigate(['/textEditor'],{ queryParamsHandling: 'preserve' });
+  };
+
+  openJsonEditor(): void {
+    this.router.navigate(['/jsonEditor'],{ queryParamsHandling: 'preserve' });
+  }
+
+  openSqlEditor(): void {
+    this.router.navigate(['/sqlEditor'],{ queryParamsHandling: 'preserve' });
   }
 }

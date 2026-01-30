@@ -1,7 +1,6 @@
 package com.iris.OnlineCompilerBackend.controllers;
 
-import com.iris.OnlineCompilerBackend.dtos.AssessmentExtensionReqDTO;
-import com.iris.OnlineCompilerBackend.dtos.NewCandidateReqDTO;
+import com.iris.OnlineCompilerBackend.dtos.request.*;
 import com.iris.OnlineCompilerBackend.models.ApiResponse;
 import com.iris.OnlineCompilerBackend.services.AssessmentService;
 import jakarta.validation.Valid;
@@ -11,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("AssessmentService")
+@RequestMapping("/AssessmentService")
 public class AssessmentController {
 
     private static final Logger log = LoggerFactory.getLogger(AssessmentController.class);
@@ -24,74 +23,89 @@ public class AssessmentController {
         return assessmentService.verifyUrl(assessmentHashCode);
     }
 
-    @PostMapping("/new-assessment")
+    @PostMapping("/newAssessment")
     public ApiResponse newAssessment(@Valid @RequestBody NewCandidateReqDTO newCandidateReqDTO) {
 
         return assessmentService.createNewAssessment(newCandidateReqDTO);
     }
 
-    @GetMapping("/active-assessments")
+    @GetMapping("/activeAssessments")
     public ApiResponse viewAllActiveAssessments() {
-        try {
             return assessmentService.getAllActiveAssessments();
-        } catch (Exception e) {
-            log.info(e.getMessage());
-            return new ApiResponse.Builder().statusMessage("FAILURE").response(null).build();
-        }
     }
 
-    @GetMapping("/interviewer-active-assessments")
+    @GetMapping("/interviewerActiveAssessments")
     public ApiResponse viewActiveAssessmentsByAdminId(@RequestHeader("adminId") String adminId) {
         return assessmentService.getActiveAssessmentsByAdminId(adminId);
     }
 
-    @GetMapping("/view-submissions/{candidate-id}")
-    public ApiResponse viewSubmissionsOfCandidates(@PathVariable(value = "candidate-id") String candidateId) {
-        return assessmentService.viewSubmissionByCandidateId(candidateId);
+//    @GetMapping("/view-submissions/{candidate-id}")
+//    public ApiResponse viewSubmissionsOfCandidates(@PathVariable(value = "candidate-id") String candidateId) {
+//        return assessmentService.viewSubmissionByCandidateId(candidateId);
+//    }
+
+    @PostMapping("/viewSubmissionsByCandidateId")
+    public ApiResponse viewSubmissionsOfCandidates(@RequestBody ViewCandidateSubmissionsReqDTO req) {
+        return assessmentService.viewSubmissionByCandidateId(req);
     }
 
-    @GetMapping("/view-submissions-for-interviewer/{interviewer-id}")
-    public ApiResponse viewAllSubmissionsByInterviewerId(@PathVariable(value = "interviewer-id") String interviewerId) {
+    @GetMapping("/viewSubmissionsForInterviewer/{interviewerId}")
+    public ApiResponse viewAllSubmissionsByInterviewerId(@PathVariable(value = "interviewerId") String interviewerId) {
         return assessmentService.viewAllSubmissionsByInterviewerId(interviewerId);
     }
 
-    @GetMapping("/all-submissions")
+    @GetMapping("/allSubmissions")
     public ApiResponse viewAllSubmissions() {
         return assessmentService.viewAllSubmissions();
     }
 
-    @PostMapping("/end-assessment/{candidate-id}")
-    public ApiResponse endAssessment(@PathVariable(name = "candidate-id") String candidateId) {
-        return assessmentService.expireAssessment(candidateId);
+    @GetMapping("/candidatesStatus/{adminId}")
+    public ApiResponse viewCandidatesStatus(@PathVariable(name = "adminId") String adminId) {
+        return assessmentService.candidatesStatus(adminId);
     }
 
-    @PostMapping("/end-assessment-by-admin/{candidate-id}")
-    public ApiResponse endAssessmentByAdmin(@PathVariable(name = "candidate-id") String candidateId) {
-        return assessmentService.expireAssessment(candidateId);
+    @PostMapping("/endAssessment")
+    public ApiResponse endAssessment(@RequestBody ExpireAssessmentReqDTO req) {
+        return assessmentService.expireAssessment(req);
     }
 
-    @PostMapping("/extend-assessment")
+    @PostMapping("/endAssessmentByAdmin")
+    public ApiResponse endAssessmentByAdmin(@RequestBody ExpireAssessmentReqDTO req) {
+        return assessmentService.expireAssessment(req);
+    }
+
+    @PostMapping("/extendAssessment")
     public ApiResponse extendAssessment(@Valid @RequestBody AssessmentExtensionReqDTO assessmentExtensionReqDTO) {
         return assessmentService.extendCandidateAssessment(assessmentExtensionReqDTO);
     }
 
-    @GetMapping("/all-candidates")
+    @GetMapping("/allCandidates")
     public ApiResponse getAllCandidates() {
         return assessmentService.fetchAllCandidates();
     }
 
-    @GetMapping("/userdet-by-email/{candidate-email}")
-    public ApiResponse getAdminDetByEmail(@PathVariable(name = "candidate-email") String candidateEmail) {
-        return assessmentService.fetchAdminDetByEmail(candidateEmail);
+    @GetMapping("/userDetByEmail/{candidateEmail}")
+    public ApiResponse getUserDetByEmail(@PathVariable(name = "candidateEmail") String candidateEmail) {
+        return assessmentService.fetchUserDetByEmail(candidateEmail);
     }
 
-    @GetMapping("/candidate-url/{candidate-id}")
-    public ApiResponse getCandidateActiveUrlById(@PathVariable(name = "candidate-id") String candidateId) {
+    @GetMapping("/candidateUrl/{candidateId}")
+    public ApiResponse getCandidateActiveUrlById(@PathVariable(name = "candidateId") String candidateId) {
         return assessmentService.fetchActiveAssessmentUrlByCandidateId(candidateId);
     }
 
-    @GetMapping("/assessment-end-time-by-candidate-id/{candidate-id}")
-    public ApiResponse getAssessmentEndTimeByCandidateId(@PathVariable(name = "candidate-id") String candidateId) {
+    @GetMapping("/assessmentEndTimeByCandidateId/{candidateId}")
+    public ApiResponse getAssessmentEndTimeByCandidateId(@PathVariable(name = "candidateId") String candidateId) {
         return assessmentService.getAssessmentEndTimeByCandId(candidateId);
+    }
+
+    @PostMapping("/viewReport")
+    public ApiResponse viewReport(@RequestBody ViewReportReqDTO req) {
+        return assessmentService.viewReport(req);
+    }
+
+    @PostMapping("/submitReview")
+    public ApiResponse submitReport(@RequestBody @Valid SubmitReportReqDTO submitReportReqDTO) {
+        return assessmentService.submitReport(submitReportReqDTO);
     }
 }

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouterModule, Router } from '@angular/router'; 
 import { AdminService } from '../../services/admin.service';
+import { NavbarText } from '../../models/constants/navbar-text.constants';
 
 @Component({
   selector: 'app-admin-panel',
@@ -19,10 +20,18 @@ import { AdminService } from '../../services/admin.service';
 })
 export class AdminPanelComponent {
 
-  constructor(private http: HttpClient, private router: Router,private adminService:AdminService) { }
+  version=NavbarText.Version;
+  copyright=NavbarText.Copyright;
+  portalTitle=NavbarText.PortalName;
+
+  adminId=sessionStorage.getItem("adminFullName");
+  adminLastLoggedIn=sessionStorage.getItem("lastLoggedIn");
+  lastLoggedIn='';
+
+  constructor(private http: HttpClient, private router: Router,private adminService:AdminService) {}
 
   navigateTo(path: string): void {
-    if(sessionStorage.getItem("isAdmin")==="false" && path==='/new-admin'){
+    if(sessionStorage.getItem("isAdmin")==="false" && path==='/newAdmin'){
       alert("You can't access this section!");
       return;
     }
@@ -31,6 +40,6 @@ export class AdminPanelComponent {
 
   logOut():void{
     this.adminService.logoutAdmin();
-    this.router.navigate(['/admin-login']);
+    this.router.navigate(['/adminLogin']);
   }
 }

@@ -1,21 +1,33 @@
 import { keymap, placeholder, EditorView } from '@codemirror/view';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { CodeSnippetReqDTO } from '../../models/code-snippet-req.model';
+import { CodeSnippetReqDTO } from '../../models/request/code-snippet-req.model';
 import { SubmissionDetails } from '../../models/submission-details.model';
-import { ActivatedRoute, Router, RouterModule, RouterOutlet } from '@angular/router';
-import { Component, ElementRef, ViewChild, AfterViewInit, Inject, PLATFORM_ID, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  Inject,
+  PLATFORM_ID,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { java } from '@codemirror/lang-java';
 import { dracula } from '@uiw/codemirror-theme-dracula';
 import { basicSetup } from 'codemirror';
+import { eclipse } from '@uiw/codemirror-theme-eclipse';
 
 @Component({
-  selector: 'app-code-submission-info', 
+  selector: 'app-code-submission-info',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './code-submission-info.component.html', 
-  styleUrls: ['./code-submission-info.component.css']
+  templateUrl: './code-submission-info.component.html',
+  styleUrls: ['./code-submission-info.component.css'],
 })
-export class CodeSubmissionInfoComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CodeSubmissionInfoComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
   private _editorRef!: ElementRef;
   @ViewChild('editor', { static: false }) set editorRef(ref: ElementRef) {
     if (ref) {
@@ -30,65 +42,72 @@ export class CodeSubmissionInfoComponent implements OnInit, AfterViewInit, OnDes
   }
 
   editorView!: EditorView;
-
-  codeReq: CodeSnippetReqDTO = {
-    candidateId: '',
-    code: ''
-  };
-
-  jdkVersion = '17.0.12'; 
-
-  isVerified: boolean = false; 
-  verificationFailed: boolean = false;
-  isViewingSubmission: boolean = false; 
+  jdkVersion = '17.0.12';
+  receivedTech: string = '';
 
   codeContent: string = '';
   editerOutput: string = '';
-
   candidateId: string = '';
   candidateName: string = '';
-  candidateAction:string='';
-  candidateStatus:string='';
+  candidateAction: string = '';
+  candidateStatus: string = '';
+  candidateRound: string = '';
+
+  stateCandidateId: string = '';
+  stateInterviewerId: string = '';
+  stateRound: string = '';
+  stateAssessmentEndTime = '';
+  stateLangType = '';
 
   submissionDetails: SubmissionDetails | undefined;
 
-  private dialogResolve: ((value: boolean) => void) | null = null; 
-
-  constructor(@Inject(PLATFORM_ID) private platformId: Object,
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router,
-    private route: ActivatedRoute) { 
-      
-      const navigation = this.router.getCurrentNavigation();
-      
-      if (navigation?.extras?.state) {
-        
-        //getting the code object sent from view-submissions component
-        this.submissionDetails = navigation.extras.state['submissionDetails'];
+    private route: ActivatedRoute,
+  ) {
+    const navigation = this.router.getCurrentNavigation();
 
-        if (this.submissionDetails) {
-          this.isViewingSubmission = true; 
-          this.codeContent = this.submissionDetails.code;
-          this.editerOutput = this.submissionDetails.output === null ? 'N/A' : this.submissionDetails.output;
+    if (navigation?.extras?.state) {
+      this.submissionDetails = navigation.extras.state['submissionDetails'];
+      this.receivedTech = navigation.extras.state['tech'];
+      this.stateAssessmentEndTime =
+        navigation.extras.state['assessmentEndTime'];
+      this.stateRound = navigation.extras.state['round'];
+      this.stateLangType = navigation.extras.state['langType'];
+      this.stateInterviewerId = navigation.extras.state['interviewerId'];
+      this.stateCandidateId = navigation.extras.state['candidateId'];
 
-          this.candidateId = this.submissionDetails.candidateId;
-          this.candidateName = this.submissionDetails.candidateFullName;
-          this.candidateAction=this.submissionDetails.actionPerformed;
-          this.candidateStatus=this.submissionDetails.status;
-        }
+      if (this.submissionDetails) {
+        debugger;
+        this.codeContent = this.submissionDetails.code;
+        this.editerOutput =
+          this.submissionDetails.output === null
+            ? 'N/A'
+            : this.submissionDetails.output;
+        this.candidateId = this.submissionDetails.candidateId;
+        this.candidateName = this.submissionDetails.candidateFullName;
+        this.candidateAction = this.submissionDetails.actionPerformed;
+        this.candidateStatus =
+          this.submissionDetails.status === null
+            ? 'N/A'
+            : this.submissionDetails.status;
+        this.candidateRound =
+          this.submissionDetails.round === null
+            ? 'N/A'
+            : this.submissionDetails.round;
       }
+    }
   }
 
-  ngOnInit(): void {
-  }
-
-  ngAfterViewInit(): void {
-  }
+  ngOnInit(): void {}
+  ngAfterViewInit(): void {}
 
   private initializeCodeMirror(): void {
     setTimeout(() => {
-      if (isPlatformBrowser(this.platformId) && this.editorRef && this.editorRef.nativeElement) {
+      if (isPlatformBrowser(this.platformId) && this.editorRef?.nativeElement) {
         if (this.editorView) {
-          this.editorView.destroy(); 
+          this.editorView.destroy();
         }
 
         this.editorView = new EditorView({
@@ -96,28 +115,17 @@ export class CodeSubmissionInfoComponent implements OnInit, AfterViewInit, OnDes
           extensions: [
             basicSetup,
             java(),
-            dracula,
-            placeholder(""), 
-            EditorView.editable.of(false),  //setting editor to be editable as false
+            eclipse,
+            placeholder(''),
+            EditorView.editable.of(false),
             keymap.of([
-              { key: "Mod-c", run: () => true, preventDefault: true },
-              { key: "Mod-x", run: () => true, preventDefault: true },
-              { key: "Mod-v", run: () => true, preventDefault: true },
-              { key: "Mod-Shift-v", run: () => true, preventDefault: true }
+              { key: 'Mod-c', run: () => true, preventDefault: true },
+              { key: 'Mod-x', run: () => true, preventDefault: true },
+              { key: 'Mod-v', run: () => true, preventDefault: true },
             ]),
-            EditorView.domEventHandlers({
-              copy: (event) => { event.preventDefault(); return true; },
-              cut: (event) => { event.preventDefault(); return true; },
-              paste: (event) => { event.preventDefault(); return true; },
-              beforecopy: (event) => { event.preventDefault(); return true; },
-              beforecut: (event) => { event.preventDefault(); return true; },
-              beforepaste: (event) => { event.preventDefault(); return true; }
-            })
           ],
-          parent: this.editorRef.nativeElement
+          parent: this.editorRef.nativeElement,
         });
-      } else {
-        console.warn('Could not initialize CodeMirror: editorRef or nativeElement not available, or not in browser platform.');
       }
     }, 0);
   }
@@ -128,7 +136,15 @@ export class CodeSubmissionInfoComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  goBack(): void {
-    this.router.navigate(['/view-submissions']);
+  fetchDetailedInfo(langType: string): void {
+    this.router.navigate(['/viewSubmissions'], {
+      state: {
+        tech: langType,
+        candidate: this.stateCandidateId,
+        round: this.stateRound,
+        interviewer: this.stateInterviewerId,
+        assessmentEndTime: this.stateAssessmentEndTime
+      },
+    });
   }
 }

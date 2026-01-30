@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
 import { AdminLoginCreds } from '../../models/admin-login-creds.model';
 import { StatusConstants } from '../../models/constants/status.constants';
+import { NavbarText } from '../../models/constants/navbar-text.constants';
 
 @Component({
   selector: 'app-admin-login',
@@ -22,6 +23,10 @@ export class AdminLoginComponent implements OnInit{
     adminId: '',
     adminPassword: '',
   };
+
+  portalName:string=NavbarText.PortalName;
+  copyright:string=NavbarText.Copyright;
+  version:string=NavbarText.Version;
 
   constructor(private router: Router, private adminService: AdminService) {}
 
@@ -48,7 +53,8 @@ export class AdminLoginComponent implements OnInit{
           this.adminId = response.response.adminId;
           this.adminService.setIsLoggedIn(true);
           sessionStorage.setItem("accessToken",response.response.accessToken);
-          this.router.navigate(['/admin-panel']);
+          sessionStorage.setItem("lastLoggedIn",response.response.lastLoggedIn);
+          this.router.navigate(['/adminPanel']);
         } else {
           this.errorMessage = response.statusMessage;
           this.adminService.setIsLoggedIn(false);
@@ -61,6 +67,6 @@ export class AdminLoginComponent implements OnInit{
   }
 
   resetPassword():void{
-    this.router.navigate(['/reset-password']);
+    this.router.navigate(['/resetPassword']);
   }
 }

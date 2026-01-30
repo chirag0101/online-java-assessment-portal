@@ -1,11 +1,14 @@
 package com.iris.OnlineCompilerBackend.services;
 
+import com.iris.OnlineCompilerBackend.constants.CodeTypes;
 import com.iris.OnlineCompilerBackend.constants.CompilerActions;
-import com.iris.OnlineCompilerBackend.dtos.CodeSnippetReqDTO;
-import com.iris.OnlineCompilerBackend.dtos.CodeSnippetResDTO;
+import com.iris.OnlineCompilerBackend.dtos.request.CodeSnippetReqDTO;
+import com.iris.OnlineCompilerBackend.dtos.response.CodeSnippetResDTO;
 import com.iris.OnlineCompilerBackend.models.ApiResponse;
+import com.iris.OnlineCompilerBackend.models.AssessmentReport;
 import com.iris.OnlineCompilerBackend.models.Candidate;
 import com.iris.OnlineCompilerBackend.models.CodeSnippet;
+import com.iris.OnlineCompilerBackend.repositories.AssessmentReportRepo;
 import com.iris.OnlineCompilerBackend.repositories.CandidateRepo;
 import com.iris.OnlineCompilerBackend.repositories.CodeSnippetRepo;
 import org.slf4j.Logger;
@@ -29,6 +32,9 @@ public class CompileService {
     @Autowired
     private CandidateRepo candidateRepo;
 
+    @Autowired
+    private AssessmentReportRepo assessmentReportRepo;
+
     @Value("${assessment.programs.dir.path}")
     private String dirPath;
 
@@ -47,7 +53,19 @@ public class CompileService {
         //  running the code
         CodeSnippetResDTO codeSnippetResDTO = compileCode(codeSnippetReqDTO.getCandidateId(), codeSnippetReqDTO.getCode(), actionId);
 
-        Candidate candidate = candidateRepo.findByCandidateIdAndIsActive(codeSnippetReqDTO.getCandidateId()).orElseThrow(() -> new Exception("Candidate Not Found!"));
+        Candidate candidate = candidateRepo.findByCandidateIdByUrlAndIsActive(codeSnippetReqDTO.getCandidateId(), codeSnippetReqDTO.getUrl()).orElseThrow(() -> new Exception("Candidate Not Found!"));
+
+        //checking if languageType exists for this candidate so that we can see it in the report
+        List<String> assessmentCodeTypes=assessmentReportRepo.findAssessmentCodeTypesByUserId(candidate.getUserId());
+
+        if(!assessmentCodeTypes.contains(CodeTypes.getCodeTypeById(codeSnippetReqDTO.getCodeType()))){
+            AssessmentReport assessmentReport=new AssessmentReport();
+            assessmentReport.setCandidateUserIdFk(candidate);
+            assessmentReport.setScore(null);
+            assessmentReport.setComments(null);
+            assessmentReport.setLangType(CodeTypes.getCodeTypeById(codeSnippetReqDTO.getCodeType()));
+            assessmentReportRepo.save(assessmentReport);
+        }
 
         // Saving code snippet to DB
         CodeSnippet codeSnippet = new CodeSnippet();
@@ -56,6 +74,7 @@ public class CompileService {
         codeSnippet.setStatus(codeSnippetResDTO.getStatus());
         codeSnippet.setOutput(codeSnippetResDTO.getOutput());
         codeSnippet.setAction(CompilerActions.getActionById(actionId));
+        codeSnippet.setLanguageType(CodeTypes.getCodeTypeById(codeSnippetReqDTO.getCodeType()));
         codeSnippet.setUserIdFk(candidate);
         codeSnippetRepo.save(codeSnippet);
 
@@ -105,7 +124,11 @@ public class CompileService {
         }
 
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+
+        //file manager to handle .class & .java files
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
+
+        //loading the source file
         Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(sourceFile);
 
         StringWriter compilerOutput = new StringWriter();
@@ -194,7 +217,7 @@ public class CompileService {
         }
     }
 
-//validating if class name contains only A-Z , a-z , 0-9 , _ , $
+    //validating if class name contains only A-Z , a-z , 0-9 , _ , $
 
     private String validateFileName(String filename) throws Exception {
         try {

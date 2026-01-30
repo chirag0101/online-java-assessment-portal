@@ -30,16 +30,8 @@ export class ExtendAssessmentDialogComponent {
   ) {}
 
   onConfirm(): void {
-
-    if(!Number.isInteger(this.minutes)){
-      alert("Invalid Extension time!");
-      return;
-    }
-
     if (this.minutes !== null && this.minutes > 0) {
       this.dialogRef.close(this.minutes); 
-    } else {
-      alert('Please enter a valid number of minutes greater than 0.');
     }
   }
 

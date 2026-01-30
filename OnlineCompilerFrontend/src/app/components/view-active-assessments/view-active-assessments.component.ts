@@ -6,7 +6,7 @@ import {
   ActiveAssessment,
   ActiveAssessmentsResponse,
   ExtendAssessment,
-  UrlRes
+  UrlRes,
 } from '../../services/assessment.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -15,6 +15,8 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { ExtendAssessmentDialogComponent } from '../extend-assessment-dialog/extend-assessment-dialog.component';
 import { MatIconModule } from '@angular/material/icon';
 import { AdminService } from '../../services/admin.service';
+import { ExpireAssessmentReq } from '../../models/request/expire-assessment-req-model';
+import { NavbarText } from '../../models/constants/navbar-text.constants';
 
 @Component({
   selector: 'app-view-active-assessments',
@@ -31,11 +33,22 @@ export class ViewActiveAssessmentsComponent implements OnInit {
   assessmentUrl: string = '';
   copySuccess: boolean = false;
 
+  adminId = sessionStorage.getItem('adminFullName');
+  lastLoggedIn = sessionStorage.getItem('lastLoggedIn');
+  req: ExpireAssessmentReq = {
+    candidateId: '',
+    assessmentUrl: '',
+    interviewRound:''
+  };
+  version = NavbarText.Version;
+  copyright = NavbarText.Copyright;
+  portalTitle = NavbarText.PortalName;
+
   constructor(
     private assessmentService: AssessmentService,
     private router: Router,
     private dialog: MatDialog,
-    private adminService: AdminService
+    private adminService: AdminService,
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +62,7 @@ export class ViewActiveAssessmentsComponent implements OnInit {
     if (sessionStorage.getItem('isAdmin') === 'false') {
       this.assessmentService
         .getActiveAssessmentsForCurrentAdmin(
-          sessionStorage.getItem('adminId') ?? ''
+          sessionStorage.getItem('adminId') ?? '',
         )
         .subscribe({
           next: (data: ActiveAssessmentsResponse) => {
@@ -89,46 +102,16 @@ export class ViewActiveAssessmentsComponent implements OnInit {
     });
   }
 
-  copyUrl(candidateId: string): void {
-    const match = candidateId.match(/\(([^)]+)\)/);
-    const finalCandidateId = match ? match[1] : candidateId;
-
-    if (finalCandidateId !== null) {
-      this.assessmentService.getUrlByCandidateId(finalCandidateId).subscribe({
-        next: (response: UrlRes) => {
-          if (response) {
-            navigator.clipboard
-              .writeText(response.response)
-              .then(() => {
-                this.copySuccess = true;
-                alert('URL copied to clipboard!');
-                setTimeout(() => {
-                  this.copySuccess = false;
-                }, 3000);
-              })
-              .catch((err) => {
-                this.copySuccess = false;
-                alert('Failed to copy URL. Please try again or copy manually.');
-              });
-          } else {
-            this.copySuccess = false;
-            alert('Could not retrieve a valid URL. Please try again.');
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching assessment URL:', err);
-          this.copySuccess = false;
-          alert(
-            'Error fetching assessment URL. Please check your connection or try again later.'
-          );
-        },
+  copyUrl(url: string) {
+    if (url) {
+      navigator.clipboard.writeText(url).then(() => {
+        this.copySuccess = true;
+        alert('Assessment URL copied to clipboard!');
+        setTimeout(() => (this.copySuccess = false), 2000);
       });
-    } else {
-      this.copySuccess = false;
     }
   }
-
-  extendAssessment(candidateId: string): void {
+  extendAssessment(candidateId: string,interviewRound:string): void {
     const match = candidateId.match(/\(([^)]+)\)/);
     const extractedId = match ? match[1] : null;
 
@@ -145,6 +128,7 @@ export class ViewActiveAssessmentsComponent implements OnInit {
         const extendAssessmentObj: ExtendAssessment = {
           candidateId: candidateId,
           minutes: minutes,
+          interviewRound: interviewRound
         };
 
         this.assessmentService.extendAssessment(extendAssessmentObj).subscribe({
@@ -162,17 +146,21 @@ export class ViewActiveAssessmentsComponent implements OnInit {
     });
   }
 
-  endAssessment(candidateId: string): void {
+  endAssessment(candidateId: string, assessmentUrl: string,round:string): void {
     const match = candidateId.match(/\(([^)]+)\)/);
     const extractedId = match ? match[1] : null;
 
     if (extractedId !== null) {
       candidateId = extractedId;
     }
+    debugger;
+    this.req.candidateId = candidateId;
+    this.req.assessmentUrl = assessmentUrl;
+    this.req.interviewRound= round;
 
     this.openConfirmationDialogBox(2).then((flag: boolean) => {
       if (flag) {
-        this.assessmentService.endAssessmentByAdmin(candidateId).subscribe({
+        this.assessmentService.endAssessmentByAdmin(this.req).subscribe({
           next: () => {
             this.fetchActiveAssessments();
           },
@@ -206,6 +194,11 @@ export class ViewActiveAssessmentsComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/admin-panel']);
+    this.router.navigate(['/adminPanel']);
+  }
+
+  logOut(): void {
+    this.adminService.logoutAdmin();
+    this.router.navigate(['/adminLogin']);
   }
 }

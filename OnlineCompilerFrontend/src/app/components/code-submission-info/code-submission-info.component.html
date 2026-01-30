@@ -1,38 +1,51 @@
-
-  <div class="info-panel">
-    <div class="candidate-label">
-      <label class="info-label">CANDIDATE ID: </label>
-      <label>{{ candidateId }} </label>
-    </div>
-    <div class="candidate-label">
-      <label class="info-label">CANDIDATE NAME: </label>
-      <label>{{ candidateName }} </label>
-    </div>
-    <div class="candidate-label">
-      <label class="info-label">ACTION: </label>
-      <label>{{ candidateAction }} </label>
-    </div>
-    <div class="candidate-label">
-      <label class="info-label">STATUS: </label>
-      <label>{{ candidateStatus }}</label>
-    </div>
-  </div>
-
-  <div class="compiler-page-container">
-    <div class="code-compiler-section">
-      <div class="code-editor-container">
-        <div #editor class="codemirror-host"></div>
+<div class="compiler-page-container">
+  <div class="code-compiler-section">
+    <div class="code-editor-container">
+      <div class="panel-header">
+        <span class="panel-icon">Source</span>
+        <span class="panel-title">EDITOR</span>
       </div>
-      <div class="output-panel">
+      <div #editor class="codemirror-host"></div>
+    </div>
+
+    <div class="output-panel-container">
+      <div class="panel-header">
+        <span class="panel-icon">Terminal</span>
+        <span class="panel-title">OUTPUT</span>
+      </div>
+      <div class="output-content">
         <pre>{{ editerOutput }}</pre>
       </div>
     </div>
-
-    <div class="buttons-panel">
-      <label> JDK Version: {{jdkVersion}}</label>
-      <button (click)="goBack()">Back</button>
-    </div>
   </div>
 
+  <div class="buttons-panel">
+    <div class="candidate-info-group">
+      <div class="candidate-label">
+        <span class="info-label">CANDIDATE ID: </span>{{ candidateId }}
+      </div>
+      <div class="candidate-label">
+        <span class="info-label">CANDIDATE NAME: </span>{{ candidateName }}
+      </div>
+      <div class="candidate-label">
+        <span class="info-label">INTERVIEW ROUND: </span>{{ candidateRound }}
+      </div>
+      <div class="candidate-label">
+        <span class="info-label">ACTION: </span>{{ candidateAction }}
+      </div>
+      <div class="candidate-label">
+        <span class="info-label">STATUS: </span>{{ candidateStatus }}
+      </div>
+    </div>
 
-<router-outlet></router-outlet>
+    <div class="action-buttons">
+      <button
+        type="button"
+        class="btn-back"
+        (click)="fetchDetailedInfo(receivedTech)"
+      >
+        BACK
+      </button>
+    </div>
+  </div>
+</div>

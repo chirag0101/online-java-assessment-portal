@@ -4,7 +4,8 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
 import { AdminLoginCreds } from '../../models/admin-login-creds.model';
-import { ResetAdminReq } from '../../models/reset-admin-req.model';
+import { ResetAdminReq } from '../../models/request/reset-admin-req.model';
+import { NavbarText } from '../../models/constants/navbar-text.constants';
 
 @Component({
   selector: 'reset-admin-password',
@@ -15,10 +16,13 @@ import { ResetAdminReq } from '../../models/reset-admin-req.model';
 })
 export class ResetAdminPasswordComponent {
   errorMessage: string = '';
-  adminId:string='';
-  adminOldPassword:string='';
-  adminNewPassword:string='';
-  adminNewConfirmPassword:string='';
+  adminId: string = '';
+  adminOldPassword: string = '';
+  adminNewPassword: string = '';
+  adminNewConfirmPassword: string = '';
+  portalName: string = NavbarText.PortalName;
+  copyright: string = NavbarText.Copyright;
+  version: string = NavbarText.Version;
 
   resetAdminReq: ResetAdminReq = {
     adminId: '',
@@ -27,25 +31,33 @@ export class ResetAdminPasswordComponent {
     adminNewConfirmPassword: '',
   };
 
-  constructor(private router: Router, private adminService: AdminService) {}
+  constructor(
+    private router: Router,
+    private adminService: AdminService,
+  ) {}
 
   resetPassword(form: NgForm): void {
     form.form.markAllAsTouched();
-    if (!this.adminId || !this.adminOldPassword || !this.adminNewPassword || !this.adminNewConfirmPassword) {
+    if (
+      !this.adminId ||
+      !this.adminOldPassword ||
+      !this.adminNewPassword ||
+      !this.adminNewConfirmPassword
+    ) {
       this.errorMessage = 'Admin Details are required!';
       return;
     }
 
-    this.resetAdminReq.adminId=this.adminId;
-    this.resetAdminReq.adminOldPassword=this.adminOldPassword;
-    this.resetAdminReq.adminNewPassword=this.adminNewPassword;
-    this.resetAdminReq.adminNewConfirmPassword=this.adminNewConfirmPassword
+    this.resetAdminReq.adminId = this.adminId;
+    this.resetAdminReq.adminOldPassword = this.adminOldPassword;
+    this.resetAdminReq.adminNewPassword = this.adminNewPassword;
+    this.resetAdminReq.adminNewConfirmPassword = this.adminNewConfirmPassword;
 
     this.adminService.resetPassword(this.resetAdminReq).subscribe({
       next: (response) => {
         if (response.status) {
-          alert("Password Resetted Successfully!");
-          this.router.navigate(['/admin-login']);
+          alert('Password Resetted Successfully!');
+          this.router.navigate(['/adminLogin']);
         } else {
           this.errorMessage = response.statusMessage;
         }
@@ -56,7 +68,7 @@ export class ResetAdminPasswordComponent {
     });
   }
 
-  goBack():void{
-    this.router.navigate(['/admin-login']);
+  goBack(): void {
+    this.router.navigate(['/adminLogin']);
   }
 }

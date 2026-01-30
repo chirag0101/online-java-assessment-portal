@@ -1,149 +1,159 @@
-.mat-mdc-dialog-surface {
-  background-color: #282a36 !important;
-  color: #e0e0e0 !important;
-  border: 1px solid #44475a !important;
+/* --- DIALOG POSITIONING & CENTERING --- */
+::ng-deep .cdk-overlay-pane {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+::ng-deep .mat-mdc-dialog-surface {
+  background-color: #ffffff !important;
+  color: #005aaa !important;
+  border: 1px solid #005aaa !important;
   border-radius: 12px !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 8px 30px rgba(0, 90, 170, 0.25) !important;
   max-width: 800px;
+  width: 100%;
+  margin: 0 auto !important; /* Forces horizontal centering */
 }
 
+/* --- CENTERED DIALOG TITLE --- */
 h2.mat-mdc-dialog-title {
-  color: #6272a4 !important;
-  border-bottom: 2px solid #6272a4;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  text-align: center;
-  font-weight: 500;
-  border-radius: 6px;
+  color: #005aaa !important;
+  border-bottom: 2px solid #005aaa;
+  padding: 20px 0 !important;
+  margin: 0 !important;
+  text-align: center !important; /* Centers the text */
+  font-weight: 700;
   font-family: 'Nunito Sans', sans-serif;
+  display: flex !important;
+  justify-content: center !important; /* Centers if it's a flex container */
+  width: 100%;
 }
 
+/* --- DIALOG CONTENT --- */
 mat-dialog-content {
-  color: #e0e0e0;
+  color: #005aaa !important;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 1em;
-  padding-bottom: 20px;
-  border-radius: 6px; 
+  font-size: 14px;
+  padding: 24px !important;
+  display: block;
 }
 
+/* --- SEARCH FIELD CENTERING & FIX --- */
 mat-form-field.full-width {
   width: 100%;
-  margin-bottom: 15px;
-  border-radius: 10px; 
+  margin: 10px 0 20px 0 !important;
 }
 
-.mat-mdc-form-field-outline-start,
-.mat-mdc-form-field-outline-end,
-.mat-mdc-form-field-outline-gap {
-  border-color: #6272a4 !important;
+/* This targets the internal container to fix the "shifted" search term */
+::ng-deep .mat-mdc-form-field-infix {
+  display: flex !important;
+  align-items: center !important;
+  padding: 12px 0 !important;
+  min-height: 48px !important;
 }
 
-.mat-mdc-form-field.mat-focused .mat-mdc-form-field-outline-start,
-.mat-mdc-form-field.mat-focused .mat-mdc-form-field-outline-end,
-.mat-mdc-form-field.mat-focused .mat-mdc-form-field-outline-gap {
-  border-color: #50fa7b !important;
-}
-
-.mat-mdc-form-field-label {
-  color: #e0e0e0 !important;
-}
-
-.mat-mdc-form-field.mat-focused .mat-mdc-form-field-label {
-  color: #50fa7b !important;
-}
-
+/* Centers the placeholder and the typed text within the input box */
 input.mat-mdc-input {
-  background-color: #44475a !important;
-  color: #f8f8f2 !important;
-  caret-color: #50fa7b !important;
-  border-radius: 6px !important;
-  padding: 8px 12px !important;
-  box-sizing: border-box !important;
+  color: #005aaa !important;
+  caret-color: #005aaa !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: normal !important;
+  vertical-align: middle !important;
 }
 
+/* Fix for the label/placeholder alignment */
+::ng-deep .mat-mdc-form-field-label-wrapper {
+  top: 0 !important;
+  padding-top: 12px !important;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  background-color: #ffffff !important;
+  border-radius: 4px !important;
+}
+
+/* --- TABLE WRAPPER --- */
 .table-wrapper {
   max-height: 300px;
   overflow-y: auto;
   margin-top: 15px;
-  border: 1px solid #44475a;
+  border: 1px solid #005aaa;
   border-radius: 8px;
+  background-color: #ffffff;
 }
 
+/* --- TABLE STYLING --- */
 table.mat-table {
   width: 100%;
-  background-color: #282a36;
-  color: #e0e0e0;
+  background-color: #ffffff;
   border-collapse: collapse;
-  border-radius: 30px; 
-  overflow: hidden; 
 }
 
 th.mat-header-cell {
-  background-color: #3b3e4e;
-  color: #f8f8f2;
+  background-color: #005aaa !important;
+  color: #ffffff !important;
   font-weight: 600;
   text-transform: uppercase;
-  font-size: 0.9em;
-  padding: 10px;
+  font-size: 12px;
+  padding: 12px !important;
   text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 td.mat-cell {
-  padding: 10px;
-  border-bottom: 1px solid #44475a;
+  padding: 12px !important;
+  border-bottom: 1px solid #ffffff;
+  color: #005aaa !important;
 }
 
-.mat-row:hover {
-  background-color: #353842;
+/* --- ROW HOVER --- */
+.mat-mdc-row:hover {
+  background-color: rgba(0, 90, 170, 0.05) !important;
+  cursor: pointer;
 }
 
-.mat-radio-button .mat-radio-inner-circle {
-  background-color: #6272a4;
+/* --- RADIO BUTTONS --- */
+::ng-deep .mat-mdc-radio-button.mat-mdc-radio-checked .mat-radio-outer-circle {
+  border-color: #005aaa !important;
 }
 
-.mat-radio-button.mat-mdc-radio-checked .mat-radio-outer-circle {
-  border-color: #6272a4;
-}
-
-.mat-radio-button {
-  color: #6272a4;
-}
-
-.mat-row.mat-no-data-row {
-  color: #6272a4;
-  text-align: center;
-  padding: 15px;
-  font-style: italic;
+::ng-deep .mat-mdc-radio-button .mat-radio-inner-circle {
+  background-color: #005aaa !important;
 }
 
 mat-dialog-actions {
-  margin-top: 20px;
+  padding: 16px 24px !important;
+  display: flex !important;
+  justify-content: right !important; /* Centers the Action buttons */
+  gap: 15px;
+  border-top: 1px solid #005aaa !important;
 }
 
 mat-dialog-actions button {
-  background-color: #6272a4;
   font-family: 'Nunito Sans', sans-serif;
-  color: #e0e0e0;
   font-weight: 600;
   text-transform: uppercase;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  padding: 8px 15px;
+  padding: 10px 24px !important;
   border-radius: 6px !important;
-  min-width: 90px;
-  margin-left: 10px;
 }
 
 mat-dialog-actions button:hover {
-  background-color: #44475a;
-  transform: translateY(-1px);
+    box-shadow: 0 8px 30px #005aaa !important;
 }
 
-mat-dialog-actions button.mat-mdc-button-primary {
-  background-color: #50fa7b;
-  color: #282a36;
+/* Cancel/Close Button */
+button[mat-dialog-close] {
+  background-color: #ffffff !important;
+  color: #495057 !important;
 }
 
-mat-dialog-actions button.mat-mdc-button-primary:hover {
-  background-color: #3cb35d;
-  transform: translateY(-1px);
+/* Primary Select Button */
+mat-dialog-actions button.mat-mdc-raised-button.mat-primary {
+  background-color: #005aaa !important;
+  color: #ffffff !important;
 }

@@ -1,7 +1,7 @@
 package com.iris.OnlineCompilerBackend.controllers;
 
-import com.iris.OnlineCompilerBackend.dtos.CodeSnippetReqDTO;
-import com.iris.OnlineCompilerBackend.dtos.CodeSnippetResDTO;
+import com.iris.OnlineCompilerBackend.dtos.request.CodeSnippetReqDTO;
+import com.iris.OnlineCompilerBackend.dtos.response.CodeSnippetResDTO;
 import com.iris.OnlineCompilerBackend.models.ApiResponse;
 import com.iris.OnlineCompilerBackend.services.AssessmentService;
 import com.iris.OnlineCompilerBackend.services.CodeService;
@@ -27,13 +27,13 @@ public class CompilerController {
     @Autowired
     private AssessmentService assessmentService;
 
-    @GetMapping("/jdk-version")
+    @GetMapping("/jdkVersion")
     public ApiResponse getJdkVersion() {
         return compileService.getJdkVersion();
     }
 
-    @PostMapping("/candidate-action/{action-id}")
-    public CodeSnippetResDTO processCode(@Valid @RequestBody CodeSnippetReqDTO codeSnippetReqDTO, @PathVariable(value = "action-id") Integer actionId) {
+    @PostMapping("/candidateAction/{actionId}")
+    public CodeSnippetResDTO processCode(@Valid @RequestBody CodeSnippetReqDTO codeSnippetReqDTO, @PathVariable(value = "actionId") Integer actionId) {
         try {
             return compileService.executeCompilerAction(codeSnippetReqDTO, actionId);
         } catch (Exception e) {
@@ -42,9 +42,14 @@ public class CompilerController {
         }
     }
 
-    @GetMapping("/get-code/{code-id}")
-    public ApiResponse viewCode(@PathVariable(name = "code-id") Long codeId) {
+    @GetMapping("/getCode/{codeId}")
+    public ApiResponse viewCode(@PathVariable(name = "codeId") Long codeId) {
         return codeService.fetchCodeById(codeId);
+    }
+
+    @PostMapping("/submitData")
+    public ApiResponse submitData(@RequestBody @Valid CodeSnippetReqDTO req) {
+        return assessmentService.submitData(req);
     }
 
 }

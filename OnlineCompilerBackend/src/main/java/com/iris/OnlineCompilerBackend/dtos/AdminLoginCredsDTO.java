@@ -1,8 +1,12 @@
 package com.iris.OnlineCompilerBackend.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class AdminLoginCredsDTO {
+    @NotBlank(message = "ADMIN ID REQUIRED!")
     private String adminId;
 
+    @NotBlank(message = "ADMIN PASSWORD REQUIRED!")
     private String adminPassword;
 
     public AdminLoginCredsDTO() {

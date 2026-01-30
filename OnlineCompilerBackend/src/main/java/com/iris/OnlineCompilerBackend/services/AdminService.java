@@ -3,7 +3,11 @@ package com.iris.OnlineCompilerBackend.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iris.OnlineCompilerBackend.config.AESV2;
 import com.iris.OnlineCompilerBackend.config.PasswordHashing;
-import com.iris.OnlineCompilerBackend.dtos.*;
+import com.iris.OnlineCompilerBackend.dtos.AdminLoginCredsDTO;
+import com.iris.OnlineCompilerBackend.dtos.request.NewAdminReqDTO;
+import com.iris.OnlineCompilerBackend.dtos.request.ResetAdminPasswordReqDTO;
+import com.iris.OnlineCompilerBackend.dtos.response.AdminAuthenticationResDTO;
+import com.iris.OnlineCompilerBackend.dtos.response.AllAdminResDTO;
 import com.iris.OnlineCompilerBackend.models.AccessTokenJSON;
 import com.iris.OnlineCompilerBackend.models.Admin;
 import com.iris.OnlineCompilerBackend.models.ApiResponse;
@@ -35,17 +39,18 @@ public class AdminService {
     @Value("${zone.id}")
     private String timeZone;
 
-    public ApiResponse createAdmin(String existingAdminId, NewAdminReqDTO adminCredsReqDTO) {
+    public ApiResponse createAdmin(String existingAdminId, NewAdminReqDTO req) {
         try {
 
-            if (adminRepo.findByAdminId(adminCredsReqDTO.getAdminId()) != null) {
+            //if admin exists
+            if (adminRepo.findByAdminId(req.getAdminId()) != null) {
                 return new ApiResponse.Builder().status(false).statusMessage("ADMIN already exists!").build();
             }
 
             Admin admin = new Admin();
-            admin.setAdminId(adminCredsReqDTO.getAdminId());
+            admin.setAdminId(req.getAdminId());
 
-            String defaultPassword = adminCredsReqDTO.getAdminId() + passwordSuffix;
+            String defaultPassword = req.getAdminId() + passwordSuffix;
 
             String salt = PasswordHashing.getSalt();
             String hashPassword = PasswordHashing.createHash(defaultPassword, salt, Boolean.TRUE);
@@ -53,15 +58,15 @@ public class AdminService {
             admin.setSalt(salt);
             admin.setAdminPassword(hashPassword);
 
-            admin.setFullName(adminCredsReqDTO.getAdminFullName());
-            admin.setIsAdmin(adminCredsReqDTO.getIsAdmin());
+            admin.setFullName(req.getAdminFullName());
+            admin.setIsAdmin(req.getIsAdmin());
 
             admin.setCreatedByFk(adminRepo.findByAdminId(existingAdminId));
 
             admin.setLastLogin(null);
 
             admin.setLastAccesstoken(null);
-            admin.setAccessTokenIsExpired(false);
+            admin.setAccessTokenIsExpired(true);
             admin.setAccessTokenCreatedOn(null);
             admin.setAccessTokenLastAccessedOn(null);
 
@@ -76,6 +81,8 @@ public class AdminService {
 
     public ApiResponse verifyAdminCreds(AdminLoginCredsDTO adminLoginReqDto) {
         try {
+
+            //check if admin exists
             Admin admin = adminRepo.findByAdminId(adminLoginReqDto.getAdminId());
 
             if (admin == null) {
@@ -108,7 +115,7 @@ public class AdminService {
 
                 adminRepo.save(admin);
 
-                return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(new AdminAuthenticationResDTO(admin.getAdminId(), admin.getIsAdmin(), admin.getFullName(), admin.getLastAccesstoken())).build();
+                return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(new AdminAuthenticationResDTO(admin.getAdminId(), admin.getIsAdmin(), admin.getFullName(), admin.getLastAccesstoken(),admin.getLastLogin())).build();
             }
 
             throw new Exception("INVALID CREDENTIALS!");
@@ -131,13 +138,12 @@ public class AdminService {
                 throw new Exception("ADMIN DOESN'T EXISTS!");
             }
 
-            //verifying old passwords match
+            //verifying if old & new passwords match
             if (!(PasswordHashing.validatePassword(admin.getSalt(), admin.getAdminPassword(), PasswordHashing.createHash(resetAdminPasswordReqDTO.getAdminOldPassword(), admin.getSalt(), Boolean.TRUE)))) {
                 throw new Exception("INVALID CREDENTIALS!");
             }
 
             //storing new password & salt
-
             String newSalt = PasswordHashing.getSalt();
             String newHashPassword = PasswordHashing.createHash(resetAdminPasswordReqDTO.getAdminNewPassword(), newSalt, Boolean.TRUE);
 
@@ -167,9 +173,11 @@ public class AdminService {
         try {
             List<Admin> admins = adminRepo.findAllActiveAdmins();
             for (Admin admin : admins) {
-                //checking if user is idle for 15 mins from last api call
-                if (Duration.between(OffsetDateTime.parse(admin.getAccessTokenLastAccessedOn()), OffsetDateTime.now(ZoneId.of(timeZone))).toMinutes() >= 15) {
-                    admin.setAccessTokenIsExpired(true);
+                if (admin.getAccessTokenLastAccessedOn() != null) {
+                    //checking if user is idle for 15 mins from last api call
+                    if (Duration.between(OffsetDateTime.parse(admin.getAccessTokenLastAccessedOn()), OffsetDateTime.now(ZoneId.of(timeZone))).toMinutes() >= 15) {
+                        admin.setAccessTokenIsExpired(true);
+                    }
                 }
             }
             adminRepo.saveAll(admins);

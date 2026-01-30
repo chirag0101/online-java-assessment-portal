@@ -1,14 +1,14 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { AdminLoginCreds } from '../../app/models/admin-login-creds.model';
-import { AdminLoginResponse } from '../../app/models/admin-login-response.model';
+import { AdminLoginResponse } from '../models/response/admin-login-response.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NewAdminResponse } from '../../app/components/new-admin/new-admin.component';
 import { Observable, BehaviorSubject, of, catchError, tap } from 'rxjs';
-import { AdminDetailsResponse } from '../models/all-admins-res.model';
+import { AdminDetailsResponse } from '../models/response/all-admins-res.model';
 import { NewAdminDetails } from '../models/admin-details.model';
 import { isPlatformBrowser } from '@angular/common';
-import { ResetAdminRes } from '../models/reset-admin-res.model';
-import { ResetAdminReq } from '../models/reset-admin-req.model';
+import { ResetAdminRes } from '../models/response/reset-admin-res.model';
+import { ResetAdminReq } from '../models/request/reset-admin-req.model';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment.development';
 
@@ -50,7 +50,7 @@ export class AdminService {
   ): Observable<AdminLoginResponse> {
     return this.http
       .post<AdminLoginResponse>(
-        `${this.adminServiceUrl}/authenticate-admin`,
+        `${this.adminServiceUrl}/authenticateAdmin`,
         adminLoginCreds
       )
       .pipe(
@@ -67,6 +67,7 @@ export class AdminService {
                 'adminFullName',
                 response.response.adminFullName
               );
+              sessionStorage.setItem('accessToken', response.response.accessToken);
             }
             this.setIsLoggedIn(true);
           } else {
@@ -108,7 +109,7 @@ export class AdminService {
       adminId: sessionStorage.getItem('adminId') || '',
     };
     return this.http.post<NewAdminResponse>(
-      `${this.adminServiceUrl}/new-admin`,
+      `${this.adminServiceUrl}/newAdmin`,
       newAdminDetails,
       { headers: header }
     );
@@ -116,7 +117,7 @@ export class AdminService {
 
   resetPassword(resetAdminReq: ResetAdminReq): Observable<ResetAdminRes> {
     return this.http.post<ResetAdminRes>(
-      `${this.adminServiceUrl}/reset-password`,
+      `${this.adminServiceUrl}/resetPassword`,
       resetAdminReq
     );
   }
@@ -128,7 +129,7 @@ export class AdminService {
     });
 
     return this.http.get<AdminDetailsResponse>(
-      `${this.adminServiceUrl}/all-admins`,
+      `${this.adminServiceUrl}/allAdmins`,
       {
         headers: header,
       }
@@ -137,7 +138,7 @@ export class AdminService {
 
   onSessionTimeout(): void {
     sessionStorage.clear();
-    alert('Session Timeout!');
-    this.router.navigate(['/admin-login']);
+    alert('Session Timeout please login again!');
+    this.router.navigate(['/adminLogin']);
   }
 }

@@ -2,31 +2,43 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { EMPTY, Observable } from 'rxjs';
-import { CodeSnippetReqDTO } from '../../app/models/code-snippet-req.model';
-import { CodeSnippetResDTO } from '../../app/models/code-snippet-res.model';
+import { CodeSnippetReqDTO } from '../models/request/code-snippet-req.model';
+import { CodeSnippetResDTO } from '../models/response/code-snippet-res.model';
 import { CompilerAction } from '../../app/models/constants/compiler-actions.constants';
-import { AssessmentVerificationResponse } from '../../app/models/assessment-verification-res.model';
+import { AssessmentVerificationResponse } from '../../app/models/response/assessment-verification-res.model';
 import { CandidateDetails } from '../../app/models/candidate-details.model';
+import { AllSubmissions } from '../../app/models/submission-details.model';
+import { environment } from '../../environments/environment';
 import {
-  AllSubmissions
-} from '../../app/models/submission-details.model';
-import { environment } from '../../environments/environment'
+  AllAssessmentHistories,
+  AssessmentHistory,
+} from '../models/assessment-history.model';
+import { ViewReportRes } from '../models/response/view-report-res.model';
+import { ReviewAssessmentComponent } from '../components/review-assessment/review-assessment.component';
+import { SubmitReportReq } from '../models/request/submit-report-req.model';
+import { GetCandidateSubmissionsReq } from '../models/request/candidate-submissions-req-model';
+import { ApiResponse } from '../models/response/candidate-submissions-res.model';
+import { ExpireAssessmentReq } from '../models/request/expire-assessment-req-model';
+import { ViewReportReq } from '../models/request/view-report-req.model';
 
 export interface ActiveAssessment {
   candidateNameWithId: string;
-  interviwerNameWithId: string;
+  interviewerNameWithId: string;
   yearsOfExperience: number;
   technology: string;
   round: string;
   urlExpiryTime: string;
+  assessmentScheduledTime:string,
   assessmentStartTime: string;
   assessmentEndTime: string;
+  assessmentIsStarted:boolean;
   url: string;
 }
 
 export interface ExtendAssessment {
   candidateId: string;
   minutes: number;
+  interviewRound:string;
 }
 
 export interface ActiveAssessmentsResponse {
@@ -35,6 +47,7 @@ export interface ActiveAssessmentsResponse {
 }
 
 export interface NewAssessmentResponse {
+  status: boolean;
   statusMessage: string;
   response: string;
 }
@@ -53,6 +66,7 @@ export interface CandidateDetialsReq {
   candidateYearsOfExpInMonths: number | null;
   adminId: string;
   interviewRound: string;
+  interviewDateTime: string;
 }
 
 export interface CandidateDetialsRes {
@@ -85,7 +99,7 @@ export interface JdkVersionRes {
   response: string;
 }
 
-export interface AssessmentEndTimeRes{
+export interface AssessmentEndTimeRes {
   status: string;
   statusMessge: string;
   response: string;
@@ -102,7 +116,7 @@ export class AssessmentService {
 
   getJdkVersion(): Observable<JdkVersionRes> {
     return this.http.get<JdkVersionRes>(
-      `${this.compilerActionUrl}/jdk-version`
+      `${this.compilerActionUrl}/jdkVersion`
     );
   }
 
@@ -125,7 +139,18 @@ export class AssessmentService {
       return EMPTY;
     }
     return this.http.post<CodeSnippetResDTO>(
-      `${this.compilerActionUrl}/candidate-action/${CompilerAction.Compile}`,
+      `${this.compilerActionUrl}/candidateAction/${CompilerAction.Compile}`,
+      codeSnippetReqDTO
+    );
+  }
+
+  saveCode(codeSnippetReqDTO: CodeSnippetReqDTO): Observable<CodeSnippetResDTO> {
+    if (codeSnippetReqDTO.code == '') {
+      alert("Code can't be empty!");
+      return EMPTY;
+    }
+    return this.http.post<CodeSnippetResDTO>(
+      `${this.compilerActionUrl}/submitData`,
       codeSnippetReqDTO
     );
   }
@@ -136,7 +161,7 @@ export class AssessmentService {
       return EMPTY;
     }
     return this.http.post<CodeSnippetResDTO>(
-      `${this.compilerActionUrl}/candidate-action/${CompilerAction.Run}`,
+      `${this.compilerActionUrl}/candidateAction/${CompilerAction.Run}`,
       codeSnippetReqDTO
     );
   }
@@ -150,28 +175,28 @@ export class AssessmentService {
     };
 
     return this.http.post<NewAssessmentResponse>(
-      `${this.assessmentUrl}/new-assessment`,
+      `${this.assessmentUrl}/newAssessment`,
       candidateDetialsReq,
       { headers: header }
     );
   }
 
-  endAssessment(candidateId: string): Observable<any> {
+  endAssessment(req:ExpireAssessmentReq): Observable<any> {
     return this.http.post(
-      `${this.assessmentUrl}/end-assessment/${candidateId}`,
-      null
+      `${this.assessmentUrl}/endAssessment`,
+       req
     );
   }
 
-  endAssessmentByAdmin(candidateId: string): Observable<any> {
+  endAssessmentByAdmin(req:ExpireAssessmentReq): Observable<any> {
     const header = {
       accessToken: sessionStorage.getItem('accessToken') || '',
       adminId: sessionStorage.getItem('adminId') || '',
     };
 
     return this.http.post(
-      `${this.assessmentUrl}/end-assessment-by-admin/${candidateId}`,
-      null,
+      `${this.assessmentUrl}/endAssessmentByAdmin`,
+       req,
       { headers: header }
     );
   }
@@ -183,7 +208,7 @@ export class AssessmentService {
     };
 
     return this.http.get<ActiveAssessmentsResponse>(
-      `${this.assessmentUrl}/active-assessments`,
+      `${this.assessmentUrl}/activeAssessments`,
       { headers: header }
     );
   }
@@ -197,8 +222,8 @@ export class AssessmentService {
     };
 
     return this.http.get<ActiveAssessmentsResponse>(
-      `${this.assessmentUrl}/interviewer-active-assessments`,
-      { headers:header }
+      `${this.assessmentUrl}/interviewerActiveAssessments`,
+      { headers: header }
     );
   }
 
@@ -209,7 +234,7 @@ export class AssessmentService {
     };
 
     return this.http.post(
-      `${this.assessmentUrl}/extend-assessment`,
+      `${this.assessmentUrl}/extendAssessment`,
       extendAssessment,
       { headers: header }
     );
@@ -221,7 +246,7 @@ export class AssessmentService {
       adminId: sessionStorage.getItem('adminId') || '',
     };
     return this.http.get<AllCandidates>(
-      `${this.assessmentUrl}/all-candidates`,
+      `${this.assessmentUrl}/allCandidates`,
       { headers: header }
     );
   }
@@ -232,7 +257,7 @@ export class AssessmentService {
       adminId: sessionStorage.getItem('adminId') || '',
     };
     return this.http.get<AllSubmissions>(
-      `${this.assessmentUrl}/all-submissions`,
+      `${this.assessmentUrl}/allSubmissions`,
       { headers: header }
     );
   }
@@ -244,14 +269,14 @@ export class AssessmentService {
     };
 
     return this.http.get<AllSubmissions>(
-      `${this.assessmentUrl}/view-submissions-for-interviewer/${adminId}`,
+      `${this.assessmentUrl}/viewSubmissionsForInterviewer/${adminId}`,
       { headers: header }
     );
   }
 
   getCodeByID(codeId: string): Observable<CodeDetailRes> {
     return this.http.get<CodeDetailRes>(
-      `${this.assessmentUrl}/get-code/${codeId}`
+      `${this.assessmentUrl}/getCode/${codeId}`
     );
   }
 
@@ -264,7 +289,7 @@ export class AssessmentService {
     });
 
     return this.http.get<CandidateDetialsRes>(
-      `${this.assessmentUrl}/userdet-by-email/${candidateEmail}`,
+      `${this.assessmentUrl}/userDetByEmail/${candidateEmail}`,
       { headers }
     );
   }
@@ -276,11 +301,67 @@ export class AssessmentService {
     });
 
     return this.http.get<UrlRes>(
-      `${this.assessmentUrl}/candidate-url/${candidateId}`,{headers:headers}
+      `${this.assessmentUrl}/candidateUrl/${candidateId}`,
+      { headers: headers }
     );
   }
 
-  getAssessmentEndTimeByCandId(candidateId:string):Observable<AssessmentEndTimeRes>{
-    return this.http.get<AssessmentEndTimeRes>(`${this.assessmentUrl}/assessment-end-time-by-candidate-id/${candidateId}`);
+  getAssessmentEndTimeByCandId(
+    candidateId: string
+  ): Observable<AssessmentEndTimeRes> {
+    return this.http.get<AssessmentEndTimeRes>(
+      `${this.assessmentUrl}/assessmentEndTimeByCandidateId/${candidateId}`
+    );
+  }
+
+  getCandidatesStatusByAdminId(
+    adminId: string
+  ): Observable<AllAssessmentHistories> {
+    const header = {
+      accessToken: sessionStorage.getItem('accessToken') || '',
+      adminId: sessionStorage.getItem('adminId') || '',
+    };
+    return this.http.get<AllAssessmentHistories>(
+      `${this.assessmentUrl}/candidatesStatus/${adminId}`,
+      { headers: header }
+    );
+  }
+
+  getCandidateReport(viewReportReq: ViewReportReq): Observable<ViewReportRes> {
+    const header = {
+      accessToken: sessionStorage.getItem('accessToken') || '',
+      adminId: sessionStorage.getItem('adminId') || '',
+    };
+    return this.http.post<ViewReportRes>(
+      `${this.assessmentUrl}/viewReport`,
+      viewReportReq,
+      { headers: header }
+    );
+  }
+
+  submitCandidateReview(submitReportReq: SubmitReportReq): Observable<any> {
+    const header = {
+      accessToken: sessionStorage.getItem('accessToken') || '',
+      adminId: sessionStorage.getItem('adminId') || '',
+    };
+    return this.http.post<any>(
+      `${this.assessmentUrl}/submitReview`,
+      submitReportReq,
+      { headers: header }
+    );
+  }
+
+  getCandidateSubmissionsByCandidateId(
+    req: GetCandidateSubmissionsReq
+  ): Observable<ApiResponse> {
+    const header = {
+      accessToken: sessionStorage.getItem('accessToken') || '',
+      adminId: sessionStorage.getItem('adminId') || '',
+    };
+    return this.http.post<ApiResponse>(
+      `${this.assessmentUrl}/viewSubmissionsByCandidateId`,
+      req,
+      { headers: header }
+    );
   }
 }

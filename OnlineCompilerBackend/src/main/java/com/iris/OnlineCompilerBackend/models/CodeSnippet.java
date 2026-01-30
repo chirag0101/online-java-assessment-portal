@@ -32,10 +32,13 @@ public class CodeSnippet {
     @JoinColumn(name = "USER_ID_FK")
     private Candidate userIdFk;
 
+    @Column(name = "LANGUAGE_TYPE")
+    private String languageType;
+
     public CodeSnippet() {
     }
 
-    public CodeSnippet(Long codeId, String code, Date time, String status, String output, String action, Candidate userIdFk) {
+    public CodeSnippet(Long codeId, String code, Date time, String status, String output, String action, Candidate userIdFk, String languageType) {
         this.codeId = codeId;
         this.code = code;
         this.time = time;
@@ -43,6 +46,7 @@ public class CodeSnippet {
         this.output = output;
         this.action = action;
         this.userIdFk = userIdFk;
+        this.languageType = languageType;
     }
 
     public Long getCodeId() {
@@ -99,5 +103,13 @@ public class CodeSnippet {
 
     public void setUserIdFk(Candidate userIdFk) {
         this.userIdFk = userIdFk;
+    }
+
+    public String getLanguageType() {
+        return languageType;
+    }
+
+    public void setLanguageType(String languageType) {
+        this.languageType = languageType;
     }
 }

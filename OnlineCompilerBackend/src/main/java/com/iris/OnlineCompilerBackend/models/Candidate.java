@@ -12,14 +12,12 @@ public class Candidate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(name = "CANDIDATE_ID")
-    private String candidateId;
+    @JoinColumn(name = "CANDIDATE_MASTER_ID_FK")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CandidateMaster candidateIdFk;
 
-    @Column(name = "CANDIDATE_EMAIL_ID")
-    private String candidateEmailId;
-
-    @Column(name = "CANDIDATE_FULL_NAME")
-    private String candidateFullName;
+    @Column(name = "CANDIDATE_ID_CODE")
+    private String candidateIdCode;
 
     @Column(name = "YEAR_OF_EXPERIENCE")
     private Double yearsOfExperience;
@@ -61,14 +59,31 @@ public class Candidate {
     @Column(name = "INTERVIEW_ROUND")
     private String interviewRound;
 
+    @Column(name = "IS_REVIEWED")
+    private Boolean isReviewed;
+
+    @Column(name = "SCORE")
+    private Double score;
+
+    @Column(name = "REMARKS")
+    private String remarks;
+
+    @Column(name = "STATUS")
+    private String status;
+
+    @Column(name = "ASSESSMENT_IS_ENDED")
+    private Boolean assessmentIsEnded;
+
+    @Column(name = "ASSESSMENT_DATE_TIME")
+    private Date assessmentDateTime;
+
     public Candidate() {
     }
 
-    public Candidate(Long userId, String candidateId, String candidateEmailId, String candidateFullName, Double yearsOfExperience, String technology, String interviewerId, Date urlCreatedTime, Date urlExpiryTime, String url, Boolean urlIsActive, String urlHashCode, Boolean assessmentIsStarted, Date assessmentStartTime, Date assessmentEndTime, Admin assessmentAssignedBy, String interviewRound) {
+    public Candidate(Long userId, CandidateMaster candidateIdFk, String candidateIdCode, Double yearsOfExperience, String technology, String interviewerId, Date urlCreatedTime, Date urlExpiryTime, String url, Boolean urlIsActive, String urlHashCode, Boolean assessmentIsStarted, Date assessmentStartTime, Date assessmentEndTime, Admin assessmentAssignedBy, String interviewRound, Boolean isReviewed, Double score, String remarks, String status, Boolean assessmentIsEnded, Date assessmentDateTime) {
         this.userId = userId;
-        this.candidateId = candidateId;
-        this.candidateEmailId = candidateEmailId;
-        this.candidateFullName = candidateFullName;
+        this.candidateIdFk = candidateIdFk;
+        this.candidateIdCode = candidateIdCode;
         this.yearsOfExperience = yearsOfExperience;
         this.technology = technology;
         this.interviewerId = interviewerId;
@@ -82,6 +97,12 @@ public class Candidate {
         this.assessmentEndTime = assessmentEndTime;
         this.assessmentAssignedBy = assessmentAssignedBy;
         this.interviewRound = interviewRound;
+        this.isReviewed = isReviewed;
+        this.score = score;
+        this.remarks = remarks;
+        this.status = status;
+        this.assessmentIsEnded = assessmentIsEnded;
+        this.assessmentDateTime = assessmentDateTime;
     }
 
     public Long getUserId() {
@@ -92,28 +113,20 @@ public class Candidate {
         this.userId = userId;
     }
 
-    public String getCandidateId() {
-        return candidateId;
+    public CandidateMaster getCandidateIdFk() {
+        return candidateIdFk;
     }
 
-    public void setCandidateId(String candidateId) {
-        this.candidateId = candidateId;
+    public void setCandidateIdFk(CandidateMaster candidateIdFk) {
+        this.candidateIdFk = candidateIdFk;
     }
 
-    public String getCandidateEmailId() {
-        return candidateEmailId;
+    public String getCandidateIdCode() {
+        return candidateIdCode;
     }
 
-    public void setCandidateEmailId(String candidateEmailId) {
-        this.candidateEmailId = candidateEmailId;
-    }
-
-    public String getCandidateFullName() {
-        return candidateFullName;
-    }
-
-    public void setCandidateFullName(String candidateFullName) {
-        this.candidateFullName = candidateFullName;
+    public void setCandidateIdCode(String candidateIdCode) {
+        this.candidateIdCode = candidateIdCode;
     }
 
     public Double getYearsOfExperience() {
@@ -218,5 +231,53 @@ public class Candidate {
 
     public void setInterviewRound(String interviewRound) {
         this.interviewRound = interviewRound;
+    }
+
+    public Boolean getIsReviewed() {
+        return isReviewed;
+    }
+
+    public void setIsReviewed(Boolean isReviewed) {
+        this.isReviewed = isReviewed;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Boolean getAssessmentIsEnded() {
+        return assessmentIsEnded;
+    }
+
+    public void setAssessmentIsEnded(Boolean assessmentIsEnded) {
+        this.assessmentIsEnded = assessmentIsEnded;
+    }
+
+    public Date getAssessmentDateTime() {
+        return assessmentDateTime;
+    }
+
+    public void setAssessmentDateTime(Date assessmentDateTime) {
+        this.assessmentDateTime = assessmentDateTime;
     }
 }

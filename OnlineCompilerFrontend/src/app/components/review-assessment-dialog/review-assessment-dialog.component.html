@@ -1,0 +1,161 @@
+<div class="custom-dialog-wrapper">
+  <h2 mat-dialog-title class="dialog-title">
+    <div class="title-left">
+      <mat-icon>assignment_ind</mat-icon>
+      <span>Report: {{ data.candidateId }} - <span [ngClass]="{
+      'status-orange': data.status === 'TO-BE-REVIEWED',
+      'status-green': data.status === 'SELECTED',
+      'status-red': data.status === 'REJECTED'
+    }">{{data.status}}</span></span>
+    </div>
+    <span class="spacer"></span>
+    <button class="btn btn-back" (click)="onClose()">
+      <i class="fa fa-close"></i>
+    </button>
+  </h2>
+
+  <form #reviewForm="ngForm">
+    <mat-dialog-content class="dialog-container">
+      <div *ngIf="isLoading" class="loading-overlay">
+        <span>Loading...</span>
+      </div>
+
+      <table class="custom-table" [class.dimmed]="isLoading">
+        <thead>
+          <tr>
+            <th class="required-label">Technology</th>
+            <th class="required-label">Score (1-5)</th>
+            <th>Comments</th>
+            <th *ngIf="!data.isReviewed"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let report of data.assessmentReports; let i = index">
+            <td>
+              <div *ngIf="$any(report).isExisting; else newTechSearch" class="tech-cell">
+                <span class="tech-name">{{ report.langType }}</span>
+                <button
+                  type="button"
+                  class="info-btn"
+                  (click)="fetchDetailedInfo(report.langType)"
+                  title="View Submissions">
+                  <mat-icon>info</mat-icon>
+                </button>
+              </div>
+              <ng-template #newTechSearch>
+                <div class="tech-autocomplete-container">
+                  <input
+                    type="text"
+                    placeholder="Search Technology"
+                    class="styled-input tech-search-input"
+                    matInput
+                    [matAutocomplete]="autoTech"
+                    [name]="'tech' + i"
+                    [(ngModel)]="report.langType"
+                    (input)="filterTech($event, i)"
+                    required
+                  />
+                  <mat-autocomplete #autoTech="matAutocomplete" (optionSelected)="onTechSelected($event, i)">
+                    <mat-option *ngFor="let tech of filteredTechs[i]" [value]="tech">
+                      {{ tech }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+              </ng-template>
+            </td>
+            <td>
+              <input
+                type="number"
+                [name]="'score' + i"
+                [(ngModel)]="report.score"
+                [disabled]="data.isReviewed"
+                class="styled-input score-input"
+                required
+                #scoreInput="ngModel"
+                min="1"
+                max="5"
+              />
+              <div *ngIf="scoreInput.invalid && (scoreInput.dirty || scoreInput.touched)" class="validation-message">
+                <small>1-5 only</small>
+              </div>
+            </td>
+            <td>
+              <textarea
+                [name]="'comm' + i"
+                [(ngModel)]="report.comments"
+                [disabled]="data.isReviewed"
+                class="styled-input styled-textarea"
+                rows="1"
+              ></textarea>
+            </td>
+            <td *ngIf="!data.isReviewed">
+              <button
+                *ngIf="!$any(report).isExisting"
+                type="button"
+                class="info-btn delete-btn"
+                (click)="removeRow(i)"
+                title="Delete Technology">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr *ngIf="!data.isReviewed">
+            <td colspan="4" class="add-row-container">
+              <button type="button" class="btn add-btn" (click)="addNewRow()" title="Add Technology">
+                <mat-icon>add</mat-icon>
+              </button>
+            </td>
+          </tr>
+          <tr class="avg-row">
+            <td colspan="1" class="avg-label">Average Score:</td>
+            <td [attr.colspan]="!data.isReviewed ? 3 : 2" class="avg-value">
+              <span
+                [class.score-red]="currentAvgScore >= 0 && currentAvgScore < 2.49"
+                [class.score-orange]="currentAvgScore >= 2.5 && currentAvgScore < 3.49"
+                [class.score-green]="currentAvgScore >= 3.5">
+                {{ currentAvgScore }} / 5
+              </span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="final-review-section" [class.dimmed]="isLoading">
+        <label class="final-label required-label">Final Overall Review</label>
+        <textarea
+          name="finalFeedback"
+          [(ngModel)]="data.finalFeedback"
+          [disabled]="data.isReviewed"
+          class="styled-input final-textarea"
+          placeholder="Enter Final Feedback here..."
+          rows="4"
+          required
+          #finalFeedbackInput="ngModel"
+        ></textarea>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="actions-root" *ngIf="!data.isReviewed">
+      <button
+        type="button"
+        class="btn btn-reject"
+        (click)="onAction('REJECT')"
+        [disabled]="reviewForm.invalid || isLoading">
+        <i class="fas fa-ban"></i> REJECT
+      </button>
+      <button
+        type="button"
+        class="btn btn-approve"
+        (click)="onAction('SELECT')"
+        [disabled]="reviewForm.invalid || isLoading">
+        <i class="fas fa-check"></i> SELECT
+      </button>
+    </mat-dialog-actions>
+
+    <p *ngIf="errorMessage" class="error-message-centered">
+      {{ errorMessage }}
+    </p>
+  </form>
+</div>

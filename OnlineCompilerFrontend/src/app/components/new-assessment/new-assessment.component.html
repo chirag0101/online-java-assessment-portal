@@ -1,131 +1,397 @@
-<div class="login-container">
-  <div class="login-panel">
-    <h2>Create New Assessment</h2>
-
-    <form #assessmentForm="ngForm">
-
-      <div class="form-group">
-        <label>Interviewer:</label>
-
-        <div class="interviewer-id-control">
-          
-          <ng-container *ngIf="isInterviewerIdDisabled; else interviewerSelectDropdown">
-            <input type="text"
-                   id="interviewerId"  [(ngModel)]="adminFullName"
-                   name="interviewerId"
-                   required
-                   [disabled]="isInterviewerIdDisabled">
-          </ng-container>
-
-          <ng-template #interviewerSelectDropdown>
-            <p-dropdown
-                   id="interviewerIdDropdown" placeholder="Select Interviewer"
-                   [options]="allAdmins"
-                   optionLabel="adminFullName"
-                   optionValue="adminId"
-                   [filter]="true"
-                   class="select-dropdown sb_selectField"
-                   [(ngModel)]="interviewerId"
-                   name="interviewerIdDropdown"
-                   required>
-            </p-dropdown>
-          </ng-template>
-        </div>
-
-        <div *ngIf="(assessmentForm.controls?.['interviewerId']?.invalid &&
-                    (assessmentForm.controls?.['interviewerId']?.dirty ||
-                     assessmentForm.controls?.['interviewerId']?.touched)) 
-                     || 
-                     (assessmentForm.controls?.['interviewerIdDropdown']?.invalid &&
-                    (assessmentForm.controls?.['interviewerIdDropdown']?.dirty ||
-                     assessmentForm.controls?.['interviewerIdDropdown']?.touched))"
-                class="validation-message">
-          <div *ngIf="assessmentForm.controls?.['interviewerId']?.errors?.['required']">Interviewer Name is required.</div>
-          <div *ngIf="assessmentForm.controls?.['interviewerIdDropdown']?.errors?.['required']">Interviewer Name is required.</div>
-        </div>
-
+<div class="page-wrapper">
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo-section">
+        <img src="images/iris_logo.png" alt="IRIS Logo" class="logo-img" />
       </div>
-      <h3 class="section-heading">Candidate Details</h3>
-
-      <div class="form-group">
-        <label for="candidateEmail">Candidate Email Id:</label>
-        <input type="text" id="candidateEmail"  [(ngModel)]="candidateEmail" name="candidateEmail" required #candidateEmailInput="ngModel" (blur)="fetchCandidateDetailsByEmail()">
-        <div *ngIf="candidateEmailInput.invalid && (candidateEmailInput.dirty || candidateEmailInput.touched)" class="validation-message">
-          <div *ngIf="candidateEmailInput.errors?.['required']">Candidate Email Id is required.</div>
-        </div>
+      <div class="portal-section">
+        <span class="portal-title">{{ portalTitle }}</span>
       </div>
 
-      <div class="form-group">
-        <label for="candidateFullName">Candidate Full Name:</label>
-        <input type="text" id="candidateFullName" [(ngModel)]="candidateFullName" name="candidateFullName" required #candidateFullNameInput="ngModel" [disabled]="isCandidateDetailsLoaded">
-        <div *ngIf="candidateFullNameInput.invalid && (candidateFullNameInput.dirty || candidateFullNameInput.touched)" class="validation-message">
-          <div *ngIf="candidateFullNameInput.errors?.['required']">Candidate Full Name is required.</div>
-        </div>
-      </div>
+      <div class="user-profile-section">
+        <div class="user-info">
+          <span class="admin-name">{{ adminId }}</span>
 
-      <div class="form-group">
-        <label for="technology">Technology:</label>
-        <input type="text" id="technology" [(ngModel)]="technology" name="technology" required #technologyInput="ngModel" disabled placeholder="JAVA">
-        <div *ngIf="technologyInput.invalid && (technologyInput.dirty || technologyInput.touched)" class="validation-message">
-          <div *ngIf="technologyInput.errors?.['required']">Technology is required.</div>
-        </div>
-      </div>
-
-      <div class="form-group form-group-with-button">
-        <label for="candidateId">Candidate Id:</label>
-        <input type="text" id="candidateId" [(ngModel)]="candidateId" name="candidateId" required #candidateIdInput="ngModel" [disabled]="isCandidateDetailsLoaded">
-        <button type="button" class="search-button" (click)="openCandidateSearch()"><mat-icon >zoom_in</mat-icon></button>
-        <div *ngIf="candidateIdInput.invalid && (candidateIdInput.dirty || candidateIdInput.touched)" class="validation-message">
-          <div *ngIf="candidateIdInput.errors?.['required']">Candidate ID is required.</div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="yearsOfExperience">Experience (in months):</label>
-        <input type="number" id="yearsOfExperience" [(ngModel)]="yearsOfExperience" name="yearsOfExperience" min="0" required #yearsOfExperienceInput="ngModel">
-        <div *ngIf="yearsOfExperienceInput.invalid && (yearsOfExperienceInput.dirty || yearsOfExperienceInput.touched)" class="validation-message">
-          <div *ngIf="yearsOfExperienceInput.errors?.['required']">Experience is required.</div>
-          <div *ngIf="yearsOfExperienceInput.errors?.['min']">Experience cannot be negative.</div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Interview Round:</label>
-        <div class="interview-round-control">
-            <p-dropdown
-                   id="interviewRoundDropdown" placeholder="Select Interview Round"
-                   [options]="interviewRounds"
-                   [filter]="true"
-                   class="select-dropdown sb_selectField"
-                   [(ngModel)]="interviewRound"
-                   name="interviewRoundDropdown"
-                   required>
-            </p-dropdown>
+          <span class="last-login"
+            >Last Login: {{ lastLoggedIn | date: "medium" }}</span
+          >
         </div>
 
-        <div *ngIf="(assessmentForm.controls?.['interviewRoundDropdown']?.invalid &&
-                    (assessmentForm.controls?.['interviewRoundDropdown']?.dirty ||
-                     assessmentForm.controls?.['interviewRoundDropdown']?.touched))"
-                    class="validation-message">
-          <div *ngIf="assessmentForm.controls?.['interviewRoundDropdown']?.errors?.['required']">Interview Round is required.</div>
-        </div>
-      </div>
+        <div class="nav-separator"></div>
 
-      <div class="form-actions">
-        <button type="button" class="create-button" (click)="createAssessment(assessmentForm)">Create</button>
-        <button type="button" class="reset-button" (click)="resetForm()">Reset</button>
-        <button type="button" class="back-button" (click)="goBack()">Back</button> </div>
-    </form>
-    <div *ngIf="assessmentUrl" class="assessment-url-container">
-      <label>Assessment URL:</label>
-      <div class="url-display-group">
-        <input type="text" [value]="assessmentUrl" readonly class="assessment-url-input">
-        <button type="button" class="copy-button" (click)="copyUrl()">Copy</button>
-      </div>
-      <div *ngIf="copySuccess" class="copy-feedback-message">
-        URL copied to clipboard!
+        <button class="nav-logout-btn" (click)="logOut()" title="Log Out">
+          <i class="fa fa-power-off"></i>
+        </button>
       </div>
     </div>
 
+    <div class="navbar-underline"></div>
+  </nav>
+
+  <div class="login-container">
+    <div class="login-panel">
+      <h2>Create New Assessment</h2>
+
+      <form #assessmentForm="ngForm">
+        <h3 class="section-heading">Interview Details</h3>
+
+        <div class="form-section">
+          <div class="form-group">
+            <label>Interviewer: <span class="required-asterisk">*</span></label>
+
+            <div class="interviewer-id-control">
+              <ng-container
+                *ngIf="isInterviewerIdDisabled; else interviewerSearchDropdown"
+              >
+                <input
+                  type="text"
+                  id="interviewerId"
+                  [(ngModel)]="adminFullName"
+                  name="interviewerId"
+                  required
+                  [disabled]="isInterviewerIdDisabled"
+                />
+              </ng-container>
+
+              <ng-template #interviewerSearchDropdown>
+                <input
+                  type="text"
+                  placeholder="Search Interviewer..."
+                  class="standard-select"
+                  matInput
+                  [matAutocomplete]="auto"
+                  [(ngModel)]="interviewerSearchText"
+                  (input)="filterAdmins($event)"
+                  name="interviewerSearch"
+                  required
+                />
+
+                <mat-autocomplete
+                  #auto="matAutocomplete"
+                  (optionSelected)="onInterviewerSelected($event)"
+                >
+                  <mat-option
+                    *ngFor="let admin of filteredAdmins"
+                    [value]="admin.adminFullName"
+                  >
+                    {{ admin.adminFullName }}
+                  </mat-option>
+                </mat-autocomplete>
+
+                <input
+                  type="hidden"
+                  [(ngModel)]="interviewerId"
+                  name="interviewerIdDropdown"
+                  required
+                />
+              </ng-template>
+            </div>
+
+            <div
+              *ngIf="
+                assessmentForm.controls['interviewerSearch']?.invalid &&
+                (assessmentForm.controls['interviewerSearch']?.dirty ||
+                  assessmentForm.controls['interviewerSearch']?.touched)
+              "
+              class="validation-message"
+            >
+              Interviewer selection is required.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="technology">Technology:</label>
+
+            <input
+              type="text"
+              id="technology"
+              [(ngModel)]="technology"
+              name="technology"
+              required
+              disabled
+              placeholder="JAVA"
+            />
+          </div>
+
+          <div class="form-group">
+            <label
+              >Interview Round: <span class="required-asterisk">*</span></label
+            >
+
+            <div class="interview-round-control">
+              <input
+                type="text"
+                placeholder="Search/Select Round..."
+                class="standard-select"
+                matInput
+                [matAutocomplete]="autoRound"
+                [(ngModel)]="interviewRound"
+                (input)="filterRounds($event)"
+                name="interviewRound"
+                required
+                #roundInput="ngModel"
+              />
+
+              <mat-autocomplete
+                #autoRound="matAutocomplete"
+                (optionSelected)="onRoundSelected($event)"
+              >
+                <mat-option
+                  *ngFor="let round of filteredRounds"
+                  [value]="round"
+                >
+                  {{ round }}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+
+            <div
+              *ngIf="
+                roundInput.invalid && (roundInput.dirty || roundInput.touched)
+              "
+              class="validation-message"
+            >
+              Interview Round is required.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label
+              >Interview Date & Time:
+              <span class="required-asterisk">*</span></label
+            >
+
+            <div class="datetime-container">
+              <div class="date-picker-wrapper">
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  class="date-input"
+                  [min]="minDate"
+                  [(ngModel)]="selectedDate"
+                  name="interviewDate"
+                  placeholder="mm/dd/yyyy"
+                  required
+                  #dateInput="ngModel"
+                  title="Select Date"
+                />
+
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="picker"
+                  title="Select Date"
+                ></mat-datepicker-toggle>
+
+                <mat-datepicker #picker></mat-datepicker>
+              </div>
+
+              <div class="time-picker-wrapper">
+                <input
+                  type="time"
+                  class="time-input"
+                  [(ngModel)]="selectedTime"
+                  name="interviewTime"
+                  required
+                  #timeInput="ngModel"
+                  title="Select Time"
+                />
+              </div>
+            </div>
+
+            <div
+              *ngIf="
+                dateInput.invalid && (dateInput.dirty || dateInput.touched)
+              "
+              class="validation-message"
+            >
+              Interview Date/Time is required.
+            </div>
+          </div>
+        </div>
+
+        <h3 class="section-heading">Candidate Details</h3>
+
+        <div class="form-section">
+          <div class="form-group">
+            <label for="candidateEmail"
+              >Candidate Email Id:
+              <span class="required-asterisk">*</span></label
+            >
+
+            <input
+              type="text"
+              id="candidateEmail"
+              [(ngModel)]="candidateEmail"
+              name="candidateEmail"
+              required
+              #candidateEmailInput="ngModel"
+              placeholder="Enter Candidate Email Id"
+              (blur)="fetchCandidateDetailsByEmail()"
+            />
+            <div
+              *ngIf="
+                candidateEmailInput.invalid &&
+                (candidateEmailInput.dirty || candidateEmailInput.touched)
+              "
+              class="validation-message"
+            >
+              Candidate Email is required.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="candidateFullName"
+              >Candidate Full Name:
+              <span class="required-asterisk">*</span></label
+            >
+
+            <input
+              type="text"
+              id="candidateFullName"
+              [(ngModel)]="candidateFullName"
+              name="candidateFullName"
+              required
+              #candidateFullNameInput="ngModel"
+              placeholder="Enter Candidate Full Name"
+              [disabled]="isCandidateDetailsLoaded"
+            />
+            <div
+              *ngIf="
+                candidateFullNameInput.invalid &&
+                (candidateFullNameInput.dirty || candidateFullNameInput.touched)
+              "
+              class="validation-message"
+            >
+              Candidate Full Name is required.
+            </div>
+          </div>
+
+          <div class="form-group form-group-with-button">
+            <label for="candidateId"
+              >Candidate Id: <span class="required-asterisk">*</span></label
+            >
+
+            <div class="input-with-icon">
+              <input
+                type="text"
+                id="candidateId"
+                [(ngModel)]="candidateId"
+                name="candidateId"
+                required
+                #candidateIdInput="ngModel"
+                [disabled]="isCandidateDetailsLoaded"
+                placeholder="Enter Candidate Id"
+              />
+
+              <button
+                type="button"
+                class="search-button"
+                (click)="openCandidateSearch()"
+                title="Search Candidate"
+              >
+                <mat-icon>zoom_in</mat-icon>
+              </button>
+            </div>
+            <div
+              *ngIf="
+                candidateIdInput.invalid &&
+                (candidateIdInput.dirty || candidateIdInput.touched)
+              "
+              class="validation-message"
+            >
+              Candidate Id is required.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="yearsOfExperience"
+              >Experience (in Years):
+              <span class="required-asterisk">*</span></label
+            >
+
+            <input
+              type="number"
+              id="yearsOfExperience"
+              [(ngModel)]="yearsOfExperience"
+              name="yearsOfExperience"
+              min="0"
+              required
+              #expInput="ngModel"
+              placeholder="Enter Experience in Years"
+            />
+            <div
+              *ngIf="
+                expInput.invalid &&
+                (expInput.dirty || expInput.touched)
+              "
+              class="validation-message"
+            >
+              Candidate Experience is required.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="create-button"
+            (click)="createAssessment(assessmentForm)"
+            title="Create Assessment"
+          >
+            Create
+          </button>
+
+          <button
+            type="button"
+            class="reset-button"
+            (click)="resetForm()"
+            title="Reset"
+          >
+            Reset
+          </button>
+
+          <button
+            type="button"
+            class="back-button"
+            (click)="goBack()"
+            title="Back"
+          >
+            Back
+          </button>
+        </div>
+
+        <div
+          *ngIf="message"
+          class="status-message"
+          [ngClass]="isSuccess ? 'text-success' : 'text-error'"
+        >
+          {{ message }}
+        </div>
+      </form>
+
+      <div *ngIf="assessmentUrl" class="assessment-url-container">
+        <label>Assessment URL:</label>
+
+        <div class="url-display-group">
+          <input
+            type="text"
+            [value]="assessmentUrl"
+            readonly
+            class="assessment-url-input"
+          />
+
+          <button type="button" class="copy-button" (click)="copyUrl()">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <footer class="login-footer">
+    <div class="footer-content">
+      <span class="copyright">&copy; {{ copyright }}</span>
+      <span class="version-tag">{{ version }}</span>
+    </div>
+  </footer>
 </div>

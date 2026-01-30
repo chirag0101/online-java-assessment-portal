@@ -1,12 +1,49 @@
-<div class="admin-panel-container">
-  <div class="admin-panel-content">
-    <h2>Admin Panel</h2>
-    <div class="admin-buttons-panel">
-      <button (click)="navigateTo('/new-assessment')">New Assessment</button>
-      <button (click)="navigateTo('/view-active-assessments')">View Assessments</button>
-      <button (click)="navigateTo('/view-submissions')">View Submissions</button>
-      <button (click)="navigateTo('/new-admin')">New Admin</button>
-      <button (click)="logOut()">Log Out</button>
+<div class="page-wrapper">
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo-section">
+        <img src="images/iris_logo.png" alt="IRIS Logo" class="logo-img" />
+      </div>
+      <div class="portal-section">
+        <span class="portal-title">{{ portalTitle }}</span>
+      </div>
+
+      <div class="user-profile-section">
+        <div class="user-info">
+          <span class="admin-name">{{ adminId }}</span>
+          <span class="last-login"
+            >Last Login: {{ adminLastLoggedIn | date: "medium" }}</span
+          >
+        </div>
+        <div class="nav-separator"></div>
+        <button class="nav-logout-btn" (click)="logOut()" title="Log Out">
+          <i class="fa fa-power-off"></i>
+        </button>
+      </div>
+    </div>
+    <div class="navbar-underline"></div>
+  </nav>
+
+  <div class="admin-panel-container">
+    <div class="admin-panel-content">
+      <h2>Admin Panel</h2>
+      <div class="admin-buttons-panel">
+        <button (click)="navigateTo('/newAssessment')">New Assessment</button>
+        <button (click)="navigateTo('/viewActiveAssessments')">
+          View Active Assessments
+        </button>
+        <button (click)="navigateTo('/reviewAssessment')">
+          View Submissions
+        </button>
+        <button (click)="navigateTo('/newAdmin')">New User</button>
+      </div>
     </div>
   </div>
+
+  <footer class="login-footer">
+    <div class="footer-content">
+      <span class="copyright">&copy; {{ copyright }}</span>
+      <span class="version-tag">{{ version }}</span>
+    </div>
+  </footer>
 </div>

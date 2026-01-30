@@ -2,7 +2,8 @@ package com.iris.OnlineCompilerBackend.constants;
 
 public enum CompilerActions {
     COMPILE_ACTION("COMPILE", 1),
-    RUN_ACTION("RUN", 2);
+    RUN_ACTION("RUN", 2),
+    SAVE("SAVE",3);
 
     private final String action;
     private final Integer actionKey;

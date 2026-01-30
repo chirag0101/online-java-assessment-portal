@@ -1,0 +1,159 @@
+<div class="page-wrapper">
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo-section">
+        <img src="images/iris_logo.png" alt="IRIS Logo" class="logo-img" />
+      </div>
+      <div class="portal-section">
+        <span class="portal-title">{{ portalTitle }}</span>
+      </div>
+
+      <div class="user-profile-section">
+        <div class="user-info">
+          <span class="admin-name">{{ adminId }}</span>
+          <span class="last-login"
+            >Last Login: {{ lastLoggedIn | date: "medium" }}</span
+          >
+        </div>
+        <div class="nav-separator"></div>
+        <button class="nav-logout-btn" (click)="logOut()" title="Log Out">
+          <i class="fa fa-power-off"></i>
+        </button>
+      </div>
+    </div>
+    <div class="navbar-underline"></div>
+  </nav>
+
+  <div class="table-container">
+    <div class="table-panel">
+      <div class="header-section">
+        <h2><span class="title">Assessment Reviews</span></h2>
+
+        <div class="date-range-selector">
+          <label for="fromDate">From:</label>
+          <input
+            type="date"
+            id="fromDate"
+            [(ngModel)]="fromDate"
+            (change)="filterSubmissionsByDate()"
+            [max]="todayDate"
+          />
+          <label for="toDate">To:</label>
+          <input
+            type="date"
+            id="toDate"
+            [(ngModel)]="toDate"
+            (change)="filterSubmissionsByDate()"
+            [max]="todayDate"
+          />
+
+          <button
+            *ngIf="fromDate || toDate"
+            (click)="clearDateFilter()"
+            class="clear-icon-btn"
+          >
+            <mat-icon>clear</mat-icon>
+          </button>
+        </div>
+
+        <div class="global-filter">
+          <mat-icon style="color: #005aaa">search</mat-icon>
+          <input
+            type="text"
+            id="globalFilter"
+            [(ngModel)]="globalFilterText"
+            (input)="applyGlobalFilter()"
+            placeholder="Search all fields..."
+          />
+
+          <button
+            *ngIf="globalFilterText"
+            (click)="clearGlobalFilter()"
+            class="clear-icon-btn"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+
+          <button class="back-button" (click)="goBack()">Back</button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <div *ngIf="loading" class="loading-message">
+          Loading submissions...
+        </div>
+        <div *ngIf="error" class="error-message">
+          Error loading submissions...
+        </div>
+
+        <div
+          *ngIf="!loading && !error && globallyFilteredSubmissions.length === 0"
+          class="no-data-message"
+        >
+          No records found.
+        </div>
+
+        <table
+          *ngIf="!loading && !error && globallyFilteredSubmissions.length > 0"
+        >
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Interviewer ID</th>
+              <th>Technology</th>
+              <th>Round</th>
+              <th>Assessment End Time</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let submission of globallyFilteredSubmissions">
+              <td>
+                {{
+                  submission.candidateName + " (" + submission.candidateId + ")"
+                }}
+              </td>
+              <td>{{ submission.interviewerId }}</td>
+              <td>{{ submission.technology }}</td>
+              <td>{{ submission.interviewRound }}</td>
+              <td>{{ submission.assessmentEndTime | date: "medium" }}</td>
+              <td>{{ submission.status }}</td>
+              <td>
+                <button
+                  *ngIf="submission.status === reviewStatusEnum.TO_BE_REVIEWED"
+                  class="review-btn"
+                  (click)="viewReport(submission.candidateId,submission.interviewerId,submission.assessmentEndTime,submission.interviewRound)"
+                  title="Review Assessment"
+                >
+                  Review
+                </button>
+                <button
+                  *ngIf="submission.status !== reviewStatusEnum.TO_BE_REVIEWED"
+                  class="view-report-btn"
+                  (click)="viewReport(submission.candidateId,submission.interviewerId,submission.assessmentEndTime,submission.interviewRound)"
+                  title="View Assessment Report"
+                >
+                  View Report
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer-actions">
+        <button class="back-button" (click)="goBack()">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="login-footer">
+    <div class="footer-content">
+      <span class="copyright"
+        >&copy; {{copyright}}</span
+      >
+      <span class="version-tag">{{version}}</span>
+    </div>
+  </footer>
+</div>

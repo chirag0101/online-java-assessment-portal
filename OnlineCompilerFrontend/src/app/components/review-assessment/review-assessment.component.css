@@ -1,0 +1,410 @@
+.required-label::after {
+  content: " *";
+  color: #ff5353;
+  font-weight: bold;
+}
+
+html,
+body,
+app-root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  font-family: "Nunito Sans", sans-serif;
+  color: #005aaa;
+}
+
+/* --- NEW: PAGE WRAPPER FOR NAVBAR/FOOTER LAYOUT --- */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.navbar {
+  flex-shrink: 0;
+  width: 100%;
+  background-color: #ffffff;
+  z-index: 1000;
+  position: relative; /* Added: Ensures the underline and content stay together */
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  font-family: "Nunito Sans", sans-serif;
+  align-items: center;
+  padding: 10px 40px;
+  position: relative; /* CRITICAL: This is the anchor for the portal-section */
+  min-height: 60px; /* Ensures vertical space for centering */
+}
+
+.logo-img {
+  height: 45px;
+  width: auto;
+  display: block;
+  position: relative;
+  z-index: 10; /* Keeps logo clickable/visible above centering layer */
+}
+
+.navbar-underline {
+  height: 3px;
+  width: 100%;
+  background: #005aaa;
+}
+
+/* --- CENTERING LOGIC --- */
+.portal-section {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  text-align: center;
+  width: auto;
+  pointer-events: none; /* Allows clicks to pass through to logo/profile if they overlap */
+}
+
+.portal-title {
+  color: #005aaa;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: auto; /* Re-enables interaction for the text itself */
+}
+
+/* --- USER PROFILE IN NAV --- */
+.user-profile-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 2; /* Keeps profile on top */
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  justify-content: center;
+}
+
+.admin-name {
+  color: #005aaa;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.last-login {
+  color: #000000;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.nav-separator {
+  width: 1px;
+  height: 30px;
+  background-color: #005aaa;
+  opacity: 0.3;
+}
+
+.nav-logout-btn {
+  background: none;
+  border: none;
+  color: #df2b2b;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.nav-logout-btn:hover {
+  color: #ff3d43;
+  transform: scale(1.1);
+}
+
+/* --- TABLE CONTAINER & PANEL (EXISTING) --- */
+.table-container {
+  font-family: "Nunito Sans", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1 0 auto; /* Allow container to grow between nav and footer */
+  padding: 40px 20px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+}
+
+.table-panel {
+  background-color: #ffffff;
+  border: 1px solid #005aaa;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px #005aaa;
+  padding: 30px;
+  width: 100%;
+  max-width: 1250px;
+  box-sizing: border-box;
+  position: relative;
+  margin: auto;
+}
+
+.header-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.table-panel h2 {
+  color: #005aaa;
+  margin: 0;
+  font-weight: 700;
+  padding-bottom: 10px;
+  text-align: left;
+  flex-grow: 1;
+}
+
+.table-panel h2 .title {
+  border-bottom: 2px solid #005aaa;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  min-height: 200px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #ffffff;
+  color: #005aaa;
+}
+
+th,
+td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #005aaa;
+  min-width: 150px;
+}
+
+thead th {
+  background-color: #005aaa;
+  color: #f8f8f2;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+tbody tr:hover {
+  background-color: #f2f2f2;
+}
+
+td {
+  font-family: "Fira Code", "Cascadia Code", "Consolas", monospace;
+  font-size: 0.95em;
+}
+
+td button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+td button.view-report-btn {
+  background-color: #28a745;
+}
+
+td button.view-report-btn:hover{
+  background-color: #259840;
+  box-shadow: 0 4px 12px #259840;
+}
+
+td button.review-btn {
+  background-color: #005aaa;
+}
+
+td button.review-btn:hover{
+  background-color: #004d90;
+  box-shadow: 0 4px 12px #004d90;
+}
+
+.loading-message,
+.error-message,
+.no-data-message {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 1.1em;
+  color: #005aaa;
+}
+
+.error-message {
+  color: #ff5353;
+}
+
+.retry-button {
+  padding: 8px 15px;
+  background-color: #005aaa;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.table-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #44475a;
+  margin-top: 20px;
+}
+
+.back-button {
+  padding: 8px 15px;
+  background-color: #005aaa;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.back-button:hover {
+  background-color: #004d90;
+  box-shadow: 0 4px 12px #004d90;
+}
+
+.date-range-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.date-range-selector input[type="date"] {
+  background-color: #ffffff;
+  border: 1px solid #005aaa;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #005aaa;
+}
+
+.date-range-selector label {
+  color: #005aaa;
+}
+
+.global-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.global-filter input[type="text"] {
+  flex-grow: 1;
+  background-color: #ffffff;
+  border: 1px solid #005aaa;
+  border-radius: 6px;
+  color: #005aaa;
+  padding: 8px 12px;
+  font-size: 0.9em;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-width: 180px;
+}
+
+.global-filter label {
+  color: #005aaa;
+  font-size: 0.9em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.global-filter input[type="text"]::placeholder {
+  color: #005aaa;
+  opacity: 0.7;
+}
+
+.global-filter input[type="text"]:focus {
+  outline: none;
+  border-color: #005aaa;
+  box-shadow: 0 0 0 2px rgba(98, 114, 164, 0.5);
+}
+
+/* Helper for clear buttons inside filters */
+.clear-icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #005aaa;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* --- NEW: LOGIN FOOTER STYLES --- */
+.login-footer {
+  flex: 0 0 auto;
+  width: 100%;
+  background-color: #ffffff;
+  border-top: 1px solid #005aaa;
+  padding: 15px 40px;
+  box-sizing: border-box;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copyright {
+  font-size: 0.85em;
+  color: #005aaa;
+}
+
+.version-tag {
+  font-size: 0.75em;
+  background-color: #f0f7ff;
+  color: #005aaa;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #cce0ff;
+  font-family: monospace;
+}
+
+@media (max-width: 768px) {
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .navbar-content,
+  .login-footer {
+    padding: 10px 20px;
+  }
+  .user-info {
+    display: none;
+  }
+}

@@ -1,0 +1,231 @@
+/* 1. Global Reset & Base Styles */
+html,
+body {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #f4f7fa; 
+  font-family: "Nunito Sans", system-ui, -apple-system, sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+/* 2. Angular Wrapper Fix */
+div:has(> .compiler-page-container),
+div[ng-version] { 
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+/* 3. Main Page Container */
+.compiler-page-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%; 
+  width: 100%;  
+  box-sizing: border-box;
+  padding: 16px; 
+  gap: 16px;
+  border-radius: 16px;
+  background-color: #005aaa;
+  box-shadow: 0 20px 50px rgba(0, 90, 170, 0.4);
+  overflow: hidden;
+}
+
+/* 4. Left Section (Editor) */
+.code-compiler-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column; 
+  height: 100%; 
+  min-width: 0;
+}
+
+/* 5. Editor Container */
+.code-editor-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 12px;
+  height: 100%; 
+  min-height: 0; 
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* 6. Panel Header */
+.panel-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e1e8ed;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.panel-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #005aaa;
+  letter-spacing: 1px;
+}
+
+.panel-icon {
+  font-size: 0.7rem;
+  background: #005aaa;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* 7. Editor Host */
+.codemirror-host {
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+}
+
+/* 8. Side Panel */
+.buttons-panel {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.candidate-label {
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #004a8d;
+  background-color: #eef5ff;
+  border: 1px solid #cce0ff;
+  font-size: 0.82em;
+}
+
+.info-label {
+  color: #1b5e20;
+  font-weight: 800;
+}
+
+/* 9. Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.action-buttons button {
+  flex: 1;
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+  background-color: #005aaa;
+  color: #ffffff;
+}
+
+.action-buttons button:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 4px 12px rgba(0, 90, 170, 0.4);
+}
+
+.action-buttons button:last-child {
+  background-color: #ff5353;
+}
+
+.action-buttons button:last-child:hover {
+  box-shadow: 0 4px 12px rgba(255, 83, 83, 0.4);
+}
+
+/* 10. Tech Icons Row */
+.tech-icons-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.tech-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tech-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #e1e8ed;
+  background: white;
+  color: #005aaa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: 0.2s;
+}
+
+.tech-btn:hover {
+  box-shadow: 0 4px 12px #005aaa;
+  border: 2px solid #005aaa;
+}
+
+.json-btn { border: 2px solid #50fa7b; }
+
+.tech-icon-item span {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #005aaa;
+}
+
+/* 11. Timer (No Font Weight) */
+.status-labels {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.timer-label {
+  color: #ff5555;
+  font-weight: normal; 
+  font-size: 0.9rem;
+}
+
+/* 12. Editor Overrides & Cursor Fix */
+::ng-deep .CodeMirror, 
+::ng-deep .cm-editor {
+  height: 100% !important;
+  flex: 1;
+}
+
+::ng-deep .cm-cursor {
+  border-left: 2px solid #005aaa !important;
+}
+
+::ng-deep .cm-focused {
+  outline: none !important;
+}

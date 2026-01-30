@@ -3,5 +3,6 @@ export interface CandidateDetails{
     candidateFullName:string,
     candidateTechnology:string,
     candidateYearsOfExpInMonths:number,
-    candidateEmailId:string
+    candidateEmailId:string,
+    interviewRound:string
 }

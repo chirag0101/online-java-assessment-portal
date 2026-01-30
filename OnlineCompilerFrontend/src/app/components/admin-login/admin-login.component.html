@@ -1,25 +1,48 @@
-<div class="login-container">
-  <div class="login-panel">
-    <h2>Admin Login</h2>
-    <form #loginForm="ngForm">
-      <div class="form-group">
-        <label for="adminId">Admin ID:</label>
-        <input type="text" id="adminId" name="adminId" [(ngModel)]="adminId" required #adminIdInput="ngModel">
-        <div *ngIf="adminIdInput.invalid && (adminIdInput.dirty || adminIdInput.touched)" class="validation-message">
-          <div *ngIf="adminIdInput.errors?.['required']">Admin ID is required!</div>
-        </div>
+<div class="page-wrapper">
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo-section">
+        <img src="images/iris_logo.png" alt="IRIS Logo" class="logo-img">
       </div>
-      <div class="form-group">
-        <label for="adminPassword">Admin Password:</label>
-        <input type="password" id="adminPassword" name="adminPassword" [(ngModel)]="adminPassword" required #adminPasswordInput="ngModel">
-        <div *ngIf="adminPasswordInput.invalid && (adminPasswordInput.dirty || adminPasswordInput.touched)" class="validation-message">
-          <div *ngIf="adminPasswordInput.errors?.['required']">Admin Password is required!</div>
-        </div>
+      
+      <div class="portal-section">
+        <span class="portal-title">{{portalName}}</span>
       </div>
+    </div>
+    <div class="navbar-underline"></div>
+  </nav>
 
-      <button type="submit" class="login-btn" (click)="onLogin(loginForm)">Login</button>
-      <button type="submit" class="reset-btn" (click)="resetPassword()">Reset Password</button>
-    </form>
-    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+  <div class="login-container">
+    <div class="login-panel">
+      <h2>User Login</h2>
+      <form #loginForm="ngForm">
+        <div class="form-group">
+          <label for="adminId">User ID: <span class="required-asterisk">*</span></label>
+          <input type="text" id="adminId" name="adminId" [(ngModel)]="adminId" required #adminIdInput="ngModel" placeholder="Enter User Id">
+          <div *ngIf="adminIdInput.invalid && (adminIdInput.dirty || adminIdInput.touched)" class="validation-message">
+            <div *ngIf="adminIdInput.errors?.['required']">Admin ID is required!</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="adminPassword">Password: <span class="required-asterisk">*</span></label>
+          <input type="password" id="adminPassword" name="adminPassword" [(ngModel)]="adminPassword" required #adminPasswordInput="ngModel" placeholder="Enter User Password">
+          <div *ngIf="adminPasswordInput.invalid && (adminPasswordInput.dirty || adminPasswordInput.touched)" class="validation-message">
+            <div *ngIf="adminPasswordInput.errors?.['required']">Password is required!</div>
+          </div>
+        </div>
+
+        <button type="submit" class="login-btn" (click)="onLogin(loginForm)">Login</button>
+        <button type="button" class="reset-btn" (click)="resetPassword()">Reset Password</button>
+      </form>
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+    </div>
   </div>
+
+  <footer class="login-footer">
+    <div class="footer-content">
+      <span class="copyright">&copy; {{copyright}}</span>
+      <span class="version-tag">{{version}}</span>
+    </div>
+  </footer>
 </div>

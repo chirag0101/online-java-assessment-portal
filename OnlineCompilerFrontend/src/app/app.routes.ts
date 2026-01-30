@@ -11,45 +11,66 @@ import { AdminAuthGuard } from './guards/admin-auth.guard';
 import { CodeSubmissionInfoComponent } from './components/code-submission-info/code-submission-info.component';
 import { AssessmentEndedGuard } from './guards/assessment-end.guard';
 import { ResetAdminPasswordComponent } from './components/reset-admin-password/reset-admin-password.component';
+import { SqlEditorComponent } from './components/sql-editor/sql-editor.component';
+import { JsonEditorComponent } from './components/json-editor/json-editor.component';
+import { TextEditorComponent } from './components/text-editor/text-editor.component';
+import { ReviewAssessmentComponent } from './components/review-assessment/review-assessment.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'admin-login', pathMatch: 'full' },
+  { path: '', redirectTo: 'adminLogin', pathMatch: 'full' },
   {
-    path: 'admin-panel',
+    path: 'adminPanel',
     component: AdminPanelComponent,
     canActivate: [AdminAuthGuard],
   },
-  { path: 'admin-login', component: AdminLoginComponent },
-  { path: 'reset-password', component: ResetAdminPasswordComponent },
+  { path: 'adminLogin', component: AdminLoginComponent },
+  { path: 'resetPassword', component: ResetAdminPasswordComponent },
   {
     path: 'assessment',
     component: AssessmentHomepageComponent,
     canActivate: [AssessmentEndedGuard],
   },
   {
-    path: 'new-assessment',
+    path: 'newAssessment',
     component: NewAssessmentComponent,
     canActivate: [AdminAuthGuard],
   },
   {
-    path: 'view-active-assessments',
+    path: 'viewActiveAssessments',
     component: ViewActiveAssessmentsComponent,
     canActivate: [AdminAuthGuard],
   },
   {
-    path: 'view-submissions',
+    path: 'viewSubmissions',
     component: ViewSubmissionsComponent,
     canActivate: [AdminAuthGuard],
   },
   {
-    path: 'new-admin',
+    path: 'newAdmin',
     component: NewAdminComponent,
     canActivate: [AdminAuthGuard],
   },
-  { path: 'thank-you', component: ThankYouComponent },
+  { path: 'thankYou', component: ThankYouComponent },
   {
-    path: 'code-info',
+    path: 'codeInfo',
     component: CodeSubmissionInfoComponent,
     canActivate: [AdminAuthGuard],
   },
+  {
+    path: 'reviewAssessment',
+    component: ReviewAssessmentComponent,
+    canActivate: [AdminAuthGuard],
+  },
+  {
+    path: 'sqlEditor',
+    component: SqlEditorComponent
+  },
+  {
+    path: 'jsonEditor',
+    component: JsonEditorComponent
+  },
+  {
+    path: 'textEditor',
+    component: TextEditorComponent
+  }
 ];

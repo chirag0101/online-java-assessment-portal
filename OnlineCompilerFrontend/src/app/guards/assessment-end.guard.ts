@@ -17,7 +17,7 @@ class PermissionsService {
   canActivate(): boolean {
     if (isPlatformBrowser(this.platformId)) {
       if (sessionStorage.getItem('assessmentEnded')) {
-        this.router.navigate(['/thank-you'], { replaceUrl: true });
+        this.router.navigate(['/thankYou'], { replaceUrl: true });
         return false; 
       }
     }

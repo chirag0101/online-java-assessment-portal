@@ -1,19 +1,20 @@
+/* --- EXISTING CSS (UNTOUCHED) --- */
 html,
 body,
 app-root {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #1a1a1a;
+  background-color: #ffffff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #e0e0e0;
+  color: #005aaa;
 }
 
 .table-container {
   font-family: 'Nunito Sans', sans-serif;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   min-height: 100vh;
   padding: 10px 20px;
   box-sizing: border-box;
@@ -21,13 +22,13 @@ app-root {
 }
 
 .table-panel {
-  background-color: #282a36;
-  border: 1px solid #44475a;
+  background-color: #ffffff;
+  border: 1px solid #005aaa;
   border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 30px #005aaa;
   padding: 30px;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1250px;
   box-sizing: border-box;
   position: relative;
 }
@@ -43,7 +44,7 @@ app-root {
 }
 
 .table-panel h2 {
-  color: #e0e0e0;
+  color: #005aaa;
   margin: 0;
   font-weight: 700;
   padding-bottom: 10px;
@@ -52,7 +53,7 @@ app-root {
 }
 
 .table-panel h2 .title {
-  border-bottom: 2px solid #6272a4;
+  border-bottom: 2px solid #005aaa;
 }
 
 .table-wrapper {
@@ -63,8 +64,8 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
-  background-color: #282a36;
-  color: #e0e0e0;
+  background-color: #ffffff;
+  color: #005aaa;
 }
 
 th,
@@ -72,10 +73,11 @@ td {
   padding: 15px;
   text-align: left;
   border-bottom: 1px solid #44475a;
+  min-width: 150px;
 }
 
 thead th {
-  background-color: #3b3e4e;
+  background-color: #005aaa;
   color: #f8f8f2;
   font-weight: 600;
   text-transform: uppercase;
@@ -83,18 +85,12 @@ thead th {
 }
 
 tbody tr:hover {
-  background-color: #353842;
+  background-color: #f2f2f2;
 }
 
 td {
   font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
   font-size: 0.95em;
-  /* word-wrap: break-word; */
-}
-
-th:last-child,
-td:last-child {
-  text-align: center;
 }
 
 td .action-buttons-group {
@@ -138,12 +134,12 @@ td button:active {
 
 td button:not(.extend-btn) {
   width: auto;
-  background-color: #3b7fe4;
-  color: #282a36;
+  background-color: #005aaa;
+  color: #ffffff;
 }
 
 td button:not(.extend-btn):hover {
-  background-color: #2371e7;
+  background-color: #004887;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -153,7 +149,7 @@ td button:not(.extend-btn):hover {
   text-align: center;
   padding: 20px;
   font-size: 1.1em;
-  color: #6272a4;
+  color: #005aaa;
 }
 
 .error-message {
@@ -163,8 +159,8 @@ td button:not(.extend-btn):hover {
 
 .retry-button {
   padding: 8px 15px;
-  background-color: #ffb86c;
-  color: #282a36;
+  background-color: #ffffff;
+  color: #005aaa;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -175,7 +171,7 @@ td button:not(.extend-btn):hover {
 }
 
 .retry-button:hover {
-  background-color: #e09f5a;
+  background-color: #bdbdbd;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -187,19 +183,19 @@ td button:not(.extend-btn):hover {
   display: flex;
   justify-content: flex-end;
   padding-top: 20px;
-  border-top: 1px solid #44475a;
+  border-top: 1px solid #005aaa;
   margin-top: 20px;
 }
 
 .back-button {
-  padding: 10px 20px;
-  background-color: #6272a4;
+  padding: 8px 15px;
+  background-color: #005aaa;
   font-family: 'Nunito Sans', sans-serif;
-  color: #000000;
+  color: #ffffff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 1em;
+  font-size: 0.9em;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -207,8 +203,8 @@ td button:not(.extend-btn):hover {
 }
 
 .back-button:hover {
-  background-color: #44475a;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  background-color: #004d90;
+  box-shadow: 0 2px 10px #004d90;
 }
 
 .back-button:active {
@@ -223,38 +219,32 @@ td button:not(.extend-btn):hover {
 }
 
 .date-range-selector label {
-  color: #e0e0e0;
-  font-size: 0.9em;
-  font-weight: 600;
+  color: #005aaa;
 }
 
 .date-range-selector input[type="date"] {
-  background-color: #3b3e4e;
+  background-color: #ffffff;
   border: 1px solid #44475a;
   border-radius: 6px;
-  color: #f8f8f2;
   padding: 8px 12px;
-  font-size: 0.9em;
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  width: 150px;
+  color: #005aaa;
 }
 
 .date-range-selector input[type="date"]:focus {
   outline: none;
-  border-color: #6272a4;
+  border-color: #005aaa;
   box-shadow: 0 0 0 2px rgba(98, 114, 164, 0.5);
 }
 
 .date-range-selector input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
   cursor: pointer;
+  opacity: 0.7;
 }
 
 .clear-filter-button {
   padding: 8px 15px;
-  background-color: #ffb86c;
-  color: #282a36;
+  background-color: #ffa13d;
+  color: #ffffff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -264,7 +254,7 @@ td button:not(.extend-btn):hover {
 }
 
 .clear-filter-button:hover {
-  background-color: #e09f5a;
+  background-color: #ed881c;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -278,22 +268,22 @@ td button:not(.extend-btn):hover {
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 15px;
-  width: 100%; 
+  width: 100%;
 }
 
 .global-filter label {
-  color: #e0e0e0;
+  color: #005aaa;
   font-size: 0.9em;
   font-weight: 600;
-  white-space: nowrap; 
+  white-space: nowrap;
 }
 
 .global-filter input[type="text"] {
-  flex-grow: 1; 
-  background-color: #3b3e4e;
-  border: 1px solid #44475a;
+  flex-grow: 1;
+  background-color: #ffffff;
+  border: 1px solid #005aaa;
   border-radius: 6px;
-  color: #f8f8f2;
+  color: #005aaa;
   padding: 8px 12px;
   font-size: 0.9em;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -301,36 +291,39 @@ td button:not(.extend-btn):hover {
 }
 
 .global-filter input[type="text"]::placeholder {
-  color: #a0a0a0;
+  color: #005aaa;
   opacity: 0.7;
 }
 
 .global-filter input[type="text"]:focus {
   outline: none;
-  border-color: #6272a4;
+  border-color: #005aaa;
   box-shadow: 0 0 0 2px rgba(98, 114, 164, 0.5);
 }
 
 @media (max-width: 768px) {
-    .header-section {
-        flex-direction: column; 
-        align-items: flex-start;
-        gap: 20px; 
-    }
-    .date-range-selector,
-    .global-filter {
-        width: 100%; 
-        flex-wrap: wrap; 
-        justify-content: flex-start; 
-    }
-    .date-range-selector input[type="date"],
-    .global-filter input[type="text"] {
-        width: calc(100% - 120px); 
-        max-width: unset;
-    }
-    .global-filter input[type="text"] {
-        min-width: unset; 
-    }
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .date-range-selector,
+  .global-filter {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .date-range-selector input[type="date"],
+  .global-filter input[type="text"] {
+    width: calc(100% - 120px);
+    max-width: unset;
+  }
+
+  .global-filter input[type="text"] {
+    min-width: unset;
+  }
 }
 
 @media (max-width: 480px) {
@@ -338,4 +331,152 @@ td button:not(.extend-btn):hover {
   .global-filter input[type="text"] {
     width: 100%;
   }
+}
+
+/* --- ADDED: NAVBAR, FOOTER & PAGE LAYOUT --- */
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.navbar {
+  flex-shrink: 0;
+  width: 100%;
+  background-color: #ffffff;
+  z-index: 1000;
+  position: relative; /* Added: Ensures the underline and content stay together */
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  font-family: "Nunito Sans", sans-serif;
+  align-items: center;
+  padding: 10px 40px;
+  position: relative; /* CRITICAL: This is the anchor for the portal-section */
+  min-height: 60px; /* Ensures vertical space for centering */
+}
+
+.logo-img {
+  height: 45px;
+  width: auto;
+  display: block;
+  position: relative;
+  z-index: 10; /* Keeps logo clickable/visible above centering layer */
+}
+
+.navbar-underline {
+  height: 3px;
+  width: 100%;
+  background: #005aaa;
+}
+
+/* --- CENTERING LOGIC --- */
+.portal-section {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  text-align: center;
+  width: auto;
+  pointer-events: none; /* Allows clicks to pass through to logo/profile if they overlap */
+}
+
+.portal-title {
+  color: #005aaa;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: auto; /* Re-enables interaction for the text itself */
+}
+
+/* --- USER PROFILE IN NAV --- */
+.user-profile-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 2; /* Keeps profile on top */
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  justify-content: center;
+}
+
+.admin-name {
+  color: #005aaa;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.last-login {
+  color: #000000;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.nav-separator {
+  width: 1px;
+  height: 30px;
+  background-color: #005aaa;
+  opacity: 0.3;
+}
+
+.nav-logout-btn {
+  background: none;
+  border: none;
+  color: #df2b2b;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.nav-logout-btn:hover {
+  color: #ff3d43;
+  transform: scale(1.1);
+}
+
+.login-footer {
+  flex: 0 0 auto;
+  width: 100%;
+  background-color: #ffffff;
+  border-top: 1px solid #005aaa;
+  padding: 15px 40px;
+  box-sizing: border-box;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copyright {
+  font-size: 0.85em;
+  color: #005aaa;
+}
+
+.version-tag {
+  font-size: 0.75em;
+  background-color: #f0f7ff;
+  color: #005aaa;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #cce0ff;
+  font-family: monospace;
 }

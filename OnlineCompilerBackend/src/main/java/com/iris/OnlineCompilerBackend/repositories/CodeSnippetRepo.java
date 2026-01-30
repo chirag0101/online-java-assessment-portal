@@ -1,6 +1,6 @@
 package com.iris.OnlineCompilerBackend.repositories;
 
-import com.iris.OnlineCompilerBackend.dtos.CodeResDTO;
+import com.iris.OnlineCompilerBackend.dtos.response.CodeResDTO;
 import com.iris.OnlineCompilerBackend.models.CodeSnippet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,9 +14,18 @@ import java.util.Optional;
 public interface CodeSnippetRepo extends JpaRepository<CodeSnippet, Long> {
     Optional<CodeSnippet> findByCodeId(Long codeId);
 
-    @Query("SELECT new com.iris.OnlineCompilerBackend.dtos.CodeResDTO(cs.code,cs.status,cs.output,cs.action) " +
+    @Query("SELECT new com.iris.OnlineCompilerBackend.dtos.response.CodeResDTO(cs.code,cs.status,cs.output,cs.action,cs.time,cs.userIdFk.interviewRound) " +
             "FROM CodeSnippet cs " +
             "WHERE cs.userIdFk.userId=:userId")
     List<CodeResDTO> findSubmissionByUserId(@Param("userId") Long userId);
+
+    @Query("""
+            SELECT new com.iris.OnlineCompilerBackend.dtos.response.CodeResDTO(cs.code,cs.status,cs.output,cs.action,cs.time,cs.userIdFk.interviewRound)
+            FROM CodeSnippet cs
+            WHERE cs.userIdFk.userId=:userId
+            AND cs.languageType=:languageType
+            ORDER BY cs.time DESC
+            """)
+    List<CodeResDTO> findSubmissionByUserIdAndLangType(@Param("userId") Long userId,@Param("languageType") String languageType);
 
 }

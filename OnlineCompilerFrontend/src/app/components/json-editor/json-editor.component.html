@@ -1,0 +1,81 @@
+<div *ngIf="isVerified; else verificationPending">
+  <div class="compiler-page-container">
+    
+    <div class="code-compiler-section">
+      <div class="code-editor-container">
+        <div class="panel-header">
+          <span class="panel-icon">Source</span>
+          <span class="panel-title">JSON EDITOR</span>
+        </div>
+        <div #editor class="codemirror-host"></div>
+      </div>
+    </div>
+
+    <div class="buttons-panel">
+      <div class="candidate-info-group">
+        <div class="candidate-label">
+          <span class="info-label">ID: </span>{{ candidateId }}
+        </div>
+        <div class="candidate-label">
+          <span class="info-label">NAME: </span>{{ candidateName }}
+        </div>
+        <div class="candidate-label">
+          <span class="info-label">EXP: </span>{{ candidateExperience }}
+        </div>
+        <div class="candidate-label">
+          <span class="info-label">TECH: </span>{{ candidateTechnology }}
+        </div>
+        <div class="candidate-label">
+          <span class="info-label">Round: </span>{{ candidateRound }}
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button type="button" title="Save" (click)="saveCode()">
+          <i class="fas fa-save"></i>
+        </button>
+        <button type="button" title="Reset" (click)="resetCode()">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+        <button type="button" title="End Session" (click)="endSession()">
+          <i class="fas fa-power-off"></i>
+        </button>
+      </div>
+
+      <div class="tech-icons-row">
+        <div class="tech-icon-item">
+          <button type="button" class="tech-btn java-btn" (click)="openJavaEditor()">
+            <i class="fab fa-java"></i>
+          </button>
+          <span>Java</span>
+        </div>
+        <div class="tech-icon-item">
+          <button type="button" class="tech-btn sql-btn" (click)="openSqlEditor()">
+            <i class="fas fa-database"></i>
+          </button>
+          <span>SQL</span>
+        </div>
+        <div class="tech-icon-item">
+          <button type="button" class="tech-btn json-btn">
+            <i class="fas fa-code"></i>
+          </button>
+          <span>JSON</span>
+        </div>
+        <div class="tech-icon-item">
+          <button type="button" class="tech-btn text-btn" (click)="openTextEditor()">
+            <i class="fas fa-file-alt"></i>
+          </button>
+          <span>Text</span>
+        </div>
+      </div>
+
+      <div class="status-labels">
+        <label class="timer-label">Time Left: {{ timerDisplay }}</label>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #verificationPending> </ng-template>
+<router-outlet></router-outlet>
