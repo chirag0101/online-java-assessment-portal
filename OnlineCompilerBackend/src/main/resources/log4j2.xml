@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <!-- ==========================
+         Common Properties
+    =========================== -->
+    <Properties>
+        <!-- <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1.} %M(%L) %m%n</Property>-->
+        <!-- Adds requestId from MDC automatically -->
+        <Property name="LOG_PATTERN">
+            <![CDATA[
+                %d{yyyy-MM-dd HH:mm:ss} %-5p [%t] [server=%X{server}] [reqId=%X{requestId}] %c{1.} (%M:%L) - %m%n%throwable
+            ]]>
+        </Property>
+
+        <Property name="JSON_LOG_PATTERN">
+            <![CDATA[
+                {"time":"%d{yyyy-MM-dd'T'HH:mm:ss.SSS}",
+                 "level":"%p",
+                 "thread":"%t",
+                 "logger":"%c{1.}",
+                 "method":"%M",
+                 "line":"%L",
+                 "requestId":"%X{requestId}",
+                 "message":"%m"}%n%throwable
+            ]]>
+        </Property>
+        <!-- Application log locations -->
+        <Property name="APP_LOG_ROOT">/OnlineCompiler/logs</Property>
+        <Property name="APP_LOG_BACKUP">/OnlineCompiler/logs/BKP</Property>
+    </Properties>
+
+    <!-- ==========================
+        Appenders
+   =========================== -->
+    <Appenders>
+        <!-- Console -->
+        <Console name="console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!--  Rolling File -->
+        <RollingFile
+                name="applicationLog"
+                fileName="${APP_LOG_ROOT}/OnlineCompilerBackend-jboss.log"
+                filePattern="${APP_LOG_BACKUP}/OnlineCompilerBackend-%d{yyyy-MM-dd}-%i-jboss.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <!-- ==========================
+         Loggers
+    =========================== -->
+    <Loggers>
+
+        <!-- Root logger -->
+        <Root level="INFO">
+            <AppenderRef ref="applicationLog"/>
+            <AppenderRef ref="console"/>
+        </Root>
+
+        <!-- Project logs -->
+        <Logger name="com.iris.OnlineCompilerBackend" additivity="false" level="debug">
+            <AppenderRef ref="applicationLog"/>
+            <AppenderRef ref="console"/>
+        </Logger>
+
+    </Loggers>
+</Configuration>

@@ -15,7 +15,7 @@ public class SubmitReportReqDTO {
     private List<ReportReviewDTO> reviews;
 
     @NotNull(message = "Result Status Required")
-    private Boolean isPassed;
+    private boolean isPassed;
 
     @NotBlank(message = "Final Feedback is Required")
     private String finalFeedback;
@@ -29,7 +29,7 @@ public class SubmitReportReqDTO {
     public SubmitReportReqDTO() {
     }
 
-    public SubmitReportReqDTO(String candidateId, List<ReportReviewDTO> reviews, Boolean isPassed, String finalFeedback, Double finalAvgScore, String interviewerId, String round, Date assessmentEndTime) {
+    public SubmitReportReqDTO(String candidateId, List<ReportReviewDTO> reviews, boolean isPassed, String finalFeedback, Double finalAvgScore, String interviewerId, String round, Date assessmentEndTime) {
         this.candidateId = candidateId;
         this.reviews = reviews;
         this.isPassed = isPassed;
@@ -56,11 +56,11 @@ public class SubmitReportReqDTO {
         this.reviews = reviews;
     }
 
-    public Boolean getIsPassed() {
+    public boolean getIsPassed() {
         return isPassed;
     }
 
-    public void setIsPassed(Boolean isPassed) {
+    public void setIsPassed(boolean isPassed) {
         this.isPassed = isPassed;
     }
 

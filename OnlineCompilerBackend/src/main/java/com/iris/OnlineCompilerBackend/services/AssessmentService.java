@@ -3,6 +3,7 @@ package com.iris.OnlineCompilerBackend.services;
 import com.iris.OnlineCompilerBackend.config.AESV2;
 import com.iris.OnlineCompilerBackend.constants.CodeTypes;
 import com.iris.OnlineCompilerBackend.constants.CompilerActions;
+import com.iris.OnlineCompilerBackend.constants.ResponseStatus;
 import com.iris.OnlineCompilerBackend.constants.ReviewStatus;
 import com.iris.OnlineCompilerBackend.dtos.AssessmentReportDTO;
 import com.iris.OnlineCompilerBackend.dtos.ReportReviewDTO;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -60,21 +62,19 @@ public class AssessmentService {
                 assessmentId = assessmentId.replace(' ', '+');
             }
 
-            //get candidate details by url
-            CandidateDetailsResDTO candidateDetails = candidateRepo.findDetailsByUrl(assessmentId);
-
-            if (candidateDetails == null) {
+            //get candidate by url
+            Candidate candidate = candidateRepo.findByCandidateIdAndUrl(null, assessmentId);
+            
+            if (candidate == null) {
                 return new ApiResponse.Builder().status(false).statusMessage("INVALID URL!").build();
             }
 
             //validate current time & scheduled time
             Date now = new Date();
 
-            if (now.compareTo(candidateDetails.getInterviewDateTime()) < 0) {
+            if (now.compareTo(candidate.getAssessmentDateTime()) < 0) {
                 return new ApiResponse.Builder().status(false).statusMessage("INVALID URL!").build();
             }
-
-            Candidate candidate = candidateRepo.findByCandidateIdAndUrl(candidateDetails.getCandidateId(), assessmentId);
 
             //if assessment isn't started
             if (!candidate.getAssessmentIsStarted()) {
@@ -90,10 +90,15 @@ public class AssessmentService {
                 candidateRepo.save(candidate);
             }
 
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(candidateDetails).build();
+            // Create response DTO from candidate
+            CandidateDetailsResDTO candidateDetails = new CandidateDetailsResDTO();
+            candidateDetails.setCandidateId(candidate.getCandidateIdFk().getCandidateId());
+            candidateDetails.setInterviewDateTime(candidate.getAssessmentDateTime());
+
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(candidateDetails).build();
         } catch (Exception e) {
-            log.info(e.getMessage());
-            return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
+            log.error("Error in verifyUrl for assessmentId: {}", assessmentId, e);
+            return new ApiResponse.Builder().status(false).statusMessage("Internal server error occurred").build();
         }
     }
 
@@ -118,7 +123,7 @@ public class AssessmentService {
             CandidateMaster candidateMaster = new CandidateMaster();
             Admin admin = adminRepo.findByAdminId(newCandidateReqDTO.getAdminId());
 
-            if (admin.equals(null)) {
+            if (admin == null) {
                 throw new GlobalException("Admin Not Found!");
             }
 
@@ -147,10 +152,6 @@ public class AssessmentService {
             newCandidateEntry.setUrl(assessmentUrl.concat("?assessmentCode=" + (newCandidateEntry.getUrlHashCode())));
             newCandidateEntry.setUrlIsActive(true);
             newCandidateEntry.setAssessmentDateTime(newCandidateReqDTO.getInterviewDateTime());
-
-            //todo setting yearsofexp in months to yrs
-            Double yearsOfExperience = newCandidateReqDTO.getCandidateYearsOfExpInMonths() / 12.0;
-
             newCandidateEntry.setYearsOfExperience(newCandidateReqDTO.getCandidateYearsOfExpInMonths());
             newCandidateEntry.setAssessmentIsStarted(false);
             newCandidateEntry.setAssessmentStartTime(null);
@@ -219,7 +220,7 @@ public class AssessmentService {
         try {
             List<SubmissionsResDTO> submissionsResDTOS = candidateRepo.findAllSubmissions();
 
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(submissionsResDTOS).build();
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(submissionsResDTOS).build();
         } catch (Exception e) {
             log.info(e.getMessage());
             return new ApiResponse.Builder().status(false).response(null).statusMessage(e.getMessage()).build();
@@ -230,7 +231,7 @@ public class AssessmentService {
         try {
             List<SubmissionsResDTO> submissions = candidateRepo.findAllSubmissionsByInterviewerId(interviewerId);
 
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(submissions).build();
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(submissions).build();
         } catch (Exception e) {
             log.info(e.getMessage());
             return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
@@ -261,11 +262,11 @@ public class AssessmentService {
                 activeAssessmentDetResDTOS.add(activeAssessmentDetResDTO);
             }
 
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(activeAssessmentDetResDTOS).build();
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(activeAssessmentDetResDTOS).build();
 
         } catch (Exception e) {
             log.info(e.getMessage());
-            return new ApiResponse.Builder().status(false).statusMessage("FAILURE").response(null).build();
+            return new ApiResponse.Builder().status(false).statusMessage(ResponseStatus.FAILURE.getStatus()).response(null).build();
         }
     }
 
@@ -288,10 +289,13 @@ public class AssessmentService {
                 activeAssessmentDetResDTOS.add(activeAssessmentDetResDTO);
             }
 
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(activeAssessmentDetResDTOS).build();
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(activeAssessmentDetResDTOS).build();
+        } catch (DataAccessException e) {
+            log.error("Database error in getActiveAssessmentsByAdminId for adminId: {}", adminId, e);
+            return new ApiResponse.Builder().status(false).statusMessage("Database operation failed").build();
         } catch (Exception e) {
-            log.info(e.getMessage());
-            return new ApiResponse.Builder().status(false).response(null).build();
+            log.error("Unexpected error in getActiveAssessmentsByAdminId for adminId: {}", adminId, e);
+            return new ApiResponse.Builder().status(false).statusMessage("Internal server error").build();
         }
     }
 
@@ -306,8 +310,8 @@ public class AssessmentService {
 
             return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(null).build();
         } catch (Exception e) {
-            log.info(e.getMessage());
-            return new ApiResponse.Builder().status(false).statusMessage("FAILURE").response(null).build();
+            log.error("Error expiring assessment for candidateId: {} and round: {}", req.getCandidateId(), req.getInterviewRound(), e);
+            return new ApiResponse.Builder().status(false).statusMessage("Failed to expire assessment").response(null).build();
         }
     }
 
@@ -343,9 +347,7 @@ public class AssessmentService {
                 return new ApiResponse.Builder().status(false).build();
             }
             CandidateDetailsResDTO candidateDetailsResDTO = candidateRepo.findByCandidateIdAndLatest(candidate.getCandidateId());
-//            if (candidateDetailsResDTO == null) {
-//            }
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(candidateDetailsResDTO).build();
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(candidateDetailsResDTO).build();
         } catch (Exception e) {
             log.info(e.getMessage());
             return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
@@ -355,17 +357,17 @@ public class AssessmentService {
     public ApiResponse fetchActiveAssessmentUrlByCandidateId(String candidateId) {
         try {
             String url = candidateRepo.findActiveUrlById(candidateId);
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(url).build();
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(url).build();
         } catch (Exception e) {
             log.info(e.getMessage());
             return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
         }
     }
 
-    public ApiResponse getAssessmentEndTimeByCandId(String candidateId) {
+    public ApiResponse getAssessmentEndTimeByCandId(GetAssessmentEndTimeReqDTO req) {
         try {
-            Date time = candidateRepo.findAssessmentEndTimeByCandId(candidateId);
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(time).build();
+            Date time = candidateRepo.findAssessmentEndTimeByCandId(req.getCandidateId(),req.getInterviewerId(),req.getRound());
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(time).build();
         } catch (Exception e) {
             log.info(e.getMessage());
             return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
@@ -376,12 +378,12 @@ public class AssessmentService {
         try {
             Admin admin = adminRepo.findByAdminId(adminId);
             List<ViewCandidatesStatusResDTO> viewCandidatesStatusResDTO;
-            if (admin.getIsAdmin() == true) {
+            if (admin.getIsAdmin()) {
                 viewCandidatesStatusResDTO = candidateRepo.getCandidatesHistoryForMasterAdmin();
             } else {
                 viewCandidatesStatusResDTO = candidateRepo.getCandidatesHistory(adminId);
             }
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(viewCandidatesStatusResDTO).build();
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(viewCandidatesStatusResDTO).build();
 
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -420,9 +422,10 @@ public class AssessmentService {
             codeSnippet.setUserIdFk(candidate);
             codeSnippetRepo.save(codeSnippet);
 
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(null).build();
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(null).build();
         } catch (Exception e) {
-            return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
+            log.error("Error in submitData for candidateId: {}", codeSnippetReqDTO.getCandidateId(), e);
+            return new ApiResponse.Builder().status(false).statusMessage("Failed to submit data").build();
         }
     }
 
@@ -451,9 +454,14 @@ public class AssessmentService {
             response.setAssessmentEndTime(candidate.getAssessmentEndTime());
             response.setStatus(candidate.getStatus());
 
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(response).build();
-        } catch (Exception e) {
+            // amazonq-ignore-next-line
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(response).build();
+        } catch (GlobalException e) {
+            log.warn("Business logic error in viewReport: {}", e.getMessage());
             return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
+        } catch (Exception e) {
+            log.error("Error in viewReport for candidateId: {}", req.getCandidateId(), e);
+            return new ApiResponse.Builder().status(false).statusMessage("Failed to retrieve report").build();
         }
     }
 
@@ -502,9 +510,9 @@ public class AssessmentService {
             }
 
             if (req.getIsPassed()) {
-                candidate.setStatus(ReviewStatus.PASSED.getStatus());
+                candidate.setStatus(ReviewStatus.SELECTED.getStatus());
             } else {
-                candidate.setStatus(ReviewStatus.FAILED.getStatus());
+                candidate.setStatus(ReviewStatus.REJECTED.getStatus());
             }
             candidate.setIsReviewed(true);
             candidate.setRemarks(req.getFinalFeedback());
@@ -514,20 +522,31 @@ public class AssessmentService {
 
             assessmentReportRepo.saveAll(assessmentReports);
 
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(null).build();
-        } catch (Exception e) {
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(null).build();
+        } catch (GlobalException e) {
+            log.warn("Business logic error in submitReport: {}", e.getMessage());
             return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
+        } catch (DataAccessException e) {
+            log.error("Database error in submitReport", e);
+            return new ApiResponse.Builder().status(false).statusMessage("Database operation failed").build();
+        } catch (Exception e) {
+            log.error("Unexpected error in submitReport", e);
+            return new ApiResponse.Builder().status(false).statusMessage("Internal server error").build();
         }
     }
 
     @Scheduled(cron = "${assessment.expiry.scheduler.cron}")
     private void validateActiveAssessments() {
-        List<Candidate> activeCandidateAssessments = candidateRepo.findAllActiveAssessmentCandidates();
-        for (Candidate candidate : activeCandidateAssessments) {
-            if ((new Date().getTime()) >= (candidate.getUrlExpiryTime().getTime())) {
-                candidate.setUrlIsActive(false);
-                candidateRepo.save(candidate);
+        try{
+            List<Candidate> activeCandidateAssessments = candidateRepo.findAllActiveAssessmentCandidates();
+            for (Candidate candidate : activeCandidateAssessments) {
+                if ((new Date().getTime()) >= (candidate.getUrlExpiryTime().getTime())) {
+                    candidate.setUrlIsActive(false);
+                    candidateRepo.save(candidate);
+                }
             }
+        } catch (Exception e) {
+            log.error("Error in validating active assessments", e);
         }
     }
 }

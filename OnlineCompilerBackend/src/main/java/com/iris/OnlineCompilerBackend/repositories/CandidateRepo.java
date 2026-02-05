@@ -19,8 +19,8 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
 
     @Query(
             """
-            FROM Candidate c WHERE c.candidateIdCode=:candidateId AND c.urlIsActive=true
-            """)
+                    FROM Candidate c WHERE c.candidateIdCode=:candidateId AND c.urlIsActive=true
+                    """)
     List<Candidate> findAllActiveAssessmentsForCandidate(@Param("candidateId") String candidateId);
 
     @Query("FROM Candidate c " +
@@ -29,9 +29,11 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
             "AND c.interviewRound=:interviewRound")
     Optional<Candidate> findByCandidateIdAndAssessmentIsActiveAndAssessmentRound(@Param("candidateId") String candidateId, @Param("interviewRound") String interviewRound);
 
-    @Query("FROM Candidate c " +
-            "WHERE c.candidateIdCode=:candidateId " +
-            "ORDER BY c.urlCreatedTime DESC LIMIT 1")
+    @Query("""
+            FROM Candidate c
+            WHERE c.candidateIdCode=:candidateId
+            ORDER BY c.urlCreatedTime DESC FETCH FIRST 1 ROWS ONLY
+            """)
     Optional<Candidate> findByCandidateIdLatestEntry(@Param("candidateId") String candidateId);
 
     @Query("FROM Candidate c " +
@@ -61,11 +63,11 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
 
     @Query("FROM Candidate c " +
             "WHERE c.candidateIdCode=:candidateId AND c.urlIsActive=true AND c.assessmentIsStarted=true AND c.interviewRound=:round")
-    Optional<Candidate> findByCandidateIdIsActiveAndRound(@Param("candidateId") String candidateId,@Param("round") String round);
+    Optional<Candidate> findByCandidateIdIsActiveAndRound(@Param("candidateId") String candidateId, @Param("round") String round);
 
     @Query("FROM Candidate c " +
             "WHERE c.candidateIdCode=:candidateId AND c.urlIsActive=true AND c.assessmentIsStarted=true AND c.urlHashCode=:url")
-    Optional<Candidate> findByCandidateIdByUrlAndIsActive(@Param("candidateId") String candidateId,String url);
+    Optional<Candidate> findByCandidateIdByUrlAndIsActive(@Param("candidateId") String candidateId, @Param("url") String url);
 
     @Query("SELECT c.userId " +
             "FROM Candidate c " +
@@ -161,10 +163,12 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
     @Query("""
             SELECT c.assessmentEndTime FROM Candidate c
             WHERE c.candidateIdCode=:candidateId
+            AND c.interviewerId=:interviewerId
+            AND c.interviewRound=:round
             AND c.urlIsActive=true
             AND c.assessmentIsStarted=true
             """)
-    Date findAssessmentEndTimeByCandId(@Param("candidateId") String candidateId);
+    Date findAssessmentEndTimeByCandId(@Param("candidateId") String candidateId, @Param("interviewerId") String interviewerId, @Param("round") String round);
 
     @Query("""
                SELECT new com.iris.OnlineCompilerBackend.dtos.response.ViewCandidatesStatusResDTO(c.candidateIdCode,c.candidateIdFk.candidateName, c.interviewerId, c.technology, c.interviewRound, c.assessmentEndTime, c.status)

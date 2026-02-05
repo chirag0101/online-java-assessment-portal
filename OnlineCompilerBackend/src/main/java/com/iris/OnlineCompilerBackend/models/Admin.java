@@ -24,11 +24,11 @@ public class Admin {
     @Column(name = "LAST_LOGIN")
     private Date lastLogin;
 
-    @Column(name = "Full_NAME")
+    @Column(name = "FULL_NAME")
     private String fullName;
 
     @Column(name = "IS_ADMIN")
-    private Boolean isAdmin;
+    private boolean isAdmin;
 
     @Column(name = "LAST_ACCESS_TOKEN")
     private String lastAccesstoken;
@@ -40,7 +40,7 @@ public class Admin {
     private String accessTokenLastAccessedOn;
 
     @Column(name = "IS_EXPIRED")
-    private Boolean accessTokenIsExpired;
+    private boolean accessTokenIsExpired;
 
     @JoinColumn(name = "CREATED_BY_FK")
     @ManyToOne
@@ -49,7 +49,7 @@ public class Admin {
     public Admin() {
     }
 
-    public Admin(Long id, String adminId, String adminPassword, String salt, Date lastLogin, String fullName, Boolean isAdmin, String lastAccesstoken, String accessTokenCreatedOn, String accessTokenLastAccessedOn, Boolean accessTokenIsExpired, Admin createdByFk) {
+    public Admin(Long id, String adminId, String adminPassword, String salt, Date lastLogin, String fullName, boolean isAdmin, String lastAccesstoken, String accessTokenCreatedOn, String accessTokenLastAccessedOn, boolean accessTokenIsExpired, Admin createdByFk) {
         this.id = id;
         this.adminId = adminId;
         this.adminPassword = adminPassword;
@@ -89,7 +89,7 @@ public class Admin {
     }
 
     public String getSalt() {
-        return salt;
+        return this.salt;
     }
 
     public void setSalt(String salt) {
@@ -112,12 +112,12 @@ public class Admin {
         this.fullName = fullName;
     }
 
-    public Boolean getIsAdmin() {
-        return isAdmin;
+    public boolean getIsAdmin() {
+        return this.isAdmin;
     }
 
-    public void setIsAdmin(Boolean admin) {
-        isAdmin = admin;
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin=isAdmin;
     }
 
     public String getLastAccesstoken() {
@@ -144,11 +144,11 @@ public class Admin {
         this.accessTokenLastAccessedOn = accessTokenLastAccessedOn;
     }
 
-    public Boolean getAccessTokenIsExpired() {
-        return accessTokenIsExpired;
+    public boolean getAccessTokenIsExpired() {
+        return this.accessTokenIsExpired;
     }
 
-    public void setAccessTokenIsExpired(Boolean accessTokenIsExpired) {
+    public void setAccessTokenIsExpired(boolean accessTokenIsExpired) {
         this.accessTokenIsExpired = accessTokenIsExpired;
     }
 

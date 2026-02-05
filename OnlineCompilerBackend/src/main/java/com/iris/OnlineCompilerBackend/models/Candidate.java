@@ -38,13 +38,13 @@ public class Candidate {
     private String url;
 
     @Column(name = "URL_IS_ACTIVE")
-    private Boolean urlIsActive;
+    private boolean urlIsActive;
 
     @Column(name = "URL_HASH_CODE")
     private String urlHashCode;
 
     @Column(name = "ASSESSMENT_IS_STARTED")
-    private Boolean assessmentIsStarted;
+    private boolean assessmentIsStarted;
 
     @Column(name = "ASSESSMENT_START_TIME")
     private Date assessmentStartTime;
@@ -60,7 +60,7 @@ public class Candidate {
     private String interviewRound;
 
     @Column(name = "IS_REVIEWED")
-    private Boolean isReviewed;
+    private boolean isReviewed;
 
     @Column(name = "SCORE")
     private Double score;
@@ -72,7 +72,7 @@ public class Candidate {
     private String status;
 
     @Column(name = "ASSESSMENT_IS_ENDED")
-    private Boolean assessmentIsEnded;
+    private boolean assessmentIsEnded;
 
     @Column(name = "ASSESSMENT_DATE_TIME")
     private Date assessmentDateTime;
@@ -80,7 +80,7 @@ public class Candidate {
     public Candidate() {
     }
 
-    public Candidate(Long userId, CandidateMaster candidateIdFk, String candidateIdCode, Double yearsOfExperience, String technology, String interviewerId, Date urlCreatedTime, Date urlExpiryTime, String url, Boolean urlIsActive, String urlHashCode, Boolean assessmentIsStarted, Date assessmentStartTime, Date assessmentEndTime, Admin assessmentAssignedBy, String interviewRound, Boolean isReviewed, Double score, String remarks, String status, Boolean assessmentIsEnded, Date assessmentDateTime) {
+    public Candidate(Long userId, CandidateMaster candidateIdFk, String candidateIdCode, Double yearsOfExperience, String technology, String interviewerId, Date urlCreatedTime, Date urlExpiryTime, String url, boolean urlIsActive, String urlHashCode, boolean assessmentIsStarted, Date assessmentStartTime, Date assessmentEndTime, Admin assessmentAssignedBy, String interviewRound, boolean isReviewed, Double score, String remarks, String status, boolean assessmentIsEnded, Date assessmentDateTime) {
         this.userId = userId;
         this.candidateIdFk = candidateIdFk;
         this.candidateIdCode = candidateIdCode;
@@ -177,11 +177,11 @@ public class Candidate {
         this.url = url;
     }
 
-    public Boolean getUrlIsActive() {
+    public boolean getUrlIsActive() {
         return urlIsActive;
     }
 
-    public void setUrlIsActive(Boolean urlIsActive) {
+    public void setUrlIsActive(boolean urlIsActive) {
         this.urlIsActive = urlIsActive;
     }
 
@@ -193,11 +193,11 @@ public class Candidate {
         this.urlHashCode = urlHashCode;
     }
 
-    public Boolean getAssessmentIsStarted() {
+    public boolean getAssessmentIsStarted() {
         return assessmentIsStarted;
     }
 
-    public void setAssessmentIsStarted(Boolean assessmentIsStarted) {
+    public void setAssessmentIsStarted(boolean assessmentIsStarted) {
         this.assessmentIsStarted = assessmentIsStarted;
     }
 
@@ -233,11 +233,11 @@ public class Candidate {
         this.interviewRound = interviewRound;
     }
 
-    public Boolean getIsReviewed() {
+    public boolean getIsReviewed() {
         return isReviewed;
     }
 
-    public void setIsReviewed(Boolean isReviewed) {
+    public void setIsReviewed(boolean isReviewed) {
         this.isReviewed = isReviewed;
     }
 
@@ -265,11 +265,11 @@ public class Candidate {
         this.status = status;
     }
 
-    public Boolean getAssessmentIsEnded() {
+    public boolean getAssessmentIsEnded() {
         return assessmentIsEnded;
     }
 
-    public void setAssessmentIsEnded(Boolean assessmentIsEnded) {
+    public void setAssessmentIsEnded(boolean assessmentIsEnded) {
         this.assessmentIsEnded = assessmentIsEnded;
     }
 

@@ -7,10 +7,10 @@ public enum CodeTypes {
     TEXT("TEXT", 4);
 
     private final String codeType;
-    private final Integer codeTypeKey;
+    private final int codeTypeKey;
 
     // All-args constructor
-    CodeTypes(String codeType, Integer codeTypeKey) {
+    CodeTypes(String codeType, int codeTypeKey) {
         this.codeType = codeType;
         this.codeTypeKey = codeTypeKey;
     }
@@ -20,26 +20,29 @@ public enum CodeTypes {
         return codeType;
     }
 
-    public Integer getCodeTypeKey() {
+    public int getCodeTypeKey() {
         return codeTypeKey;
     }
 
     // Utility methods
-    public static String getCodeTypeById(Integer codeTypeKey) {
+    public static String getCodeTypeById(int codeTypeKey) {
         for (CodeTypes codeTypes : CodeTypes.values()) {
-            if (codeTypes.getCodeTypeKey().equals(codeTypeKey)) {
+            if (codeTypes.getCodeTypeKey()==codeTypeKey) {
                 return codeTypes.getCodeType();
             }
         }
-        return null;
+        throw new IllegalArgumentException("Invalid code type key: " + codeTypeKey);
     }
 
-    public static Integer getIdByCodeType(String codeType) {
+    public static int getIdByCodeType(String codeType) {
+        if (codeType == null || codeType.trim().isEmpty()) {
+            throw new IllegalArgumentException("Code type cannot be null or empty");
+        }
         for (CodeTypes codeTypes : CodeTypes.values()) {
             if (codeTypes.getCodeType().equalsIgnoreCase(codeType)) {
                 return codeTypes.getCodeTypeKey();
             }
         }
-        return null;
+        throw new IllegalArgumentException("Invalid code type: " + codeType);
     }
 }

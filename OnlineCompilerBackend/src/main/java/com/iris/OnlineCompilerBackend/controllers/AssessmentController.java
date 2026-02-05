@@ -25,7 +25,6 @@ public class AssessmentController {
 
     @PostMapping("/newAssessment")
     public ApiResponse newAssessment(@Valid @RequestBody NewCandidateReqDTO newCandidateReqDTO) {
-
         return assessmentService.createNewAssessment(newCandidateReqDTO);
     }
 
@@ -38,11 +37,6 @@ public class AssessmentController {
     public ApiResponse viewActiveAssessmentsByAdminId(@RequestHeader("adminId") String adminId) {
         return assessmentService.getActiveAssessmentsByAdminId(adminId);
     }
-
-//    @GetMapping("/view-submissions/{candidate-id}")
-//    public ApiResponse viewSubmissionsOfCandidates(@PathVariable(value = "candidate-id") String candidateId) {
-//        return assessmentService.viewSubmissionByCandidateId(candidateId);
-//    }
 
     @PostMapping("/viewSubmissionsByCandidateId")
     public ApiResponse viewSubmissionsOfCandidates(@RequestBody ViewCandidateSubmissionsReqDTO req) {
@@ -94,9 +88,9 @@ public class AssessmentController {
         return assessmentService.fetchActiveAssessmentUrlByCandidateId(candidateId);
     }
 
-    @GetMapping("/assessmentEndTimeByCandidateId/{candidateId}")
-    public ApiResponse getAssessmentEndTimeByCandidateId(@PathVariable(name = "candidateId") String candidateId) {
-        return assessmentService.getAssessmentEndTimeByCandId(candidateId);
+    @PostMapping("/assessmentEndTimeByCandidateId")
+    public ApiResponse getAssessmentEndTimeByCandidateId(GetAssessmentEndTimeReqDTO req){
+        return assessmentService.getAssessmentEndTimeByCandId(req);
     }
 
     @PostMapping("/viewReport")

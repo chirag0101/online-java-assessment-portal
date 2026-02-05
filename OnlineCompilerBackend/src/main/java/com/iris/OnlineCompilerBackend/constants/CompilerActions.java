@@ -6,10 +6,10 @@ public enum CompilerActions {
     SAVE("SAVE",3);
 
     private final String action;
-    private final Integer actionKey;
+    private final int actionKey;
 
     // All-args constructor
-    CompilerActions(String action, Integer actionKey) {
+    CompilerActions(String action, int actionKey) {
         this.action = action;
         this.actionKey = actionKey;
     }
@@ -19,26 +19,29 @@ public enum CompilerActions {
         return action;
     }
 
-    public Integer getActionKey() {
+    public int getActionKey() {
         return actionKey;
     }
 
     // Utility methods
-    public static String getActionById(Integer actionId) {
+    public static String getActionById(int actionId) {
         for (CompilerActions actions : CompilerActions.values()) {
-            if (actions.getActionKey().equals(actionId)) {
+            if (actions.getActionKey()==actionId) {
                 return actions.getAction();
             }
         }
-        return null;
+        throw new IllegalArgumentException("Invalid action ID: " + actionId);
     }
 
-    public static Integer getIdByAction(String action) {
+    public static int getIdByAction(String action) {
+        if (action == null || action.trim().isEmpty()) {
+            throw new IllegalArgumentException("Action cannot be null or empty");
+        }
         for (CompilerActions actions : CompilerActions.values()) {
             if (actions.getAction().equalsIgnoreCase(action)) {
                 return actions.getActionKey();
             }
         }
-        return null;
+        throw new IllegalArgumentException("Invalid action: " + action);
     }
 }

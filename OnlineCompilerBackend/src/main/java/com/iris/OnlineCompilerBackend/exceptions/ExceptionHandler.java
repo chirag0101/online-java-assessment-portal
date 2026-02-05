@@ -3,9 +3,14 @@ package com.iris.OnlineCompilerBackend.exceptions;
 import com.iris.OnlineCompilerBackend.models.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.*;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.sql.SQLTransientConnectionException;
 
 @RestControllerAdvice
 public class ExceptionHandler {
@@ -28,4 +33,27 @@ public class ExceptionHandler {
 
         return new ApiResponse.Builder().status(false).statusMessage(errorMessage).build();
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(DataAccessResourceFailureException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE) // 503, not 500
+    public ApiResponse handleDataAccessFailure(DataAccessResourceFailureException e) {
+
+        return new ApiResponse.Builder()
+                .status(false)
+                .response(null)
+                .statusMessage("Database connection unavailable. Please try again later.")
+                .build();
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(SQLTransientConnectionException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ApiResponse handleSqlTransient(SQLTransientConnectionException e) {
+
+        return new ApiResponse.Builder()
+                .status(false)
+                .response(null)
+                .statusMessage("Database is down or unreachable.")
+                .build();
+    }
+
 }

@@ -2,8 +2,10 @@ package com.iris.OnlineCompilerBackend.services;
 
 import com.iris.OnlineCompilerBackend.constants.CodeTypes;
 import com.iris.OnlineCompilerBackend.constants.CompilerActions;
+import com.iris.OnlineCompilerBackend.constants.ResponseStatus;
 import com.iris.OnlineCompilerBackend.dtos.request.CodeSnippetReqDTO;
 import com.iris.OnlineCompilerBackend.dtos.response.CodeSnippetResDTO;
+import com.iris.OnlineCompilerBackend.exceptions.GlobalException;
 import com.iris.OnlineCompilerBackend.models.ApiResponse;
 import com.iris.OnlineCompilerBackend.models.AssessmentReport;
 import com.iris.OnlineCompilerBackend.models.Candidate;
@@ -42,9 +44,12 @@ public class CompileService {
         try {
             String jdkVersion = System.getProperty("java.version");
             return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(jdkVersion).build();
+        } catch (SecurityException e) {
+            log.error("Security error accessing JDK version", e);
+            return new ApiResponse.Builder().status(false).statusMessage("Unable to access system properties").response(null).build();
         } catch (Exception e) {
-            log.info(e.getMessage());
-            return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).response(null).build();
+            log.error("Unexpected error getting JDK version", e);
+            return new ApiResponse.Builder().status(false).statusMessage("Internal server error").response(null).build();
         }
     }
 
@@ -56,10 +61,10 @@ public class CompileService {
         Candidate candidate = candidateRepo.findByCandidateIdByUrlAndIsActive(codeSnippetReqDTO.getCandidateId(), codeSnippetReqDTO.getUrl()).orElseThrow(() -> new Exception("Candidate Not Found!"));
 
         //checking if languageType exists for this candidate so that we can see it in the report
-        List<String> assessmentCodeTypes=assessmentReportRepo.findAssessmentCodeTypesByUserId(candidate.getUserId());
+        List<String> assessmentCodeTypes = assessmentReportRepo.findAssessmentCodeTypesByUserId(candidate.getUserId());
 
-        if(!assessmentCodeTypes.contains(CodeTypes.getCodeTypeById(codeSnippetReqDTO.getCodeType()))){
-            AssessmentReport assessmentReport=new AssessmentReport();
+        if (!assessmentCodeTypes.contains(CodeTypes.getCodeTypeById(codeSnippetReqDTO.getCodeType()))) {
+            AssessmentReport assessmentReport = new AssessmentReport();
             assessmentReport.setCandidateUserIdFk(candidate);
             assessmentReport.setScore(null);
             assessmentReport.setComments(null);
@@ -81,15 +86,21 @@ public class CompileService {
         return codeSnippetResDTO;
     }
 
-    private CodeSnippetResDTO compileCode(String candidateId, String code, Integer actionId) throws Exception {
+    private CodeSnippetResDTO compileCode(String candidateId, String code, Integer actionId) throws IOException {
         String className = getClassNameFromCode(code);
 
-        String candidateDirPath=dirPath+File.separator+candidateId;
+        String candidateDirPath = dirPath + File.separator + candidateId;
 
         File dir = new File(candidateDirPath);   //creating dir for candidate
 
         if (!dir.exists()) {
-            dir.mkdir();
+            if (!dir.mkdirs()) {
+                log.error("Failed to create directory: {}", candidateDirPath);
+                return new CodeSnippetResDTO.Builder()
+                        .status(ResponseStatus.FAILURE.getStatus())
+                        .statusMessage("Internal Server Error")
+                        .build();
+            }
         }
 
         //file format: dirPath/candidateId/classname.java
@@ -102,7 +113,7 @@ public class CompileService {
         } catch (IOException e) {
             log.error("Error writing source file: {}", e.getMessage());
             return new CodeSnippetResDTO.Builder()
-                    .status("FAILURE")
+                    .status(ResponseStatus.FAILURE.getStatus())
                     .statusMessage("Failed to write source file")
                     .build();
         }
@@ -118,7 +129,7 @@ public class CompileService {
             log.info("Compiler not available!");
 
             return new CodeSnippetResDTO.Builder()
-                    .status("FAILURE")
+                    .status(ResponseStatus.FAILURE.getStatus())
                     .statusMessage("Internal Server Error...")
                     .build();
         }
@@ -152,7 +163,7 @@ public class CompileService {
         String compileOutput = compilerOutput.toString() + diagnosticMessages.toString();
 
         CodeSnippetResDTO.Builder builder = new CodeSnippetResDTO.Builder()
-                .status(success ? "SUCCESS" : "FAILURE");
+                .status(success ? ResponseStatus.SUCCESS.getStatus() : ResponseStatus.FAILURE.getStatus());
 
         //if any error occurs or if the compilerAction is just to COMPILE then return response
         if (!success || actionId.equals(CompilerActions.getIdByAction("COMPILE"))) {
@@ -195,7 +206,7 @@ public class CompileService {
 
 //  method for fetching class name from code, on the basis of space and \n
 
-    private String getClassNameFromCode(String code) throws Exception {
+    private String getClassNameFromCode(String code) {
         try {
             String[] lines = code.split("\n");
 
@@ -213,27 +224,29 @@ public class CompileService {
             }
             return validateFileName(filename);
         } catch (Exception e) {
-            throw new RuntimeException("Error: Invalid Class Name!");
+            throw new GlobalException("Error: Invalid Class Name!");
         }
     }
 
     //validating if class name contains only A-Z , a-z , 0-9 , _ , $
 
-    private String validateFileName(String filename) throws Exception {
+    private String validateFileName(String filename) {
         try {
             char[] fileNameArray = filename.toCharArray();
             StringBuilder validFileName = new StringBuilder();
             for (int fileNameIterator = 0; fileNameIterator < fileNameArray.length; fileNameIterator++) {
-                if (((filename.charAt(fileNameIterator) >= 'A' && filename.charAt(fileNameIterator) <= 'Z')) || ((filename.charAt(fileNameIterator) >= 'a' && filename.charAt(fileNameIterator) <= 'z')) || ((filename.charAt(fileNameIterator) >= '0') && (filename.charAt(fileNameIterator) <= '9')) || (filename.charAt(fileNameIterator) == '_') || (filename.charAt(fileNameIterator) == '$')) {
+                if ((filename.charAt(fileNameIterator) >= 'A' && filename.charAt(fileNameIterator) <= 'Z') || (filename.charAt(fileNameIterator) >= 'a' && filename.charAt(fileNameIterator) <= 'z') || (filename.charAt(fileNameIterator) >= '0' && filename.charAt(fileNameIterator) <= '9') || (filename.charAt(fileNameIterator) == '_') || (filename.charAt(fileNameIterator) == '$')) {
                     validFileName.append(filename.charAt(fileNameIterator));
                 } else {
                     return validFileName.toString();
                 }
             }
             return validFileName.toString();
+        } catch (GlobalException e) {
+            throw e;
         } catch (Exception e) {
-            log.info(e.getMessage());
-            throw new Exception("Error: Invalid Class Name!");
+            log.error("Error validating filename: {}", filename, e);
+            throw new GlobalException("Error: Invalid Class Name!");
         }
     }
 

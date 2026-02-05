@@ -3,11 +3,13 @@ package com.iris.OnlineCompilerBackend.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iris.OnlineCompilerBackend.config.AESV2;
 import com.iris.OnlineCompilerBackend.config.PasswordHashing;
+import com.iris.OnlineCompilerBackend.constants.ResponseStatus;
 import com.iris.OnlineCompilerBackend.dtos.AdminLoginCredsDTO;
 import com.iris.OnlineCompilerBackend.dtos.request.NewAdminReqDTO;
 import com.iris.OnlineCompilerBackend.dtos.request.ResetAdminPasswordReqDTO;
 import com.iris.OnlineCompilerBackend.dtos.response.AdminAuthenticationResDTO;
 import com.iris.OnlineCompilerBackend.dtos.response.AllAdminResDTO;
+import com.iris.OnlineCompilerBackend.exceptions.GlobalException;
 import com.iris.OnlineCompilerBackend.models.AccessTokenJSON;
 import com.iris.OnlineCompilerBackend.models.Admin;
 import com.iris.OnlineCompilerBackend.models.ApiResponse;
@@ -61,7 +63,11 @@ public class AdminService {
             admin.setFullName(req.getAdminFullName());
             admin.setIsAdmin(req.getIsAdmin());
 
-            admin.setCreatedByFk(adminRepo.findByAdminId(existingAdminId));
+            Admin createdByAdmin = adminRepo.findByAdminId(existingAdminId);
+            if (createdByAdmin == null) {
+                return new ApiResponse.Builder().status(false).statusMessage("Admin Not Found!").build();
+            }
+            admin.setCreatedByFk(createdByAdmin);
 
             admin.setLastLogin(null);
 
@@ -72,21 +78,21 @@ public class AdminService {
 
             adminRepo.save(admin);
 
-            return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(null).build();
+            return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(null).build();
         } catch (Exception e) {
-            log.info(e.getMessage());
-            return new ApiResponse.Builder().status(false).statusMessage("FAILURE").build();
+            log.error("Error creating admin for adminId: {}", req.getAdminId(), e);
+            return new ApiResponse.Builder().status(false).statusMessage("Failed to create admin").build();
         }
     }
 
-    public ApiResponse verifyAdminCreds(AdminLoginCredsDTO adminLoginReqDto) {
+    public ApiResponse verifyAdminCredentials(AdminLoginCredsDTO adminLoginReqDto) {
         try {
 
             //check if admin exists
             Admin admin = adminRepo.findByAdminId(adminLoginReqDto.getAdminId());
 
             if (admin == null) {
-                throw new Exception("ADMIN NOT FOUND!");
+                throw new GlobalException("ADMIN NOT FOUND!");
             }
 
             if (PasswordHashing.validatePassword(admin.getSalt(), admin.getAdminPassword(), PasswordHashing.createHash(adminLoginReqDto.getAdminPassword(), admin.getSalt(), Boolean.TRUE))) {
@@ -115,13 +121,16 @@ public class AdminService {
 
                 adminRepo.save(admin);
 
-                return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(new AdminAuthenticationResDTO(admin.getAdminId(), admin.getIsAdmin(), admin.getFullName(), admin.getLastAccesstoken(),admin.getLastLogin())).build();
+                return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(new AdminAuthenticationResDTO(admin.getAdminId(), admin.getIsAdmin(), admin.getFullName(), admin.getLastAccesstoken(), admin.getLastLogin())).build();
             }
 
-            throw new Exception("INVALID CREDENTIALS!");
-        } catch (Exception e) {
-            log.info(e.getMessage());
+            throw new GlobalException("INVALID CREDENTIALS!");
+        } catch (GlobalException e) {
+            log.warn("Authentication error for adminId: {}", adminLoginReqDto.getAdminId());
             return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
+        } catch (Exception e) {
+            log.error("Error verifying admin credentials for adminId: {}", adminLoginReqDto.getAdminId(), e);
+            return new ApiResponse.Builder().status(false).statusMessage("Authentication failed").build();
         }
     }
 
@@ -129,18 +138,18 @@ public class AdminService {
         try {
             //checking if new & confirm password match
             if (!(resetAdminPasswordReqDTO.getAdminNewPassword().equals(resetAdminPasswordReqDTO.getAdminNewConfirmPassword()))) {
-                throw new Exception("PASSWORDS DON'T MATCH!");
+                throw new GlobalException("PASSWORDS DON'T MATCH!");
             }
 
             //checking if admin exists
             Admin admin = adminRepo.findByAdminId(resetAdminPasswordReqDTO.getAdminId());
             if (admin == null) {
-                throw new Exception("ADMIN DOESN'T EXISTS!");
+                throw new GlobalException("ADMIN DOESN'T EXISTS!");
             }
 
             //verifying if old & new passwords match
             if (!(PasswordHashing.validatePassword(admin.getSalt(), admin.getAdminPassword(), PasswordHashing.createHash(resetAdminPasswordReqDTO.getAdminOldPassword(), admin.getSalt(), Boolean.TRUE)))) {
-                throw new Exception("INVALID CREDENTIALS!");
+                throw new GlobalException("INVALID CREDENTIALS!");
             }
 
             //storing new password & salt
@@ -152,9 +161,15 @@ public class AdminService {
             adminRepo.save(admin);
 
             return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(null).build();
-        } catch (Exception e) {
-            log.info(e.getMessage());
+        } catch (GlobalException e) {
+            log.warn("Password reset validation error for adminId: {}", resetAdminPasswordReqDTO.getAdminId());
             return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
+        } catch (org.springframework.dao.DataAccessException e) {
+            log.error("Database error resetting password for adminId: {}", resetAdminPasswordReqDTO.getAdminId(), e);
+            return new ApiResponse.Builder().status(false).statusMessage("Database operation failed").build();
+        } catch (Exception e) {
+            log.error("Unexpected error resetting password for adminId: {}", resetAdminPasswordReqDTO.getAdminId(), e);
+            return new ApiResponse.Builder().status(false).statusMessage("Internal server error").build();
         }
     }
 
@@ -162,9 +177,12 @@ public class AdminService {
         try {
             List<AllAdminResDTO> allAdmins = adminRepo.findAllAdminsDet();
             return new ApiResponse.Builder().status(true).statusMessage("SUCCESS").response(allAdmins).build();
+        } catch (org.springframework.dao.DataAccessException e) {
+            log.error("Database error fetching all admins", e);
+            return new ApiResponse.Builder().status(false).statusMessage("Database operation failed").build();
         } catch (Exception e) {
-            log.info(e.getMessage());
-            return new ApiResponse.Builder().status(false).statusMessage(e.getMessage()).build();
+            log.error("Unexpected error fetching all admins", e);
+            return new ApiResponse.Builder().status(false).statusMessage("Internal server error").build();
         }
     }
 
@@ -173,14 +191,12 @@ public class AdminService {
         try {
             List<Admin> admins = adminRepo.findAllActiveAdmins();
             for (Admin admin : admins) {
-                if (admin.getAccessTokenLastAccessedOn() != null) {
+                if (admin.getAccessTokenLastAccessedOn() != null && (Duration.between(OffsetDateTime.parse(admin.getAccessTokenLastAccessedOn()), OffsetDateTime.now(ZoneId.of(timeZone))).toMinutes() >= 15)) {
                     //checking if user is idle for 15 mins from last api call
-                    if (Duration.between(OffsetDateTime.parse(admin.getAccessTokenLastAccessedOn()), OffsetDateTime.now(ZoneId.of(timeZone))).toMinutes() >= 15) {
-                        admin.setAccessTokenIsExpired(true);
-                    }
+                    admin.setAccessTokenIsExpired(true);
+                    adminRepo.save(admin);
                 }
             }
-            adminRepo.saveAll(admins);
         } catch (Exception e) {
             log.info(e.getMessage());
         }

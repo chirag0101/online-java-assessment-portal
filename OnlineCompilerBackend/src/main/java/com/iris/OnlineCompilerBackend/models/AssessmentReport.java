@@ -32,8 +32,7 @@ public class AssessmentReport {
         this.comments = comments;
     }
 
-    public AssessmentReport(Integer scoreId, String langType, Double score, String comments, Candidate candidateUserIdFk) {
-        this.scoreId = scoreId;
+    public AssessmentReport(String langType, Double score, String comments, Candidate candidateUserIdFk) {
         this.langType = langType;
         this.score = score;
         this.comments = comments;

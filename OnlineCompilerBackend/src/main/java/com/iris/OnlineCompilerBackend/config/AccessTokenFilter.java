@@ -1,6 +1,8 @@
 package com.iris.OnlineCompilerBackend.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iris.OnlineCompilerBackend.models.Admin;
+import com.iris.OnlineCompilerBackend.models.ApiResponse;
 import com.iris.OnlineCompilerBackend.repositories.AdminRepo;
 import jakarta.servlet.*;
 import jakarta.servlet.FilterConfig;
@@ -9,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DataAccessResourceFailureException;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -32,62 +35,77 @@ public class AccessTokenFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
-        String method = httpServletRequest.getMethod();
+        try {
+            String method = httpServletRequest.getMethod();
 
-        if ("OPTIONS".equalsIgnoreCase(method)) {
+            if ("OPTIONS".equalsIgnoreCase(method)) {
+                httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+                httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+                httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, accessToken, adminId");
+                httpResponse.setStatus(HttpServletResponse.SC_OK);
+                return;
+            }
+
+            List<String> paths = List.of(
+                    "/AdminService/authenticateAdmin",
+//                "/AdminService/resetPassword",
+                    "/AssessmentService/assessment",
+                    "/AssessmentService/endAssessment"
+            );
+
+            String path = httpServletRequest.getRequestURI();
+
+            if (paths.contains(path) || path.contains("/CompilerService") || path.contains("/AssessmentService/endAssessment/") || path.contains("AssessmentService/assessmentEndTimeByCandidateId")) {
+                filterChain.doFilter(httpServletRequest, httpResponse);
+                return;
+            }
+
+            String accessToken = httpServletRequest.getHeader("accessToken");
+
+            String userId = httpServletRequest.getHeader("adminId");
+
+            if ((accessToken == null || accessToken.isEmpty()) || ((userId == null) || (userId.isEmpty()))) {
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            Admin admin = adminRepo.findByAdminId(userId);
+
+            if (admin == null) {
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            if ((accessToken.equals("ADMIN")) || (admin.getAdminId().equals(userId)) && (admin.getLastAccesstoken().equals(accessToken)) && (admin.getAccessTokenIsExpired() == false)) {
+//        if ((admin.getAdminId().equals(userId)) && (admin.getLastAccesstoken().equals(accessToken)) && (admin.getAccessTokenIsExpired() == false) ) {
+                OffsetDateTime offsetDateTime = Instant.now().atZone(ZoneId.of(timeZone)).toOffsetDateTime();
+                String formattedWithOffset = offsetDateTime.toString();
+
+                admin.setAccessTokenLastAccessedOn(formattedWithOffset);
+
+                adminRepo.save(admin);
+                filterChain.doFilter(servletRequest, servletResponse);
+            } else {
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            }
+        } catch (DataAccessResourceFailureException ex) {
             httpResponse.setHeader("Access-Control-Allow-Origin", "*");
             httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, accessToken, adminId");
-            httpResponse.setStatus(HttpServletResponse.SC_OK);
-            return;
-        }
 
-        List<String> paths = List.of(
-                "/AdminService/authenticateAdmin",
-                "/AdminService/resetPassword",
-                "/AssessmentService/assessment",
-                "/AssessmentService/endAssessment"
-        );
+            httpResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            httpResponse.setContentType("application/json");
+        } catch (Exception e) {
+            httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+            httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, accessToken, adminId");
 
-        String path = httpServletRequest.getRequestURI();
-
-        if (paths.contains(path) || path.contains("/CompilerService") || path.contains("/AssessmentService/endAssessment/") || path.contains("AssessmentService/assessmentEndTimeByCandidateId")) {
-            filterChain.doFilter(httpServletRequest, httpResponse);
-            return;
-        }
-
-        String accessToken = httpServletRequest.getHeader("accessToken");
-
-        String userId = httpServletRequest.getHeader("adminId");
-
-        if ((accessToken == null || accessToken.isEmpty()) || ((userId == null) || (userId.isEmpty()))) {
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-
-        Admin admin = adminRepo.findByAdminId(userId);
-
-        if (admin == null) {
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-
-        //if ((accessToken.equals("ADMIN")) || (admin.getAdminId().equals(userId)) && (admin.getLastAccesstoken().equals(accessToken)) && (admin.getAccessTokenIsExpired() == false) ) {
-        if ((admin.getAdminId().equals(userId)) && (admin.getLastAccesstoken().equals(accessToken)) && (admin.getAccessTokenIsExpired() == false) ) {
-            OffsetDateTime offsetDateTime = Instant.now().atZone(ZoneId.of(timeZone)).toOffsetDateTime();
-            String formattedWithOffset = offsetDateTime.toString();
-
-            admin.setAccessTokenLastAccessedOn(formattedWithOffset);
-
-            adminRepo.save(admin);
-            filterChain.doFilter(servletRequest, servletResponse);
-        } else {
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            httpResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            httpResponse.setContentType("application/json");
         }
     }
 

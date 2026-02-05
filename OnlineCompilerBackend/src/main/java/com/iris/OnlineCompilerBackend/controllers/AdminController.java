@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/AdminService")
 public class AdminController {
+
     @Autowired
     private AdminService adminService;
 
@@ -22,7 +23,7 @@ public class AdminController {
 
     @PostMapping("/authenticateAdmin")
     public ApiResponse verifyAdmin(@Valid @RequestBody AdminLoginCredsDTO adminLoginReqDto) {
-        return adminService.verifyAdminCreds(adminLoginReqDto);
+        return adminService.verifyAdminCredentials(adminLoginReqDto);
     }
 
     @GetMapping("/allAdmins")
