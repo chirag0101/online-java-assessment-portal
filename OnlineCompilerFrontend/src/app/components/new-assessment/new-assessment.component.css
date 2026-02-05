@@ -15,13 +15,13 @@ html, body, app-root {
   width: 100%;
 }
 
-/* --- NAVBAR (Modified for Centering) --- */
+/* --- NAVBAR --- */
 .navbar {
   flex-shrink: 0;
   width: 100%;
   background-color: #ffffff;
   z-index: 1000;
-  position: relative; /* Added: Ensures the underline and content stay together */
+  position: relative;
 }
 
 .navbar-content {
@@ -30,8 +30,8 @@ html, body, app-root {
   font-family: "Nunito Sans", sans-serif;
   align-items: center;
   padding: 10px 40px;
-  position: relative; /* CRITICAL: This is the anchor for the portal-section */
-  min-height: 60px; /* Ensures vertical space for centering */
+  position: relative;
+  min-height: 60px;
 }
 
 .logo-img {
@@ -39,7 +39,7 @@ html, body, app-root {
   width: auto;
   display: block;
   position: relative;
-  z-index: 10; /* Keeps logo clickable/visible above centering layer */
+  z-index: 10;
 }
 
 .navbar-underline {
@@ -57,7 +57,7 @@ html, body, app-root {
   z-index: 1;
   text-align: center;
   width: auto;
-  pointer-events: none; /* Allows clicks to pass through to logo/profile if they overlap */
+  pointer-events: none;
 }
 
 .portal-title {
@@ -67,7 +67,7 @@ html, body, app-root {
   letter-spacing: 1px;
   text-transform: uppercase;
   white-space: nowrap;
-  pointer-events: auto; /* Re-enables interaction for the text itself */
+  pointer-events: auto;
 }
 
 /* --- USER PROFILE IN NAV --- */
@@ -75,7 +75,7 @@ html, body, app-root {
   display: flex;
   align-items: center;
   gap: 15px;
-  z-index: 2; /* Keeps profile on top */
+  z-index: 2;
 }
 
 .user-info {
@@ -115,9 +115,7 @@ html, body, app-root {
   padding: 5px;
   display: flex;
   align-items: center;
-  transition:
-    transform 0.2s ease,
-    color 0.2s ease;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .nav-logout-btn:hover {
@@ -143,7 +141,7 @@ html, body, app-root {
   border: 1px solid #005aaa;
   border-radius: 12px;
   padding: 25px 40px;
-  box-shadow: 0 8px 30px #005aaa;
+  box-shadow: 0 8px 30px rgba(0, 90, 170, 0.15);
   max-width: 850px;
   width: 100%;
   box-sizing: border-box;
@@ -217,7 +215,7 @@ html, body, app-root {
   font-weight: 500;
 }
 
-/* --- DYNAMIC SEARCH ICON FIX --- */
+/* --- SEARCH ICON FIX --- */
 .input-with-icon {
   position: relative;
   display: flex;
@@ -271,14 +269,6 @@ html, body, app-root {
   min-width: 120px;
 }
 
-::ng-deep .mat-mdc-option {
-  border-bottom: 1px solid rgba(0, 90, 170, 0.2) !important;
-}
-
-::ng-deep .mat-mdc-option:last-child {
-  border-bottom: none !important;
-}
-
 .create-button { background-color: #28a745; color: #ffffff; }
 .create-button:hover { background-color: #259840; box-shadow: 0 2px 10px #259840}
 .reset-button { background-color: #de2a2a; color: #ffffff; }
@@ -286,21 +276,25 @@ html, body, app-root {
 .back-button { background-color: #005aaa; color: #ffffff; }
 .back-button:hover { background-color: #004d90; box-shadow: 0 2px 10px #005aaa}
 
-/* --- ASSESSMENT URL SECTION --- */
+/* --- ASSESSMENT URL SECTION (UPDATED) --- */
 .assessment-url-container {
   background: #f9f9f9;
   padding: 15px;
-  border-radius: 8px;color: #005aaa;
+  border-radius: 8px;
+  color: #005aaa;
+  margin-top: 20px;
 }
 
 .url-display-group {
   display: flex;
+  flex-wrap: wrap; /* Allows the badge to wrap below */
   gap: 10px;
   margin-top: 10px;
 }
 
 .assessment-url-input {
-  flex-grow: 1;
+  flex: 1;
+  min-width: 200px;
   padding: 10px;
   color: #00aa2d;
   border: 1px solid #ccc;
@@ -317,9 +311,18 @@ html, body, app-root {
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .copy-button:hover { background-color: #004d90; box-shadow: 0 2px 10px #005aaa}
+
+.copy-badge {
+  flex-basis: 100%; /* Forces the message to a new line below the input */
+  color: #28a745;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 5px 0 0 2px;
+}
 
 /* --- FOOTER STYLES --- */
 .login-footer {
@@ -352,23 +355,12 @@ html, body, app-root {
   font-family: monospace;
 }
 
-/* --- RESPONSIVE ADJUSTMENTS --- */
-@media (max-width: 768px) {
-  .navbar-content { padding: 10px 20px; }
-  .user-info { display: none; }
-  .login-container { padding: 20px 10px; }
-  .login-panel { padding: 20px 20px; }
-  .form-actions { flex-direction: column; }
-  .form-actions button { width: 100%; }
-}
-
-/* --- Date & Time Picker IRIS Theme Styling --- */
+/* --- DATE & TIME PICKER --- */
 .datetime-container {
   display: flex;
   gap: 15px;
   align-items: center;
   width: 100%;
-  color: #005aaa;
 }
 
 .date-picker-wrapper {
@@ -394,12 +386,8 @@ html, body, app-root {
   font-size: 14px;
 }
 
-.time-picker-wrapper {
-  flex: 1;
-}
-
 .time-input {
-  width: 100%;
+  flex: 1;
   height: 38px;
   padding: 8px 10px;
   border: 1px solid #005aaa;
@@ -412,40 +400,7 @@ html, body, app-root {
   box-sizing: border-box;
 }
 
-.date-picker-wrapper:focus-within,
-.time-input:focus {
-  border-color: #005aaa;
-  background-color: #ffffff;
-}
-
-::ng-deep .mat-datepicker-toggle {
-  color: #005aaa !important;
-}
-
-::ng-deep .mat-mdc-form-field-flex {
-  padding: 0 !important;
-  background: transparent !important;
-}
-
-::ng-deep .mat-mdc-form-field-infix {
-  padding: 0 !important;
-  min-height: auto !important;
-}
-
-::ng-deep .mat-mdc-form-field-subscript-wrapper {
-  display: none !important;
-}
-
-input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(21%) sepia(91%) saturate(1915%) hue-rotate(193deg) brightness(91%) contrast(101%);
-  cursor: pointer;
-}
-
-.form-group .datetime-container {
-  margin-top: 5px;
-}
-
-/* --- ADDED FOR RESPONSE MESSAGE COLORING --- */
+/* --- STATUS MESSAGE --- */
 .status-message {
   margin-top: 10px;
   text-align: center;
@@ -455,58 +410,33 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   border-radius: 6px;
 }
 
-.text-success {
-  color: #28a745; /* Deep Green */
-}
+.text-success { color: #28a745; }
+.text-error { color: #de2a2a; }
 
-.text-error {
-  color: #de2a2a; /* Matching your Reset button red */
-}
-
-/* --- NEW: INTERVIEWER SEARCH DROPDOWN STYLING --- */
-
-/* The actual panel that pops up */
+/* --- MATERIAL DROPDOWN STYLING --- */
 ::ng-deep .mat-mdc-autocomplete-panel {
   background-color: #ffffff !important;
   border: 1px solid #005aaa !important;
   border-radius: 6px !important;
-  margin-top: 0px !important;
   box-shadow: 0 4px 12px rgba(0, 90, 170, 0.2) !important;
 }
 
-/* Individual options in the list */
-::ng-deep .mat-mdc-option {
-  min-height: 40px !important;
-  padding: 0 12px !important;
-}
-
-/* Text inside the options */
 ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
   color: #005aaa !important;
   font-family: 'Nunito Sans', sans-serif !important;
   font-size: 0.95em !important;
 }
 
-/* Hover state for options */
 ::ng-deep .mat-mdc-option:hover:not(.mdc-list-item--disabled) {
   background-color: #f0f7ff !important;
 }
 
-/* Active/Focus state for options */
-::ng-deep .mat-mdc-option.mat-mdc-option-active {
-  background-color: #e6f0ff !important;
-}
-
-/* Scrollbar styling for the dropdown */
-::ng-deep .mat-mdc-autocomplete-panel::-webkit-scrollbar {
-  width: 6px;
-}
-
-::ng-deep .mat-mdc-autocomplete-panel::-webkit-scrollbar-thumb {
-  background: #005aaa;
-  border-radius: 10px;
-}
-
-::ng-deep .mat-mdc-autocomplete-panel::-webkit-scrollbar-track {
-  background: #f1f1f1;
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 768px) {
+  .navbar-content { padding: 10px 20px; }
+  .user-info { display: none; }
+  .login-container { padding: 20px 10px; }
+  .login-panel { padding: 20px 20px; }
+  .form-actions { flex-direction: column; }
+  .form-actions button { width: 100%; }
 }

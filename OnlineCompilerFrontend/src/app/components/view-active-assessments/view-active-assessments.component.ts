@@ -38,7 +38,7 @@ export class ViewActiveAssessmentsComponent implements OnInit {
   req: ExpireAssessmentReq = {
     candidateId: '',
     assessmentUrl: '',
-    interviewRound:''
+    interviewRound: '',
   };
   version = NavbarText.Version;
   copyright = NavbarText.Copyright;
@@ -76,9 +76,10 @@ export class ViewActiveAssessmentsComponent implements OnInit {
             this.isLoading = false;
           },
           error: (err) => {
+            debugger;
             this.isLoading = false;
             this.activeAssessments = [];
-            this.adminService.onSessionTimeout();
+            this.errorMessage=this.adminService.onError(err);
           },
         });
       return;
@@ -96,8 +97,9 @@ export class ViewActiveAssessmentsComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
+        this.isLoading = false;
         this.activeAssessments = [];
-        this.adminService.onSessionTimeout();
+        this.errorMessage=this.adminService.onError(err);
       },
     });
   }
@@ -111,7 +113,7 @@ export class ViewActiveAssessmentsComponent implements OnInit {
       });
     }
   }
-  extendAssessment(candidateId: string,interviewRound:string): void {
+  extendAssessment(candidateId: string, interviewRound: string): void {
     const match = candidateId.match(/\(([^)]+)\)/);
     const extractedId = match ? match[1] : null;
 
@@ -128,15 +130,15 @@ export class ViewActiveAssessmentsComponent implements OnInit {
         const extendAssessmentObj: ExtendAssessment = {
           candidateId: candidateId,
           minutes: minutes,
-          interviewRound: interviewRound
+          interviewRound: interviewRound,
         };
 
         this.assessmentService.extendAssessment(extendAssessmentObj).subscribe({
           next: () => {
             this.fetchActiveAssessments();
           },
-          error: (err) => {
-            this.adminService.onSessionTimeout();
+          error: (error) => {
+            this.errorMessage = this.adminService.onError(error);
           },
         });
       } else if (minutes === null) {
@@ -146,17 +148,20 @@ export class ViewActiveAssessmentsComponent implements OnInit {
     });
   }
 
-  endAssessment(candidateId: string, assessmentUrl: string,round:string): void {
+  endAssessment(
+    candidateId: string,
+    assessmentUrl: string,
+    round: string,
+  ): void {
     const match = candidateId.match(/\(([^)]+)\)/);
     const extractedId = match ? match[1] : null;
 
     if (extractedId !== null) {
       candidateId = extractedId;
     }
-    debugger;
     this.req.candidateId = candidateId;
     this.req.assessmentUrl = assessmentUrl;
-    this.req.interviewRound= round;
+    this.req.interviewRound = round;
 
     this.openConfirmationDialogBox(2).then((flag: boolean) => {
       if (flag) {

@@ -20,12 +20,12 @@ import { ViewReportReq } from '../../models/request/view-report-req.model';
   styleUrl: './review-assessment.component.css',
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    HttpClientModule, 
-    MatIconModule, 
-    MatDialogModule
-  ]
+    CommonModule,
+    FormsModule,
+    HttpClientModule,
+    MatIconModule,
+    MatDialogModule,
+  ],
 })
 export class ReviewAssessmentComponent implements OnInit {
   reviewStatusEnum = ReviewStatus;
@@ -33,32 +33,33 @@ export class ReviewAssessmentComponent implements OnInit {
   filteredSubmissions: AssessmentHistory[] = [];
   globallyFilteredSubmissions: AssessmentHistory[] = [];
 
-    version=NavbarText.Version;
-    copyright=NavbarText.Copyright;
-    portalTitle=NavbarText.PortalName;
+  version = NavbarText.Version;
+  copyright = NavbarText.Copyright;
+  portalTitle = NavbarText.PortalName;
 
   fromDate: string = '';
   toDate: string = '';
   globalFilterText: string = '';
   loading: boolean = false;
   error: boolean = false;
+  errorMessage: string = '';
   todayDate: string;
-  adminId=sessionStorage.getItem("adminFullName");
-  lastLoggedIn=sessionStorage.getItem("lastLoggedIn");
+  adminId = sessionStorage.getItem('adminFullName');
+  lastLoggedIn = sessionStorage.getItem('lastLoggedIn');
 
-  viewSubmissionReq:ViewReportReq={
-  candidateId: '',
-  interviewerId: '',
-  round: '',
-  assessmentEndTime: '',
-  }
+  viewSubmissionReq: ViewReportReq = {
+    candidateId: '',
+    interviewerId: '',
+    round: '',
+    assessmentEndTime: '',
+  };
 
   // Inject MatDialog in the constructor
   constructor(
-    private router: Router, 
+    private router: Router,
     private assessmentService: AssessmentService,
     private adminService: AdminService,
-    private dialog: MatDialog 
+    private dialog: MatDialog,
   ) {
     const today = new Date();
     this.todayDate = today.toISOString().split('T')[0];
@@ -77,66 +78,104 @@ export class ReviewAssessmentComponent implements OnInit {
       next: (res) => {
         if (res && res.response) {
           this.allSubmissions = res.response;
-          this.allSubmissions.sort((a, b) => new Date(b.assessmentEndTime).getTime() - new Date(a.assessmentEndTime).getTime());
+          this.allSubmissions.sort(
+            (a, b) =>
+              new Date(b.assessmentEndTime).getTime() -
+              new Date(a.assessmentEndTime).getTime(),
+          );
           this.filteredSubmissions = [...this.allSubmissions];
           this.applyGlobalFilter();
+        } else {
+          this.error = true;
+          this.loading = false;
         }
         this.loading = false;
       },
       error: (err) => {
         this.error = true;
         this.loading = false;
-        this.adminService.onSessionTimeout();
+        this.errorMessage = this.adminService.onError(err);
       },
     });
   }
 
-viewReport(candidateId: string,interviewerId:string,assessmentEndTime:string,round:string): void {
-  debugger;
-  this.loading = true;
+  viewReport(
+    candidateId: string,
+    interviewerId: string,
+    assessmentEndTime: string,
+    round: string,
+  ): void {
+    this.loading = true;
 
-  this.viewSubmissionReq.candidateId=candidateId;
-  this.viewSubmissionReq.interviewerId=interviewerId;
-  this.viewSubmissionReq.assessmentEndTime=assessmentEndTime;
-  this.viewSubmissionReq.round=round;
+    this.viewSubmissionReq.candidateId = candidateId;
+    this.viewSubmissionReq.interviewerId = interviewerId;
+    this.viewSubmissionReq.assessmentEndTime = assessmentEndTime;
+    this.viewSubmissionReq.round = round;
 
-  this.assessmentService.getCandidateReport(this.viewSubmissionReq).subscribe({
-    next: (res: ViewReportRes) => {
-      this.loading = false;
-      
-      if (res && res.status && res.response) {
-        const dialogRef = this.dialog.open(ReviewAssessmentDialogComponent, {
-          width: '80%',
-          maxWidth: '95vw',
-          data: res.response
-        });
+    this.assessmentService
+      .getCandidateReport(this.viewSubmissionReq)
+      .subscribe({
+        next: (res: ViewReportRes) => {
+          this.loading = false;
 
-        dialogRef.afterClosed().subscribe(result => {
-          if (result && result.action) {
-            console.log(`Assessment ${result.action}. Refreshing list...`);
-            this.fetchSubmissions(); 
+          if (res && res.status && res.response) {
+            const dialogRef = this.dialog.open(
+              ReviewAssessmentDialogComponent,
+              {
+                width: '80%',
+                maxWidth: '95vw',
+                data: res.response,
+              },
+            );
+
+            dialogRef.afterClosed().subscribe((result) => {
+              if (result && result.action) {
+                this.fetchSubmissions();
+              }
+            });
+          } else {
+            alert(res.statusMessage || 'Failed to fetch report data.');
           }
-        });
-      } else {
-        alert(res.statusMessage || 'Failed to fetch report data.');
-      }
-    },
-    error: (err) => {
-      this.loading = false;
-      this.adminService.onSessionTimeout();
-    }
-  });
-}
+        },
+        error: (err) => {
+          this.loading = false;
+          this.errorMessage = this.adminService.onError(err);
+        },
+      });
+  }
 
-filterSubmissionsByDate(): void {
+  filterSubmissionsByDate(): void {
     const fromDateObj = this.fromDate ? new Date(this.fromDate) : null;
     const toDateObj = this.toDate ? new Date(this.toDate) : null;
 
     this.filteredSubmissions = this.allSubmissions.filter((submission) => {
       const submissionTime = new Date(submission.assessmentEndTime);
-      const startOfDayFrom = fromDateObj ? new Date(fromDateObj.getFullYear(), fromDateObj.getMonth(), fromDateObj.getDate(), 0, 0, 0, 0) : null;
-      const endOfDayTo = toDateObj ? new Date(toDateObj.getFullYear(), toDateObj.getMonth(), toDateObj.getDate(), 23, 59, 59, 999) : null;
-      return (startOfDayFrom ? submissionTime >= startOfDayFrom : true) && (endOfDayTo ? submissionTime <= endOfDayTo : true);
+      const startOfDayFrom = fromDateObj
+        ? new Date(
+            fromDateObj.getFullYear(),
+            fromDateObj.getMonth(),
+            fromDateObj.getDate(),
+            0,
+            0,
+            0,
+            0,
+          )
+        : null;
+      const endOfDayTo = toDateObj
+        ? new Date(
+            toDateObj.getFullYear(),
+            toDateObj.getMonth(),
+            toDateObj.getDate(),
+            23,
+            59,
+            59,
+            999,
+          )
+        : null;
+      return (
+        (startOfDayFrom ? submissionTime >= startOfDayFrom : true) &&
+        (endOfDayTo ? submissionTime <= endOfDayTo : true)
+      );
     });
     this.applyGlobalFilter();
   }
@@ -147,17 +186,30 @@ filterSubmissionsByDate(): void {
       this.globallyFilteredSubmissions = [...this.filteredSubmissions];
       return;
     }
-    this.globallyFilteredSubmissions = this.filteredSubmissions.filter(submission => {
-      const searchableString = `${submission.candidateName} ${submission.candidateId} ${submission.status}`.toLowerCase();
-      return searchableString.includes(filterText);
-    });
+    this.globallyFilteredSubmissions = this.filteredSubmissions.filter(
+      (submission) => {
+        const searchableString =
+          `${submission.candidateName} ${submission.candidateId} ${submission.status}`.toLowerCase();
+        return searchableString.includes(filterText);
+      },
+    );
   }
 
-  clearDateFilter(): void { this.fromDate = ''; this.toDate = ''; this.filteredSubmissions = [...this.allSubmissions]; this.applyGlobalFilter(); }
-  clearGlobalFilter(): void { this.globalFilterText = ''; this.applyGlobalFilter(); }
-  goBack(): void { this.router.navigate(['/adminPanel']); }
+  clearDateFilter(): void {
+    this.fromDate = '';
+    this.toDate = '';
+    this.filteredSubmissions = [...this.allSubmissions];
+    this.applyGlobalFilter();
+  }
+  clearGlobalFilter(): void {
+    this.globalFilterText = '';
+    this.applyGlobalFilter();
+  }
+  goBack(): void {
+    this.router.navigate(['/adminPanel']);
+  }
 
-  logOut():void{
+  logOut(): void {
     this.adminService.logoutAdmin();
     this.router.navigate(['/adminLogin']);
   }

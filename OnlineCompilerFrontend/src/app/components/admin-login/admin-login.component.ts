@@ -61,7 +61,7 @@ export class AdminLoginComponent implements OnInit{
         }
       },
       error: (err) => {
-        this.errorMessage = err.statusMessage;
+        this.errorMessage = err.statusMessage|| "Login Failed!";
       },
     });
   }

@@ -3,18 +3,6 @@
   color: #ff5353;
   font-weight: bold;
 }
-
-html,
-body,
-app-root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: #ffffff;
-  font-family: "Nunito Sans", sans-serif;
-  color: #005aaa;
-}
-
 /* --- NEW: PAGE WRAPPER FOR NAVBAR/FOOTER LAYOUT --- */
 .page-wrapper {
   display: flex;
@@ -265,12 +253,32 @@ td button.review-btn:hover{
 }
 
 .retry-button {
-  padding: 8px 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
   background-color: #005aaa;
   color: #ffffff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 600;
+  margin-top: 15px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.retry-button:hover {
+  background-color: #004d90;
+  box-shadow: 0 4px 12px rgba(0, 90, 170, 0.3);
+}
+
+.retry-button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 .table-footer-actions {

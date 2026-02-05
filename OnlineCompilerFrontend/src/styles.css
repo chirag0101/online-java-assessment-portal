@@ -1,4 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap');
+@font-face {
+  font-family: "Font Awesome 6 Free";
+  font-style: normal;
+  font-weight: 900;
+
+  src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2")
+       format("woff2");
+
+  font-display: swap;
+
+  /* Prevent layout shift */
+  ascent-override: 90%;
+  descent-override: 10%;
+  line-gap-override: 0%;
+}
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

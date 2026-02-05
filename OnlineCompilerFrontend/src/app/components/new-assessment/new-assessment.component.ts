@@ -141,9 +141,9 @@ export class NewAssessmentComponent implements OnInit {
     interviewDateTime: '',
   };
 
-    version=NavbarText.Version;
-    copyright=NavbarText.Copyright;
-    portalTitle=NavbarText.PortalName;
+  version = NavbarText.Version;
+  copyright = NavbarText.Copyright;
+  portalTitle = NavbarText.PortalName;
 
   constructor(
     private dialog: MatDialog,
@@ -187,15 +187,15 @@ export class NewAssessmentComponent implements OnInit {
 
           this.filteredAdmins = [...this.allAdmins];
         } else {
-          this.router.navigate(['/adminLogin']);
+          this.message = 'Internal Server Error';
         }
       },
 
-      error: () => this.adminService.onSessionTimeout(),
+      error: (error) => {
+        this.message = this.adminService.onError(error);
+      },
     });
   }
-
-  // New: Filter logic for search
 
   filterAdmins(event: any): void {
     const query = (event.target.value || '').toLowerCase();
@@ -363,13 +363,12 @@ export class NewAssessmentComponent implements OnInit {
             this.isSuccess = true;
           } else {
             this.isSuccess = false;
-
             this.message = response.statusMessage;
           }
         },
 
-        error: () => {
-          this.adminService.onSessionTimeout();
+        error: (error) => {
+          this.message = this.adminService.onError(error);
         },
       });
   }
@@ -407,6 +406,7 @@ export class NewAssessmentComponent implements OnInit {
   }
 
   copyUrl(): void {
+    debugger
     if (this.assessmentUrl) {
       navigator.clipboard.writeText(this.assessmentUrl).then(() => {
         this.copySuccess = true;

@@ -20,6 +20,7 @@ import { GetCandidateSubmissionsReq } from '../models/request/candidate-submissi
 import { ApiResponse } from '../models/response/candidate-submissions-res.model';
 import { ExpireAssessmentReq } from '../models/request/expire-assessment-req-model';
 import { ViewReportReq } from '../models/request/view-report-req.model';
+import { AssessmentEndTimeReq } from '../models/request/assessment-end-time-req.model';
 
 export interface ActiveAssessment {
   candidateNameWithId: string;
@@ -307,10 +308,11 @@ export class AssessmentService {
   }
 
   getAssessmentEndTimeByCandId(
-    candidateId: string
+    req: AssessmentEndTimeReq,
   ): Observable<AssessmentEndTimeRes> {
-    return this.http.get<AssessmentEndTimeRes>(
-      `${this.assessmentUrl}/assessmentEndTimeByCandidateId/${candidateId}`
+    return this.http.post<AssessmentEndTimeRes>(
+      `${this.assessmentUrl}/assessmentEndTimeByCandidateId`,
+      req
     );
   }
 

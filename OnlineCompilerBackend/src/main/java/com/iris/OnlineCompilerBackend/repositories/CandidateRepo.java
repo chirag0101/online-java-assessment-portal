@@ -163,12 +163,11 @@ public interface CandidateRepo extends JpaRepository<Candidate, Long> {
     @Query("""
             SELECT c.assessmentEndTime FROM Candidate c
             WHERE c.candidateIdCode=:candidateId
-            AND c.interviewerId=:interviewerId
             AND c.interviewRound=:round
             AND c.urlIsActive=true
             AND c.assessmentIsStarted=true
             """)
-    Date findAssessmentEndTimeByCandId(@Param("candidateId") String candidateId, @Param("interviewerId") String interviewerId, @Param("round") String round);
+    Date findAssessmentEndTimeByCandId(@Param("candidateId") String candidateId, @Param("round") String round);
 
     @Query("""
                SELECT new com.iris.OnlineCompilerBackend.dtos.response.ViewCandidatesStatusResDTO(c.candidateIdCode,c.candidateIdFk.candidateName, c.interviewerId, c.technology, c.interviewRound, c.assessmentEndTime, c.status)

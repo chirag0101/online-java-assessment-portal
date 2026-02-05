@@ -1,0 +1,94 @@
+2026-02-03 10:54:41 WARN  [HikariPool-1:housekeeper] [server=] [reqId=] c.z.h.p.HikariPool (run:825) - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=15h47m31s383ms660µs900ns).
+2026-02-03 12:49:07 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] o.s.b.w.e.t.GracefulShutdown (shutDownGracefully:54) - Commencing graceful shutdown. Waiting for active requests to complete
+2026-02-03 12:49:07 INFO  [tomcat-shutdown] [server=] [reqId=] o.s.b.w.e.t.GracefulShutdown (doShutdown:76) - Graceful shutdown complete
+2026-02-03 12:49:07 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] o.s.o.j.LocalContainerEntityManagerFactoryBean (destroy:660) - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-03 12:49:08 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] c.z.h.HikariDataSource (close:349) - HikariPool-1 - Shutdown initiated...
+2026-02-03 12:49:08 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] c.z.h.HikariDataSource (close:351) - HikariPool-1 - Shutdown completed.
+2026-02-03 12:49:17 INFO  [background-preinit] [server=] [reqId=] o.h.v.i.u.Version (<clinit>:21) - HV000001: Hibernate Validator 8.0.3.Final
+2026-02-03 12:49:17 INFO  [main] [server=] [reqId=] c.i.O.OnlineCompilerBackendApplication (logStarting:53) - Starting OnlineCompilerBackendApplication using Java 17.0.12 with PID 12892 (D:\OnlineCompiler\OnlineCompilerBackend\target\classes started by chirag.suryawanshi in D:\OnlineCompiler\OnlineCompilerBackend)
+2026-02-03 12:49:17 DEBUG [main] [server=] [reqId=] c.i.O.OnlineCompilerBackendApplication (logStarting:54) - Running with Spring Boot v3.5.10, Spring v6.2.15
+2026-02-03 12:49:17 INFO  [main] [server=] [reqId=] c.i.O.OnlineCompilerBackendApplication (logStartupProfileInfo:652) - No active profile set, falling back to 1 default profile: "default"
+2026-02-03 12:49:20 INFO  [main] [server=] [reqId=] o.s.d.r.c.RepositoryConfigurationDelegate (registerRepositoriesIn:145) - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-03 12:49:20 INFO  [main] [server=] [reqId=] o.s.d.r.c.RepositoryConfigurationDelegate (registerRepositoriesIn:213) - Finished Spring Data repository scanning in 218 ms. Found 5 JPA repository interfaces.
+2026-02-03 12:49:22 INFO  [main] [server=] [reqId=] o.s.b.w.e.t.TomcatWebServer (initialize:111) - Tomcat initialized with port 8080 (http)
+2026-02-03 12:49:22 INFO  [main] [server=] [reqId=] o.a.c.h.Http11NioProtocol (log:168) - Initializing ProtocolHandler ["http-nio-8080"]
+2026-02-03 12:49:22 INFO  [main] [server=] [reqId=] o.a.c.c.StandardService (log:168) - Starting service [Tomcat]
+2026-02-03 12:49:22 INFO  [main] [server=] [reqId=] o.a.c.c.StandardEngine (log:168) - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-02-03 12:49:22 INFO  [main] [server=] [reqId=] o.a.c.c.C.[.[.[/] (log:168) - Initializing Spring embedded WebApplicationContext
+2026-02-03 12:49:22 INFO  [main] [server=] [reqId=] o.s.b.w.s.c.ServletWebServerApplicationContext (prepareWebApplicationContext:301) - Root WebApplicationContext: initialization completed in 4556 ms
+2026-02-03 12:49:23 INFO  [main] [server=] [reqId=] c.z.h.HikariDataSource (getConnection:109) - HikariPool-1 - Starting...
+2026-02-03 12:49:24 INFO  [main] [server=] [reqId=] c.z.h.p.HikariPool (checkFailFast:580) - HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@68d6f48e
+2026-02-03 12:49:24 INFO  [main] [server=] [reqId=] c.z.h.HikariDataSource (getConnection:122) - HikariPool-1 - Start completed.
+2026-02-03 12:49:24 INFO  [main] [server=] [reqId=] o.h.j.i.u.LogHelper (logPersistenceUnitInformation:31) - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-02-03 12:49:25 INFO  [main] [server=] [reqId=] o.h.Version (logVersion:44) - HHH000412: Hibernate ORM core version 6.6.41.Final
+2026-02-03 12:49:25 INFO  [main] [server=] [reqId=] o.h.c.i.RegionFactoryInitiator (initiateService:50) - HHH000026: Second-level cache disabled
+2026-02-03 12:49:26 INFO  [main] [server=] [reqId=] o.s.o.j.p.SpringPersistenceUnitInfo (addTransformer:87) - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-03 12:49:27 INFO  [main] [server=] [reqId=] o.h.o.c.pooling (logConnectionInfo:163) - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 21.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-03 12:49:29 INFO  [main] [server=] [reqId=] o.h.e.t.j.p.i.JtaPlatformInitiator (initiateService:59) - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-03 12:49:29 INFO  [main] [server=] [reqId=] o.s.o.j.LocalContainerEntityManagerFactoryBean (buildNativeEntityManagerFactory:447) - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-03 12:49:29 INFO  [main] [server=] [reqId=] o.s.d.j.r.q.QueryEnhancerFactory (<clinit>:49) - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-02-03 12:49:32 WARN  [main] [server=] [reqId=] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration (openEntityManagerInViewInterceptor:258) - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-03 12:49:34 INFO  [main] [server=] [reqId=] o.a.c.h.Http11NioProtocol (log:168) - Starting ProtocolHandler ["http-nio-8080"]
+2026-02-03 12:49:34 INFO  [main] [server=] [reqId=] o.s.b.w.e.t.TomcatWebServer (start:243) - Tomcat started on port 8080 (http) with context path '/'
+2026-02-03 12:49:34 INFO  [main] [server=] [reqId=] c.i.O.OnlineCompilerBackendApplication (logStarted:59) - Started OnlineCompilerBackendApplication in 17.183 seconds (process running for 19.352)
+2026-02-03 12:49:44 INFO  [http-nio-8080-exec-1] [server=] [reqId=] o.a.c.c.C.[.[.[/] (log:168) - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-03 12:49:44 INFO  [http-nio-8080-exec-1] [server=] [reqId=] o.s.w.s.DispatcherServlet (initServletBean:532) - Initializing Servlet 'dispatcherServlet'
+2026-02-03 12:49:44 INFO  [http-nio-8080-exec-1] [server=] [reqId=] o.s.w.s.DispatcherServlet (initServletBean:554) - Completed initialization in 1 ms
+2026-02-03 12:49:44 WARN  [http-nio-8080-exec-4] [server=] [reqId=] c.i.O.s.AdminService (verifyAdminCredentials:127) - Authentication error for adminId: ADMIN_1
+2026-02-03 12:50:34 WARN  [http-nio-8080-exec-2] [server=] [reqId=] c.i.O.s.AdminService (verifyAdminCredentials:127) - Authentication error for adminId: ADMIN_1
+2026-02-03 12:51:06 WARN  [http-nio-8080-exec-6] [server=] [reqId=] c.i.O.s.AdminService (verifyAdminCredentials:127) - Authentication error for adminId: ADMIN_1
+2026-02-03 12:52:04 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] o.s.b.w.e.t.GracefulShutdown (shutDownGracefully:54) - Commencing graceful shutdown. Waiting for active requests to complete
+2026-02-03 12:52:05 INFO  [tomcat-shutdown] [server=] [reqId=] o.s.b.w.e.t.GracefulShutdown (doShutdown:76) - Graceful shutdown complete
+2026-02-03 12:52:05 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] o.s.o.j.LocalContainerEntityManagerFactoryBean (destroy:660) - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-03 12:52:05 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] c.z.h.HikariDataSource (close:349) - HikariPool-1 - Shutdown initiated...
+2026-02-03 12:52:05 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] c.z.h.HikariDataSource (close:351) - HikariPool-1 - Shutdown completed.
+2026-02-03 16:53:39 INFO  [background-preinit] [server=] [reqId=] o.h.v.i.u.Version (<clinit>:21) - HV000001: Hibernate Validator 8.0.3.Final
+2026-02-03 16:53:39 INFO  [main] [server=] [reqId=] c.i.O.OnlineCompilerBackendApplication (logStarting:53) - Starting OnlineCompilerBackendApplication using Java 17.0.12 with PID 15804 (D:\OnlineCompiler\OnlineCompilerBackend\target\classes started by chirag.suryawanshi in D:\OnlineCompiler\OnlineCompilerBackend)
+2026-02-03 16:53:39 DEBUG [main] [server=] [reqId=] c.i.O.OnlineCompilerBackendApplication (logStarting:54) - Running with Spring Boot v3.5.10, Spring v6.2.15
+2026-02-03 16:53:39 INFO  [main] [server=] [reqId=] c.i.O.OnlineCompilerBackendApplication (logStartupProfileInfo:652) - No active profile set, falling back to 1 default profile: "default"
+2026-02-03 16:53:42 INFO  [main] [server=] [reqId=] o.s.d.r.c.RepositoryConfigurationDelegate (registerRepositoriesIn:145) - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-03 16:53:42 INFO  [main] [server=] [reqId=] o.s.d.r.c.RepositoryConfigurationDelegate (registerRepositoriesIn:213) - Finished Spring Data repository scanning in 272 ms. Found 5 JPA repository interfaces.
+2026-02-03 16:53:45 INFO  [main] [server=] [reqId=] o.s.b.w.e.t.TomcatWebServer (initialize:111) - Tomcat initialized with port 8080 (http)
+2026-02-03 16:53:45 INFO  [main] [server=] [reqId=] o.a.c.h.Http11NioProtocol (log:168) - Initializing ProtocolHandler ["http-nio-8080"]
+2026-02-03 16:53:45 INFO  [main] [server=] [reqId=] o.a.c.c.StandardService (log:168) - Starting service [Tomcat]
+2026-02-03 16:53:45 INFO  [main] [server=] [reqId=] o.a.c.c.StandardEngine (log:168) - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-02-03 16:53:45 INFO  [main] [server=] [reqId=] o.a.c.c.C.[.[.[/] (log:168) - Initializing Spring embedded WebApplicationContext
+2026-02-03 16:53:45 INFO  [main] [server=] [reqId=] o.s.b.w.s.c.ServletWebServerApplicationContext (prepareWebApplicationContext:301) - Root WebApplicationContext: initialization completed in 5615 ms
+2026-02-03 16:53:46 INFO  [main] [server=] [reqId=] c.z.h.HikariDataSource (getConnection:109) - HikariPool-1 - Starting...
+2026-02-03 16:53:47 INFO  [main] [server=] [reqId=] c.z.h.p.HikariPool (checkFailFast:580) - HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@2a1e57c6
+2026-02-03 16:53:47 INFO  [main] [server=] [reqId=] c.z.h.HikariDataSource (getConnection:122) - HikariPool-1 - Start completed.
+2026-02-03 16:53:47 INFO  [main] [server=] [reqId=] o.h.j.i.u.LogHelper (logPersistenceUnitInformation:31) - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-02-03 16:53:48 INFO  [main] [server=] [reqId=] o.h.Version (logVersion:44) - HHH000412: Hibernate ORM core version 6.6.41.Final
+2026-02-03 16:53:48 INFO  [main] [server=] [reqId=] o.h.c.i.RegionFactoryInitiator (initiateService:50) - HHH000026: Second-level cache disabled
+2026-02-03 16:53:49 INFO  [main] [server=] [reqId=] o.s.o.j.p.SpringPersistenceUnitInfo (addTransformer:87) - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-03 16:53:50 INFO  [main] [server=] [reqId=] o.h.o.c.pooling (logConnectionInfo:163) - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 21.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-03 16:53:52 INFO  [main] [server=] [reqId=] o.h.e.t.j.p.i.JtaPlatformInitiator (initiateService:59) - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-03 16:53:52 INFO  [main] [server=] [reqId=] o.s.o.j.LocalContainerEntityManagerFactoryBean (buildNativeEntityManagerFactory:447) - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-03 16:53:52 INFO  [main] [server=] [reqId=] o.s.d.j.r.q.QueryEnhancerFactory (<clinit>:49) - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-02-03 16:53:55 WARN  [main] [server=] [reqId=] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration (openEntityManagerInViewInterceptor:258) - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-03 16:53:57 INFO  [main] [server=] [reqId=] o.a.c.h.Http11NioProtocol (log:168) - Starting ProtocolHandler ["http-nio-8080"]
+2026-02-03 16:53:57 INFO  [main] [server=] [reqId=] o.s.b.w.e.t.TomcatWebServer (start:243) - Tomcat started on port 8080 (http) with context path '/'
+2026-02-03 16:53:57 INFO  [main] [server=] [reqId=] c.i.O.OnlineCompilerBackendApplication (logStarted:59) - Started OnlineCompilerBackendApplication in 19.653 seconds (process running for 23.036)
+2026-02-03 16:54:00 INFO  [http-nio-8080-exec-1] [server=] [reqId=] o.a.c.c.C.[.[.[/] (log:168) - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-03 16:54:00 INFO  [http-nio-8080-exec-1] [server=] [reqId=] o.s.w.s.DispatcherServlet (initServletBean:532) - Initializing Servlet 'dispatcherServlet'
+2026-02-03 16:54:00 INFO  [http-nio-8080-exec-1] [server=] [reqId=] o.s.w.s.DispatcherServlet (initServletBean:554) - Completed initialization in 2 ms
+2026-02-03 17:11:34 WARN  [http-nio-8080-exec-7] [server=] [reqId=] c.i.O.s.AdminService (verifyAdminCredentials:128) - Authentication error for adminId: ADMIN_1
+2026-02-03 19:12:26 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] o.s.b.w.e.t.GracefulShutdown (shutDownGracefully:54) - Commencing graceful shutdown. Waiting for active requests to complete
+2026-02-03 19:12:27 INFO  [tomcat-shutdown] [server=] [reqId=] o.s.b.w.e.t.GracefulShutdown (doShutdown:76) - Graceful shutdown complete
+2026-02-03 19:12:27 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] o.s.o.j.LocalContainerEntityManagerFactoryBean (destroy:660) - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-03 19:12:27 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] c.z.h.HikariDataSource (close:349) - HikariPool-1 - Shutdown initiated...
+2026-02-03 19:12:27 INFO  [SpringApplicationShutdownHook] [server=] [reqId=] c.z.h.HikariDataSource (close:351) - HikariPool-1 - Shutdown completed.

@@ -32,6 +32,7 @@ import { debug } from 'console';
 // import { vscodeDark } from '@uiw/codemirror-theme-vscode';
 import { eclipse } from '@uiw/codemirror-theme-eclipse';
 import { ExpireAssessmentReq } from '../../models/request/expire-assessment-req-model';
+import { AssessmentEndTimeReq } from '../../models/request/assessment-end-time-req.model';
 
 @Component({
   selector: 'app-compiler-code-editor-homepage',
@@ -63,8 +64,8 @@ export class AssessmentHomepageComponent
   codeReq: CodeSnippetReqDTO = {
     candidateId: '',
     code: '',
-    codeType:1,
-    url:''
+    codeType: 1,
+    url: '',
   };
 
   jdkVersion = '';
@@ -86,7 +87,7 @@ export class AssessmentHomepageComponent
   candidateName: string = '';
   candidateExperience: string = '';
   candidateTechnology: string = '';
-  candidateRound:string='';
+  candidateRound: string = '';
 
   showConfirmationDialog: boolean = false;
   dialogTitle: string = '';
@@ -95,11 +96,16 @@ export class AssessmentHomepageComponent
   assessmentCode: string = '';
 
   warned5Min: boolean = false;
-    req:ExpireAssessmentReq={
-          candidateId:'',
-          assessmentUrl:'',
-          interviewRound:''
-        };
+  req: ExpireAssessmentReq = {
+    candidateId: '',
+    assessmentUrl: '',
+    interviewRound: '',
+  };
+
+  assessmentEndTimeReq:AssessmentEndTimeReq={
+    candidateId:'',
+    round:''
+  };
 
   private dialogResolve: ((value: boolean) => void) | null = null;
 
@@ -108,57 +114,61 @@ export class AssessmentHomepageComponent
     private assessmentService: AssessmentService,
     private router: Router,
     private dialog: MatDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-    if (sessionStorage.getItem('assessmentEnded')) {
-      const currentAssessmentCode =
-        this.route.snapshot.queryParamMap.get('assessmentCode');
-      sessionStorage.removeItem('assessmentEnded');
-      sessionStorage.removeItem('assessmentEndTime');
-      window.location.reload();
-    }
-    this.assessmentCode =
-      this.route.snapshot.queryParamMap.get('assessmentCode') ?? '';
+      if (sessionStorage.getItem('assessmentEnded')) {
+        const currentAssessmentCode =
+          this.route.snapshot.queryParamMap.get('assessmentCode');
+        sessionStorage.removeItem('assessmentEnded');
+        sessionStorage.removeItem('assessmentEndTime');
+        window.location.reload();
+      }
+      this.assessmentCode =
+        this.route.snapshot.queryParamMap.get('assessmentCode') ?? '';
 
-    if (this.assessmentCode) {
-      this.assessmentService
-        .verifyAssessmentCode(this.assessmentCode)
-        .subscribe({
-          next: (apiResponse) => {
-            debugger
-            if (apiResponse.statusMessage === 'SUCCESS') {
-              this.isVerified = true;
+      if (this.assessmentCode) {
+        this.assessmentService
+          .verifyAssessmentCode(this.assessmentCode)
+          .subscribe({
+            next: (apiResponse) => {
+              if (apiResponse.statusMessage === 'SUCCESS') {
+                this.isVerified = true;
 
-              if (apiResponse.status) {
-                this.candidateId = apiResponse.response.candidateId;
-                this.candidateName = apiResponse.response.candidateFullName;
-                this.candidateExperience =
-                  apiResponse.response.candidateYearsOfExpInMonths
-                    .toString()
-                    .concat(' Yrs');
-                this.candidateTechnology =
-                  apiResponse.response.candidateTechnology;
-                this.candidateRound=apiResponse.response.interviewRound;
-              }
-              this.initializeCodeMirror();
-            } else {
+                if (apiResponse.status) {
+                  this.candidateId = apiResponse.response.candidateId;
+                  this.candidateName = apiResponse.response.candidateFullName;
+                  this.candidateExperience =
+                    apiResponse.response.candidateYearsOfExpInMonths
+                      .toString()
+                      .concat(' Yrs');
+                  this.candidateTechnology =
+                    apiResponse.response.candidateTechnology;
+                  this.candidateRound = apiResponse.response.interviewRound;
+                }
+                this.initializeCodeMirror();
+              } else {
                 this.verificationFailed = true;
-                this.verificationMessage ='Invalid or expired assessment link.';
+                this.verificationMessage =
+                  'Invalid or expired assessment link.';
                 return;
-            }
-          },
-          error: (err) => {
-            this.isVerified = false;
-            this.verificationFailed = true;
-            this.verificationMessage ='Failed to verify assessment link. Please try again.';
-        },
-        });
-    } else {
-      this.verificationFailed = true;
-    }}
+              }
+            },
+            error: (err) => {
+              this.isVerified = false;
+              this.verificationFailed = true;
+              this.verificationMessage =
+                'Failed to verify assessment link. Please try again.';
+            },
+          });
+      } else {
+        this.verificationFailed = true;
+        this.verificationMessage =
+          'Failed to verify assessment link. Please try again.';
+      }
+    }
   }
 
   ngAfterViewInit(): void {}
@@ -252,7 +262,7 @@ export class AssessmentHomepageComponent
       }
       if (!this.assessmentCode) {
         console.warn(
-          'Assessment code missing during periodic verification. Ending session.'
+          'Assessment code missing during periodic verification. Ending session.',
         );
         this.endSessionByTimer();
         return;
@@ -272,7 +282,7 @@ export class AssessmentHomepageComponent
           error: (err) => {
             console.error(
               'Error during periodic assessment verification:',
-              err
+              err,
             );
             this.endSessionByTimer();
           },
@@ -290,7 +300,7 @@ export class AssessmentHomepageComponent
       this.codeReq.candidateId = this.candidateId;
       this.codeReq.code = currentCode;
       this.codeReq.codeType = 1;
-      this.codeReq.url=this.assessmentCode;
+      this.codeReq.url = this.assessmentCode;
 
       if (this.codeReq.code.trim() !== '') {
         this.editerOutput = 'COMPILING...';
@@ -326,7 +336,7 @@ export class AssessmentHomepageComponent
       const currentCode = this.editorView.state.doc.toString();
       this.codeReq.candidateId = this.candidateId;
       this.codeReq.code = currentCode;
-      this.codeReq.url=this.assessmentCode;
+      this.codeReq.url = this.assessmentCode;
 
       if (this.codeReq.code.trim() !== '') {
         this.editerOutput = 'RUNNING...';
@@ -369,9 +379,9 @@ export class AssessmentHomepageComponent
   }
 
   endSession(): void {
-    this.req.candidateId=this.candidateId;
-    this.req.assessmentUrl=this.assessmentCode;
-    this.req.interviewRound=this.candidateRound;
+    this.req.candidateId = this.candidateId;
+    this.req.assessmentUrl = this.assessmentCode;
+    this.req.interviewRound = this.candidateRound;
     this.openConfirmationDialogBox().then((flag: boolean) => {
       if (!flag) {
         return;
@@ -439,8 +449,10 @@ export class AssessmentHomepageComponent
   }
 
   assessmentEndTimeCheck(): void {
+    this.assessmentEndTimeReq.candidateId=this.candidateId;
+    this.assessmentEndTimeReq.round=this.candidateRound;
     this.assessmentService
-      .getAssessmentEndTimeByCandId(this.candidateId)
+      .getAssessmentEndTimeByCandId(this.assessmentEndTimeReq)
       .subscribe({
         next: (res) => {
           if (res.status) {
@@ -452,10 +464,11 @@ export class AssessmentHomepageComponent
 
             sessionStorage.setItem(
               'assessmentEndTime',
-              newEndTimeMillis.toString()
+              newEndTimeMillis.toString(),
             );
           }
         },
+        error: () => alert('Failed to end assessment. Please try again.')
       });
   }
 
@@ -463,9 +476,9 @@ export class AssessmentHomepageComponent
     sessionStorage.removeItem('assessmentEndTime');
     sessionStorage.setItem('assessmentEnded', 'true');
 
-    this.req.candidateId=this.candidateId;
-    this.req.interviewRound=this.candidateRound;
-    this.req.assessmentUrl=this.assessmentCode;
+    this.req.candidateId = this.candidateId;
+    this.req.interviewRound = this.candidateRound;
+    this.req.assessmentUrl = this.assessmentCode;
 
     this.assessmentService.endAssessment(this.req).subscribe({
       next: () => {
@@ -487,14 +500,14 @@ export class AssessmentHomepageComponent
   }
 
   openTextEditor(): void {
-    this.router.navigate(['/textEditor'],{ queryParamsHandling: 'preserve' });
-  };
+    this.router.navigate(['/textEditor'], { queryParamsHandling: 'preserve' });
+  }
 
   openJsonEditor(): void {
-    this.router.navigate(['/jsonEditor'],{ queryParamsHandling: 'preserve' });
+    this.router.navigate(['/jsonEditor'], { queryParamsHandling: 'preserve' });
   }
 
   openSqlEditor(): void {
-    this.router.navigate(['/sqlEditor'],{ queryParamsHandling: 'preserve' });
+    this.router.navigate(['/sqlEditor'], { queryParamsHandling: 'preserve' });
   }
 }

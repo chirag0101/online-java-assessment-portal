@@ -79,7 +79,6 @@ export class CodeSubmissionInfoComponent
       this.stateCandidateId = navigation.extras.state['candidateId'];
 
       if (this.submissionDetails) {
-        debugger;
         this.codeContent = this.submissionDetails.code;
         this.editerOutput =
           this.submissionDetails.output === null

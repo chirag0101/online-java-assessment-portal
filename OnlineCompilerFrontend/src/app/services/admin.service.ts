@@ -1,9 +1,20 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { AdminLoginCreds } from '../../app/models/admin-login-creds.model';
 import { AdminLoginResponse } from '../models/response/admin-login-response.model';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { NewAdminResponse } from '../../app/components/new-admin/new-admin.component';
-import { Observable, BehaviorSubject, of, catchError, tap } from 'rxjs';
+import {
+  Observable,
+  BehaviorSubject,
+  of,
+  catchError,
+  tap,
+  throwError,
+} from 'rxjs';
 import { AdminDetailsResponse } from '../models/response/all-admins-res.model';
 import { NewAdminDetails } from '../models/admin-details.model';
 import { isPlatformBrowser } from '@angular/common';
@@ -30,7 +41,7 @@ export class AdminService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {
     if (this.isBrowser()) {
       this.isAuthenticatedUser =
@@ -46,12 +57,12 @@ export class AdminService {
   }
 
   authenticateAdmin(
-    adminLoginCreds: AdminLoginCreds
+    adminLoginCreds: AdminLoginCreds,
   ): Observable<AdminLoginResponse> {
     return this.http
       .post<AdminLoginResponse>(
         `${this.adminServiceUrl}/authenticateAdmin`,
-        adminLoginCreds
+        adminLoginCreds,
       )
       .pipe(
         tap((response) => {
@@ -61,13 +72,16 @@ export class AdminService {
               sessionStorage.setItem('adminId', response.response.adminId);
               sessionStorage.setItem(
                 'isAdmin',
-                response.response.isAdmin.toString()
+                response.response.isAdmin.toString(),
               );
               sessionStorage.setItem(
                 'adminFullName',
-                response.response.adminFullName
+                response.response.adminFullName,
               );
-              sessionStorage.setItem('accessToken', response.response.accessToken);
+              sessionStorage.setItem(
+                'accessToken',
+                response.response.accessToken,
+              );
             }
             this.setIsLoggedIn(true);
           } else {
@@ -81,10 +95,10 @@ export class AdminService {
           if (this.isBrowser()) {
             sessionStorage.setItem('isAuthenticatedUser', 'false');
           }
-          console.error('Authentication API error:', error);
-          alert("Login Failed!");
-          throw error;
-        })
+          // console.error('Authentication API error:', error);
+          // alert("Login Failed!");
+          return throwError(() => error.error);
+        }),
       );
   }
 
@@ -111,14 +125,14 @@ export class AdminService {
     return this.http.post<NewAdminResponse>(
       `${this.adminServiceUrl}/newAdmin`,
       newAdminDetails,
-      { headers: header }
+      { headers: header },
     );
   }
 
   resetPassword(resetAdminReq: ResetAdminReq): Observable<ResetAdminRes> {
     return this.http.post<ResetAdminRes>(
       `${this.adminServiceUrl}/resetPassword`,
-      resetAdminReq
+      resetAdminReq,
     );
   }
 
@@ -132,13 +146,21 @@ export class AdminService {
       `${this.adminServiceUrl}/allAdmins`,
       {
         headers: header,
-      }
+      },
     );
   }
 
   onSessionTimeout(): void {
     sessionStorage.clear();
-    alert('Session Timeout please login again!');
+    alert('Session Timeout Please Login again!');
     this.router.navigate(['/adminLogin']);
+  }
+
+  onError(error: HttpErrorResponse): string {
+    if (error.status === 401) {
+      this.onSessionTimeout();
+      return "";
+    }
+      return'Internal Server Error, Plz Contact Admin!';
   }
 }

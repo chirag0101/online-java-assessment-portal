@@ -15,6 +15,7 @@ import { ViewReport } from '../../models/response/view-report-res.model';
 import { AssessmentService } from '../../services/assessment.service';
 import { SubmitReportReq } from '../../models/request/submit-report-req.model';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component'; // Import your component
+import { AdminService } from '../../services/admin.service';
 
 @Component({
   selector: 'app-review-assessment-dialog',
@@ -46,7 +47,8 @@ export class ReviewAssessmentDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: ViewReport,
     private assessmentService: AssessmentService,
     private router: Router,
-    private dialog: MatDialog // Injected MatDialog
+    private dialog: MatDialog, // Injected MatDialog
+    private adminService: AdminService,
   ) {}
 
   ngOnInit() {
@@ -168,7 +170,7 @@ export class ReviewAssessmentDialogComponent implements OnInit {
       },
       error: (err: any) => {
         this.isLoading = false;
-        this.errorMessage = err?.error?.message || 'Server error occurred.';
+        this.errorMessage = this.adminService.onError(err);
       },
     });
   }

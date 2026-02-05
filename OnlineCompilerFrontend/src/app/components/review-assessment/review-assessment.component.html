@@ -83,7 +83,10 @@
           Loading submissions...
         </div>
         <div *ngIf="error" class="error-message">
-          Error loading submissions...
+          <p>{{ errorMessage }}</p>
+          <button class="retry-button" (click)="fetchSubmissions()">
+            <mat-icon>replay</mat-icon>
+          </button>
         </div>
 
         <div
@@ -123,7 +126,14 @@
                 <button
                   *ngIf="submission.status === reviewStatusEnum.TO_BE_REVIEWED"
                   class="review-btn"
-                  (click)="viewReport(submission.candidateId,submission.interviewerId,submission.assessmentEndTime,submission.interviewRound)"
+                  (click)="
+                    viewReport(
+                      submission.candidateId,
+                      submission.interviewerId,
+                      submission.assessmentEndTime,
+                      submission.interviewRound
+                    )
+                  "
                   title="Review Assessment"
                 >
                   Review
@@ -131,7 +141,14 @@
                 <button
                   *ngIf="submission.status !== reviewStatusEnum.TO_BE_REVIEWED"
                   class="view-report-btn"
-                  (click)="viewReport(submission.candidateId,submission.interviewerId,submission.assessmentEndTime,submission.interviewRound)"
+                  (click)="
+                    viewReport(
+                      submission.candidateId,
+                      submission.interviewerId,
+                      submission.assessmentEndTime,
+                      submission.interviewRound
+                    )
+                  "
                   title="View Assessment Report"
                 >
                   View Report
@@ -150,10 +167,8 @@
 
   <footer class="login-footer">
     <div class="footer-content">
-      <span class="copyright"
-        >&copy; {{copyright}}</span
-      >
-      <span class="version-tag">{{version}}</span>
+      <span class="copyright">&copy; {{ copyright }}</span>
+      <span class="version-tag">{{ version }}</span>
     </div>
   </footer>
 </div>

@@ -29,6 +29,7 @@ import { eclipse } from '@uiw/codemirror-theme-eclipse';
 import { debug } from 'console';
 import { CodeTypes } from '../../models/constants/code-type.constants';
 import { ExpireAssessmentReq } from '../../models/request/expire-assessment-req-model';
+import { AssessmentEndTimeReq } from '../../models/request/assessment-end-time-req.model';
 // import { oneDark } from '@codemirror/theme-one-dark';
 // import { materialLight } from '@ddietr/codemirror-themes/material-light';
 // import { solarizedLight } from '@ddietr/codemirror-themes/solarized-light';
@@ -38,12 +39,9 @@ import { ExpireAssessmentReq } from '../../models/request/expire-assessment-req-
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './json-editor.component.html',
-  styleUrl: './json-editor.component.css'
+  styleUrl: './json-editor.component.css',
 })
-
-export class JsonEditorComponent
-  implements OnInit, AfterViewInit, OnDestroy
-{
+export class JsonEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   private _editorRef!: ElementRef;
   assessmentVerificationIntervalId: any;
 
@@ -64,10 +62,14 @@ export class JsonEditorComponent
   codeReq: CodeSnippetReqDTO = {
     candidateId: '',
     code: '',
-    codeType:3,
-    url:''
+    codeType: 3,
+    url: '',
   };
 
+  assessmentEndTimeReq: AssessmentEndTimeReq = {
+    candidateId: '',
+    round: '',
+  };
 
   private timerDuration: number = 120 * 60 * 1000;
   private timerIntervalId: any;
@@ -77,15 +79,14 @@ export class JsonEditorComponent
   isVerified: boolean = false;
   verificationFailed: boolean = false;
 
-  codeContent: string =
-    '';
+  codeContent: string = '';
   editerOutput: string = 'OUTPUT WILL BE DISPLAYED HERE...';
 
   candidateId: string = '';
   candidateName: string = '';
   candidateExperience: string = '';
   candidateTechnology: string = '';
-  candidateRound:string='';
+  candidateRound: string = '';
 
   showConfirmationDialog: boolean = false;
   dialogTitle: string = '';
@@ -95,11 +96,11 @@ export class JsonEditorComponent
 
   warned5Min: boolean = false;
 
-    req:ExpireAssessmentReq={
-          candidateId:'',
-          assessmentUrl:'',
-          interviewRound:''
-        };
+  req: ExpireAssessmentReq = {
+    candidateId: '',
+    assessmentUrl: '',
+    interviewRound: '',
+  };
 
   private dialogResolve: ((value: boolean) => void) | null = null;
 
@@ -108,59 +109,59 @@ export class JsonEditorComponent
     private assessmentService: AssessmentService,
     private router: Router,
     private dialog: MatDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-    if (sessionStorage.getItem('assessmentEnded')) {
-      const currentAssessmentCode =
-        this.route.snapshot.queryParamMap.get('assessmentCode');
-      sessionStorage.removeItem('assessmentEnded');
-      sessionStorage.removeItem('assessmentEndTime');
-      window.location.reload();
-    }
-    this.assessmentCode =
-      this.route.snapshot.queryParamMap.get('assessmentCode') ?? '';
+      if (sessionStorage.getItem('assessmentEnded')) {
+        const currentAssessmentCode =
+          this.route.snapshot.queryParamMap.get('assessmentCode');
+        sessionStorage.removeItem('assessmentEnded');
+        sessionStorage.removeItem('assessmentEndTime');
+        window.location.reload();
+      }
+      this.assessmentCode =
+        this.route.snapshot.queryParamMap.get('assessmentCode') ?? '';
 
-    if (this.assessmentCode) {
-      this.assessmentService
-        .verifyAssessmentCode(this.assessmentCode)
-        .subscribe({
-          next: (apiResponse) => {
-            debugger
-            if (apiResponse.statusMessage === 'SUCCESS') {
-              this.isVerified = true;
+      if (this.assessmentCode) {
+        this.assessmentService
+          .verifyAssessmentCode(this.assessmentCode)
+          .subscribe({
+            next: (apiResponse) => {
+              if (apiResponse.statusMessage === 'SUCCESS') {
+                this.isVerified = true;
 
-              if (apiResponse.status) {
-                this.candidateId = apiResponse.response.candidateId;
-                this.candidateName = apiResponse.response.candidateFullName;
-                this.candidateExperience =
-                  apiResponse.response.candidateYearsOfExpInMonths
-                    .toString()
-                    .concat(' Yrs');
-                this.candidateTechnology =
-                  apiResponse.response.candidateTechnology;
-                  this.candidateRound=apiResponse.response.interviewRound;
-              }
-              this.initializeCodeMirror();
-            } else {
+                if (apiResponse.status) {
+                  this.candidateId = apiResponse.response.candidateId;
+                  this.candidateName = apiResponse.response.candidateFullName;
+                  this.candidateExperience =
+                    apiResponse.response.candidateYearsOfExpInMonths
+                      .toString()
+                      .concat(' Yrs');
+                  this.candidateTechnology =
+                    apiResponse.response.candidateTechnology;
+                  this.candidateRound = apiResponse.response.interviewRound;
+                }
+                this.initializeCodeMirror();
+              } else {
                 this.verificationFailed = true;
                 alert('Invalid or expired assessment link.');
                 return;
-            }
-          },
-          error: (err) => {
-            console.error('Verification error:', err);
-            this.verificationFailed = true;
-            alert(
-              'Failed to verify assessment link. Please check the link or try again.'
-            );
-          },
-        });
-    } else {
-      this.verificationFailed = true;
-    }}
+              }
+            },
+            error: (err) => {
+              console.error('Verification error:', err);
+              this.verificationFailed = true;
+              alert(
+                'Failed to verify assessment link. Please check the link or try again.',
+              );
+            },
+          });
+      } else {
+        this.verificationFailed = true;
+      }
+    }
   }
 
   ngAfterViewInit(): void {}
@@ -242,7 +243,7 @@ export class JsonEditorComponent
       }
       if (!this.assessmentCode) {
         console.warn(
-          'Assessment code missing during periodic verification. Ending session.'
+          'Assessment code missing during periodic verification. Ending session.',
         );
         this.endSessionByTimer();
         return;
@@ -262,7 +263,7 @@ export class JsonEditorComponent
           error: (err) => {
             console.error(
               'Error during periodic assessment verification:',
-              err
+              err,
             );
             this.endSessionByTimer();
           },
@@ -279,8 +280,8 @@ export class JsonEditorComponent
       const currentCode = this.editorView.state.doc.toString();
       this.codeReq.candidateId = this.candidateId;
       this.codeReq.code = currentCode;
-      this.codeReq.codeType=CodeTypes.JSON;
-      this.codeReq.url=this.assessmentCode;
+      this.codeReq.codeType = CodeTypes.JSON;
+      this.codeReq.url = this.assessmentCode;
 
       if (this.codeReq.code.trim() !== '') {
         this.editerOutput = 'SAVING...';
@@ -297,12 +298,11 @@ export class JsonEditorComponent
           } else {
             this.editerOutput = response.output;
           }
-            alert('JSON saved successfully!');
+          alert('JSON saved successfully!');
         },
         error: (err) => {
           console.error('Error saving json code:', err);
-          this.editerOutput =
-            'An error occurred while communicating with the server.';
+          this.editerOutput = 'An error occurred while saving the code.';
         },
       });
     }
@@ -317,7 +317,7 @@ export class JsonEditorComponent
       const currentCode = this.editorView.state.doc.toString();
       this.codeReq.candidateId = this.candidateId;
       this.codeReq.code = currentCode;
-      this.codeReq.url=this.assessmentCode;
+      this.codeReq.url = this.assessmentCode;
 
       if (this.codeReq.code.trim() !== '') {
         this.editerOutput = 'RUNNING...';
@@ -332,8 +332,7 @@ export class JsonEditorComponent
         },
         error: (err) => {
           console.error('Error running code:', err);
-          this.editerOutput =
-            'An error occurred while communicating with the compiler service.';
+          this.editerOutput = 'An error occurred while running the code.';
         },
       });
     }
@@ -360,9 +359,9 @@ export class JsonEditorComponent
   }
 
   endSession(): void {
-    this.req.candidateId=this.candidateId;
-    this.req.assessmentUrl=this.assessmentCode;
-    this.req.interviewRound=this.candidateRound;
+    this.req.candidateId = this.candidateId;
+    this.req.assessmentUrl = this.assessmentCode;
+    this.req.interviewRound = this.candidateRound;
     this.openConfirmationDialogBox().then((flag: boolean) => {
       if (!flag) {
         return;
@@ -430,8 +429,10 @@ export class JsonEditorComponent
   }
 
   assessmentEndTimeCheck(): void {
+    this.assessmentEndTimeReq.candidateId = this.candidateId;
+    this.assessmentEndTimeReq.round = this.candidateRound;
     this.assessmentService
-      .getAssessmentEndTimeByCandId(this.candidateId)
+      .getAssessmentEndTimeByCandId(this.assessmentEndTimeReq)
       .subscribe({
         next: (res) => {
           if (res.status) {
@@ -443,7 +444,7 @@ export class JsonEditorComponent
 
             sessionStorage.setItem(
               'assessmentEndTime',
-              newEndTimeMillis.toString()
+              newEndTimeMillis.toString(),
             );
           }
         },
@@ -453,9 +454,9 @@ export class JsonEditorComponent
   endSessionByTimer(): void {
     sessionStorage.removeItem('assessmentEndTime');
     sessionStorage.setItem('assessmentEnded', 'true');
-    this.req.candidateId=this.candidateId;
-    this.req.assessmentUrl=this.assessmentCode;
-    this.req.interviewRound=this.candidateRound;
+    this.req.candidateId = this.candidateId;
+    this.req.assessmentUrl = this.assessmentCode;
+    this.req.interviewRound = this.candidateRound;
 
     this.assessmentService.endAssessment(this.req).subscribe({
       next: () => {
@@ -477,14 +478,14 @@ export class JsonEditorComponent
   }
 
   openTextEditor(): void {
-    this.router.navigate(['/textEditor'],{ queryParamsHandling: 'preserve' });
-  };
+    this.router.navigate(['/textEditor'], { queryParamsHandling: 'preserve' });
+  }
 
   openJavaEditor(): void {
-    this.router.navigate(['/assessment'],{ queryParamsHandling: 'preserve' });
+    this.router.navigate(['/assessment'], { queryParamsHandling: 'preserve' });
   }
 
   openSqlEditor(): void {
-    this.router.navigate(['/sqlEditor'],{ queryParamsHandling: 'preserve' });
+    this.router.navigate(['/sqlEditor'], { queryParamsHandling: 'preserve' });
   }
 }

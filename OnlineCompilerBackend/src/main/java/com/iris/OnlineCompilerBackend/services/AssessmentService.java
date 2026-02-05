@@ -366,7 +366,7 @@ public class AssessmentService {
 
     public ApiResponse getAssessmentEndTimeByCandId(GetAssessmentEndTimeReqDTO req) {
         try {
-            Date time = candidateRepo.findAssessmentEndTimeByCandId(req.getCandidateId(),req.getInterviewerId(),req.getRound());
+            Date time = candidateRepo.findAssessmentEndTimeByCandId(req.getCandidateId(),req.getRound());
             return new ApiResponse.Builder().status(true).statusMessage(ResponseStatus.SUCCESS.getStatus()).response(time).build();
         } catch (Exception e) {
             log.info(e.getMessage());

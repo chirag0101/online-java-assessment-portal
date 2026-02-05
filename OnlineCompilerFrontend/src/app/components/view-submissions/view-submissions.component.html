@@ -99,7 +99,7 @@
           Loading submissions...
         </div>
         <div *ngIf="error" class="error-message">
-          Error loading submissions. Please try again.
+          {{errorMessage}}
           <button class="retry-button" (click)="fetchSubmissions()">
             <mat-icon>replay</mat-icon>
           </button>

@@ -320,10 +320,7 @@
               placeholder="Enter Experience in Years"
             />
             <div
-              *ngIf="
-                expInput.invalid &&
-                (expInput.dirty || expInput.touched)
-              "
+              *ngIf="expInput.invalid && (expInput.dirty || expInput.touched)"
               class="validation-message"
             >
               Candidate Experience is required.
@@ -380,9 +377,16 @@
             class="assessment-url-input"
           />
 
-          <button type="button" class="copy-button" (click)="copyUrl()">
-            <mat-icon>content_copy</mat-icon>
-          </button>
+            <button
+              type="button"
+              class="copy-button"
+              (click)="copyUrl()"
+              title="Copy URL"
+            >
+              <mat-icon>content_copy</mat-icon>
+            </button>
+
+            <p *ngIf="copySuccess" class="copy-badge">Assessment Url Copied! </p>
         </div>
       </div>
     </div>

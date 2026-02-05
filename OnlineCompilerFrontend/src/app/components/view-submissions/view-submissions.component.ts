@@ -47,6 +47,7 @@ export class ViewSubmissionsComponent implements OnInit {
 
   adminId = sessionStorage.getItem('adminFullName');
   lastLoggedIn = sessionStorage.getItem('lastLoggedIn');
+  errorMessage:string='';
 
   constructor(
     private router: Router,
@@ -124,8 +125,8 @@ export class ViewSubmissionsComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Fetch error:', err);
         this.error = true;
+        this.errorMessage = this.adminService.onError(err);
         this.loading = false;
       },
     });

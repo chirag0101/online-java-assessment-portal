@@ -63,7 +63,7 @@ export class ResetAdminPasswordComponent {
         }
       },
       error: (err) => {
-        this.errorMessage = err.statusMessage;
+        this.errorMessage = err.statusMessage || "Failed to Reset Password!";
       },
     });
   }

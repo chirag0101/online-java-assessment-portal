@@ -71,13 +71,12 @@ export class NewAdminComponent implements OnInit {
           this.router.navigate(['/adminPanel']);
         } else {
           this.errorMessage =
-            response.statusMessage || 'Failed to save admin credentials.';
+            response.statusMessage || 'Failed to create admin.';
         }
       },
       error: (err) => {
         this.errorMessage =
-          err.message || 'An unexpected error occurred while saving.';
-        this.adminService.onSessionTimeout();
+          this.adminService.onError(err);
       },
     });
   }

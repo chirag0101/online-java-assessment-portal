@@ -158,25 +158,32 @@ td button:not(.extend-btn):hover {
 }
 
 .retry-button {
-  padding: 8px 15px;
-  background-color: #ffffff;
-  color: #005aaa;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background-color: #005aaa;
+  color: #ffffff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9em;
   font-weight: 600;
-  margin-top: 10px;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-top: 15px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
 }
 
 .retry-button:hover {
-  background-color: #bdbdbd;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  background-color: #004d90;
+  box-shadow: 0 4px 12px rgba(0, 90, 170, 0.3);
 }
 
-.retry-button:active {
-  transform: translateY(1px);
+.retry-button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 .table-footer-actions {

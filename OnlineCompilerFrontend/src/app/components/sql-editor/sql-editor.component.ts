@@ -29,6 +29,7 @@ import { eclipse } from '@uiw/codemirror-theme-eclipse';
 import { debug } from 'console';
 import { CodeTypes } from '../../models/constants/code-type.constants';
 import { ExpireAssessmentReq } from '../../models/request/expire-assessment-req-model';
+import { AssessmentEndTimeReq } from '../../models/request/assessment-end-time-req.model';
 // import { oneDark } from '@codemirror/theme-one-dark';
 // import { materialLight } from '@ddietr/codemirror-themes/material-light';
 // import { solarizedLight } from '@ddietr/codemirror-themes/solarized-light';
@@ -88,6 +89,11 @@ export class SqlEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   assessmentCode: string = '';
 
+  assessmentEndTimeReq: AssessmentEndTimeReq = {
+    candidateId: '',
+    round: '',
+  };
+
   warned5Min: boolean = false;
   req: ExpireAssessmentReq = {
     candidateId: '',
@@ -122,7 +128,6 @@ export class SqlEditorComponent implements OnInit, AfterViewInit, OnDestroy {
           .verifyAssessmentCode(this.assessmentCode)
           .subscribe({
             next: (apiResponse) => {
-              debugger;
               if (apiResponse.statusMessage === 'SUCCESS') {
                 this.isVerified = true;
 
@@ -145,7 +150,6 @@ export class SqlEditorComponent implements OnInit, AfterViewInit, OnDestroy {
               }
             },
             error: (err) => {
-              console.error('Verification error:', err);
               this.verificationFailed = true;
               alert(
                 'Failed to verify assessment link. Please check the link or try again.',
@@ -219,9 +223,6 @@ export class SqlEditorComponent implements OnInit, AfterViewInit, OnDestroy {
         clearInterval(this.assessmentVerificationIntervalId);
       }
       if (!this.assessmentCode) {
-        console.warn(
-          'Assessment code missing during periodic verification. Ending session.',
-        );
         this.endSessionByTimer();
         return;
       }
@@ -238,10 +239,6 @@ export class SqlEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           },
           error: (err) => {
-            console.error(
-              'Error during periodic assessment verification:',
-              err,
-            );
             this.endSessionByTimer();
           },
         });
@@ -278,9 +275,7 @@ export class SqlEditorComponent implements OnInit, AfterViewInit, OnDestroy {
           alert('Code saved successfully!');
         },
         error: (err) => {
-          console.error('Error saving code:', err);
-          this.editerOutput =
-            'An error occurred while communicating with the server.';
+          this.editerOutput = 'An error occurred while saving the sql.';
         },
       });
     }
@@ -309,9 +304,7 @@ export class SqlEditorComponent implements OnInit, AfterViewInit, OnDestroy {
           this.editerOutput = response.output;
         },
         error: (err) => {
-          console.error('Error running code:', err);
-          this.editerOutput =
-            'An error occurred while communicating with the compiler service.';
+          this.editerOutput = 'An error occurred while running the code.';
         },
       });
     }
@@ -408,8 +401,10 @@ export class SqlEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   assessmentEndTimeCheck(): void {
+    this.assessmentEndTimeReq.candidateId = this.candidateId;
+    this.assessmentEndTimeReq.round = this.candidateRound;
     this.assessmentService
-      .getAssessmentEndTimeByCandId(this.candidateId)
+      .getAssessmentEndTimeByCandId(this.assessmentEndTimeReq)
       .subscribe({
         next: (res) => {
           if (res.status) {
